@@ -23,7 +23,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\..\ERP.Application\ERP.Application.csproj" />
+		<ProjectReference Include="..\ERP.Application\ERP.Application.csproj" />
 		<ProjectReference Include="..\ERP.Contracts\ERP.Contracts.csproj" />
 		<ProjectReference Include="..\ERP.Infrastructure\ERP.Infrastructure.csproj" />
 	</ItemGroup>
