@@ -1,0 +1,68 @@
+<div class="register-wrapper">
+  <div class="register-card">
+    <h2>Registration</h2>
+
+    <form [formGroup]="registerForm" (ngSubmit)="register()">
+
+      <!-- NAME -->
+      <div class="input-group">
+        <input type="text" formControlName="name" placeholder=" ">
+        <label>Full Name</label>
+        <small *ngIf="registerForm.get('name')?.touched && registerForm.get('name')?.invalid">
+          Name is required
+        </small>
+      </div>
+
+      <!-- EMAIL -->
+      <div class="input-group">
+        <input type="email" formControlName="email" placeholder=" ">
+        <label>Email Address</label>
+        <small *ngIf="registerForm.get('email')?.touched && registerForm.get('email')?.invalid">
+          Enter valid email
+        </small>
+      </div>
+
+      <!-- PASSWORD -->
+      <div class="input-group">
+        <input
+          [type]="showPassword ? 'text' : 'password'"
+          formControlName="password"
+          placeholder=" "
+          (input)="onPasswordInput()"
+        >
+        <label>Password</label>
+        <span class="toggle" (click)="togglePassword()">👁</span>
+      </div>
+
+      <!-- STRENGTH -->
+      <div class="strength">
+        <span [style.width]="strengthWidth"></span>
+      </div>
+
+      <!-- CONFIRM PASSWORD -->
+      <div class="input-group">
+        <input
+          [type]="showPassword ? 'text' : 'password'"
+          formControlName="confirmPassword"
+          placeholder=" "
+        >
+        <label>Confirm Password</label>
+        <small *ngIf="registerForm.hasError('mismatch') && registerForm.get('confirmPassword')?.touched">
+          Passwords do not match
+        </small>
+      </div>
+
+      <!-- BUTTON -->
+      <button type="submit" [disabled]="registerForm.invalid || loading">
+        <span *ngIf="!loading">Register</span>
+        <span *ngIf="loading" class="loader"></span>
+      </button>
+
+      <!-- SUCCESS -->
+      <div class="success" [class.show]="showSuccess">
+        ✔ Registered Successfully
+      </div>
+
+    </form>
+  </div>
+</div>

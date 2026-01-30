@@ -1,0 +1,624 @@
+<div class="customer-order-container">
+  <div class="container-fluid mt-4 mb-5">
+  <!-- Add Customer Order Form Card -->
+  <div class="card shadow-sm mb-4">
+    <div class="card-header bg-primary text-white">
+      <h4 class="mb-0">
+        <i class="bi bi-cart-plus me-2"></i>{{ isEditMode ? 'Edit' : 'Add' }} Customer Order
+      </h4>
+    </div>
+    <div class="card-body">
+      <form>
+        <div class="row g-3">
+          <!-- Customer Search -->
+          <div class="col-md-5">
+            <label class="form-label">
+              Customer <span class="text-danger">*</span>
+            </label>
+            <div class="position-relative">
+              <div class="input-group">
+                <input
+                  type="text"
+                  class="form-control"
+                  [(ngModel)]="customerSearchTerm"
+                  name="customerSearch"
+                  placeholder="Type to search customer..."
+                  (input)="onCustomerSearch($event)"
+                  (focus)="onCustomerInputFocus()"
+                  (blur)="onCustomerInputBlur()"
+                  autocomplete="off"
+                />
+                <button
+                  class="btn btn-success"
+                  type="button"
+                  (click)="openCustomerModal()"
+                  title="Add New Customer"
+                >
+                  <i class="bi bi-plus-circle"></i>
+                </button>
+              </div>
+              <!-- Customer Suggestions Dropdown -->
+              <div
+                *ngIf="showCustomerDropdown && getFilteredCustomers().length > 0"
+                class="position-absolute w-100 bg-white border rounded shadow-lg customer-dropdown"
+                style="z-index: 9999; max-height: 300px; overflow-y: auto; top: 100%; margin-top: 2px;"
+              >
+                <div
+                  *ngFor="let customer of getFilteredCustomers(); let i = index"
+                  class="px-3 py-2 cursor-pointer customer-suggestion-item"
+                  style="cursor: pointer;"
+                  (mousedown)="selectCustomer(customer); $event.preventDefault()"
+                  [class.bg-primary]="customerOrder.customerCode === customer.customerCode"
+                  [class.text-white]="customerOrder.customerCode === customer.customerCode"
+                  [class.bg-light]="customerOrder.customerCode !== customer.customerCode"
+                  [attr.data-index]="i"
+                >
+                  <div class="fw-bold">{{ getCustomerDisplayName(customer) }}</div>
+                  <small class="text-muted" [class.text-white]="customerOrder.customerCode === customer.customerCode">
+                    Code: {{ customer.customerCode }} | 
+                    Phone: {{ customer.phone || 'N/A' }} | 
+                    Email: {{ customer.email || 'N/A' }}
+                  </small>
+                </div>
+              </div>
+              <div
+                *ngIf="showCustomerDropdown && getFilteredCustomers().length === 0 && customerSearchTerm.trim().length >= 2"
+                class="position-absolute w-100 bg-white border rounded shadow-lg px-3 py-2 customer-dropdown"
+                style="z-index: 9999; top: 100%; margin-top: 2px;"
+              >
+                <div class="text-muted">No customers found</div>
+              </div>
+            </div>
+            <!-- Selected Customer Display -->
+            <div *ngIf="customerOrder.customerCode" class="mt-2">
+              <small class="text-muted">
+                Selected: <strong>{{ getSelectedCustomerName() }}</strong>
+                <button
+                  type="button"
+                  class="btn btn-sm btn-link text-danger p-0 ms-2"
+                  (click)="clearCustomerSelection()"
+                  title="Clear selection"
+                >
+                  <i class="bi bi-x-circle"></i>
+                </button>
+              </small>
+            </div>
+          </div>
+
+          <!-- Order Date -->
+          <div class="col-md-3">
+            <label class="form-label">Order Date</label>
+            <input
+              type="date"
+              class="form-control"
+              [(ngModel)]="customerOrder.orderDate"
+              name="orderDate"
+            />
+          </div>
+
+          <!-- Status -->
+          <div class="col-md-4">
+            <label class="form-label">Status</label>
+            <!-- Read-only when creating -->
+            <input
+              *ngIf="!isEditMode"
+              type="text"
+              class="form-control bg-light"
+              [value]="customerOrder.status || 'Registered'"
+              readonly
+              style="cursor: default;"
+            />
+            <!-- Editable dropdown when editing -->
+            <select
+              *ngIf="isEditMode"
+              class="form-select"
+              [(ngModel)]="customerOrder.status"
+              name="status"
+              [disabled]="isLoadingStatus"
+            >
+              <option value="" *ngIf="isLoadingStatus">Loading...</option>
+              <option *ngFor="let status of getFilteredStatusOptions()" [value]="getStatusValue(status)">
+                {{ getStatusValue(status) }}
+              </option>
+            </select>
+            <small class="text-muted" *ngIf="!isEditMode">
+              <i class="bi bi-info-circle"></i> Status is set to "Registered" at creation time
+            </small>
+          </div>
+        </div>
+
+        <!-- Update Time Information (shown in edit mode, Created removed) -->
+        <div class="row g-3 mb-3" *ngIf="isEditMode && customerOrder.updateDt">
+          <div class="col-md-6" *ngIf="customerOrder.updateDt">
+            <label class="form-label text-muted">Last Updated</label>
+            <div class="form-control bg-light" style="border: 1px solid #dee2e6;">
+              <small>
+                <i class="bi bi-pencil-square me-1"></i>
+                Date: {{ customerOrder.updateDt }}
+                <span *ngIf="customerOrder.updateTm">
+                  | Time: {{ customerOrder.updateTm | date:'short' }}
+                </span>
+                <span *ngIf="customerOrder.updateBy">
+                  | By: {{ customerOrder.updateBy }}
+                </span>
+              </small>
+            </div>
+          </div>
+        </div>
+
+        <div class="row g-3">
+          <!-- Line Items Table -->
+          <div class="col-12">
+            <h5 class="mb-2">Order Items</h5>
+            <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
+              <table class="table table-bordered table-sm align-middle">
+                <thead class="table-secondary sticky-top">
+                  <tr>
+                    <th style="width: 5%;">S.No</th>
+                    <th style="width: 25%;">Part Name</th>
+                    <th style="width: 15%;">Make</th>
+                    <th style="width: 10%;">Price</th>
+                    <th style="width: 8%;">Quantity</th>
+                    <th style="width: 10%;">Discount</th>
+                    <th style="width: 10%;">Total</th>
+                    <th style="width: 17%;" class="text-center">Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let row of orderRows; let i = index">
+                    <td class="text-center">{{ i + 1 }}</td>
+                    <td>
+                      <div class="position-relative">
+                        <input
+                          type="text"
+                          class="form-control form-control-sm"
+                          [(ngModel)]="row.partSearchTerm"
+                          name="partSearch_{{row.id}}"
+                          (input)="onPartSearch(row, $event)"
+                          (focus)="onPartInputFocus(row)"
+                          (blur)="onPartInputBlur(row)"
+                          placeholder="Search part..."
+                          autocomplete="off"
+                        />
+                        <div
+                          *ngIf="row.showPartDropdown"
+                          class="position-absolute w-100 bg-white border rounded shadow-lg"
+                          style="z-index: 1000; max-height: 200px; overflow-y: auto; top: 100%;"
+                        >
+                          <!-- Loading indicator -->
+                          <div
+                            *ngIf="isSearchingParts"
+                            class="px-3 py-2 text-center"
+                          >
+                            <div class="spinner-border spinner-border-sm text-primary me-2" role="status">
+                              <span class="visually-hidden">Loading...</span>
+                            </div>
+                            <span class="text-muted">Searching in 1002 parts...</span>
+                          </div>
+                          
+                          <!-- Results -->
+                          <div *ngIf="!isSearchingParts">
+                            <div
+                              *ngFor="let part of getFilteredPartsForRow(row)"
+                              class="px-3 py-2 cursor-pointer"
+                              style="cursor: pointer;"
+                              (mousedown)="selectPart(row, part)"
+                              [class.bg-primary]="row.partId === getPartId(part)"
+                              [class.text-white]="row.partId === getPartId(part)"
+                              [class.bg-light]="row.partId !== getPartId(part)"
+                            >
+                              {{ getPartDisplayName(part) }}
+                            </div>
+                            <div
+                              *ngIf="getFilteredPartsForRow(row).length === 0 && row.partSearchTerm && row.partSearchTerm.trim().length >= 2"
+                              class="px-3 py-2"
+                            >
+                              <div class="text-muted mb-2">No parts found</div>
+                              <button
+                                type="button"
+                                class="btn btn-sm btn-primary w-100"
+                                (mousedown)="createPartIfNotExists(row); $event.preventDefault()"
+                              >
+                                <i class="bi bi-plus-circle me-1"></i>Create Part "{{ row.partSearchTerm }}"
+                              </button>
+                            </div>
+                            <div
+                              *ngIf="!row.partSearchTerm || row.partSearchTerm.trim().length < 2"
+                              class="px-3 py-2 text-muted"
+                            >
+                              Type at least 2 characters to search
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      <select
+                        class="form-select form-select-sm"
+                        [(ngModel)]="row.make"
+                        name="make_{{row.id}}"
+                        (change)="onMakeChange(row)"
+                      >
+                        <option value="">-- Select Make --</option>
+                        <option *ngFor="let make of getAllMakes()" [value]="make">
+                          {{ make }}
+                        </option>
+                      </select>
+                    </td>
+                    <td>
+                      <input
+                        type="number"
+                        class="form-control form-control-sm text-end"
+                        [(ngModel)]="row.price"
+                        name="price_{{row.id}}"
+                        (input)="calculateTotal(row)"
+                        placeholder="0.00"
+                        step="0.01"
+                        min="0"
+                      />
+                    </td>
+                    <td>
+                      <input
+                        type="number"
+                        class="form-control form-control-sm text-end"
+                        [(ngModel)]="row.quantity"
+                        name="quantity_{{row.id}}"
+                        (input)="calculateTotal(row)"
+                        placeholder="0"
+                        step="1"
+                        min="0"
+                      />
+                    </td>
+                    <td>
+                      <input
+                        type="number"
+                        class="form-control form-control-sm text-end"
+                        [(ngModel)]="row.discount"
+                        name="discount_{{row.id}}"
+                        (input)="calculateTotal(row)"
+                        placeholder="0.00"
+                        step="0.01"
+                        min="0"
+                      />
+                    </td>
+                    <td>
+                      <input
+                        type="text"
+                        class="form-control form-control-sm text-end fw-bold"
+                        [value]="row.total | number:'1.2-2'"
+                        readonly
+                        style="background-color: #f8f9fa;"
+                      />
+                    </td>
+                    <td class="text-center">
+                      <div class="d-flex gap-1 justify-content-center">
+                        <!-- Add button - only show on last line -->
+                        <button
+                          type="button"
+                          class="btn btn-sm btn-success"
+                          (click)="addNewRow()"
+                          title="Add New Line"
+                          *ngIf="i === orderRows.length - 1"
+                        >
+                          <i class="bi bi-plus-circle"></i>
+                        </button>
+                        <!-- Remove button - show on all lines except when only one line exists -->
+                        <button
+                          type="button"
+                          class="btn btn-sm btn-danger"
+                          (click)="removeRow(row.id)"
+                          title="Remove"
+                          *ngIf="orderRows.length > 1"
+                        >
+                          <i class="bi bi-trash"></i>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr *ngIf="orderRows.length === 0">
+                    <td colspan="8" class="text-center text-muted py-2">
+                      No order items. Click "Add" button to add items.
+                    </td>
+                  </tr>
+                  <!-- Grand Total Row -->
+                  <tr *ngIf="orderRows.length > 0" class="table-info">
+                    <td colspan="6" class="text-end fw-bold">Grand Total:</td>
+                    <td class="text-end fw-bold">
+                      {{ getGrandTotal() | number:'1.2-2' }}
+                    </td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="col-12">
+            <button type="button" class="btn btn-primary me-2" (click)="saveOrder()">
+              <i class="bi bi-save me-2"></i>{{ isEditMode ? 'Update' : 'Save' }} Order
+            </button>
+            <button type="button" class="btn btn-secondary" (click)="goBackToList()">
+              <i class="bi bi-arrow-left me-2"></i>Back to List
+            </button>
+            <button type="button" class="btn btn-secondary" (click)="resetForm()" *ngIf="isEditMode">
+              <i class="bi bi-x-circle me-2"></i>Cancel
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+  </div>
+</div>
+
+
+<!-- Customer Modal -->
+<div
+  class="modal fade"
+  [class.show]="showCustomerModal"
+  [style.display]="showCustomerModal ? 'block' : 'none'"
+  tabindex="-1"
+  role="dialog"
+  [attr.aria-hidden]="!showCustomerModal"
+>
+  <div class="modal-dialog modal-lg modal-dialog-scrollable" role="document">
+    <div class="modal-content">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title">
+          <i class="bi bi-person-plus me-2"></i>Add New Customer
+        </h5>
+        <button
+          type="button"
+          class="btn-close btn-close-white"
+          (click)="closeCustomerModal()"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <form (ngSubmit)="saveCustomer()">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label">
+                Customer Code <span class="text-danger">*</span>
+              </label>
+              <input
+                type="text"
+                class="form-control"
+                [(ngModel)]="customerForm.customerCode"
+                name="customerCode"
+                required
+                maxlength="10"
+              />
+              <small class="text-muted">Max 10 characters</small>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">
+                Name <span class="text-danger">*</span>
+              </label>
+              <input
+                type="text"
+                class="form-control"
+                [(ngModel)]="customerForm.name"
+                name="name"
+                required
+                maxlength="100"
+              />
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">
+                Name(AR) <span class="text-danger">*</span>
+              </label>
+              <input
+                type="text"
+                class="form-control"
+                [(ngModel)]="customerForm.nameAr"
+                name="nameAr"
+                required
+                maxlength="100"
+              />
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">
+                Phone <span class="text-danger">*</span>
+              </label>
+              <input
+                type="text"
+                class="form-control"
+                [class.is-invalid]="phoneError"
+                [(ngModel)]="customerForm.phone"
+                name="phone"
+                (blur)="onPhoneBlur()"
+                required
+                maxlength="50"
+                placeholder="1234567890"
+              />
+              <div class="invalid-feedback" *ngIf="phoneError">
+                {{ phoneError }}
+              </div>
+              <small class="text-muted" *ngIf="!phoneError">Enter numbers only</small>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">
+                Email <span class="text-danger">*</span>
+              </label>
+              <input
+                type="email"
+                class="form-control"
+                [class.is-invalid]="emailError"
+                [(ngModel)]="customerForm.email"
+                name="email"
+                (blur)="onEmailBlur()"
+                required
+                maxlength="100"
+                placeholder="example@domain.com"
+              />
+              <div class="invalid-feedback" *ngIf="emailError">
+                {{ emailError }}
+              </div>
+              <small class="text-muted" *ngIf="!emailError">Enter a valid email address</small>
+            </div>
+            <div class="col-12">
+              <label class="form-label">
+                Address <span class="text-danger">*</span>
+              </label>
+              <textarea
+                class="form-control"
+                rows="2"
+                [(ngModel)]="customerForm.address"
+                name="address"
+                required
+                maxlength="100"
+              ></textarea>
+            </div>
+            <div class="col-md-12">
+              <label class="form-label">
+                VAT No <span class="text-danger">*</span>
+              </label>
+              <input
+                type="text"
+                class="form-control"
+                [(ngModel)]="customerForm.vatNo"
+                name="vatNo"
+                required
+                maxlength="50"
+              />
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="closeCustomerModal()">
+          <i class="bi bi-x-circle me-2"></i>Cancel
+        </button>
+        <button type="button" class="btn btn-primary" (click)="saveCustomer()">
+          <i class="bi bi-check-circle me-2"></i>Save
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Vehicle Modal -->
+<div
+  class="modal fade"
+  [class.show]="showVehicleModal"
+  [style.display]="showVehicleModal ? 'block' : 'none'"
+  tabindex="-1"
+  role="dialog"
+  [attr.aria-hidden]="!showVehicleModal"
+>
+  <div class="modal-dialog modal-lg modal-dialog-scrollable" role="document">
+    <div class="modal-content">
+      <div class="modal-header bg-success text-white">
+        <h5 class="modal-title">
+          <i class="bi bi-car-front me-2"></i>Add New Vehicle
+        </h5>
+        <button
+          type="button"
+          class="btn-close btn-close-white"
+          (click)="closeVehicleModal()"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <form (ngSubmit)="saveVehicle()">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label">
+                Plate Number <span class="text-danger">*</span>
+              </label>
+              <input
+                type="text"
+                class="form-control"
+                [(ngModel)]="vehicleForm.plateNumber"
+                name="plateNumber"
+                required
+                placeholder="ABC-1234"
+              />
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Make</label>
+              <input
+                type="text"
+                class="form-control"
+                [(ngModel)]="vehicleForm.make"
+                name="make"
+                placeholder="Toyota, Ford, etc."
+              />
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Model</label>
+              <input
+                type="text"
+                class="form-control"
+                [(ngModel)]="vehicleForm.model"
+                name="model"
+                placeholder="Camry, F-150, etc."
+              />
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Year</label>
+              <input
+                type="number"
+                class="form-control"
+                [(ngModel)]="vehicleForm.year"
+                name="year"
+                [min]="1900"
+                [max]="2030"
+                placeholder="2024"
+              />
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Color</label>
+              <input
+                type="text"
+                class="form-control"
+                [(ngModel)]="vehicleForm.color"
+                name="color"
+                placeholder="Red, Blue, etc."
+              />
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Chassis Number</label>
+              <input
+                type="text"
+                class="form-control"
+                [(ngModel)]="vehicleForm.chassisNumber"
+                name="chassisNumber"
+                placeholder="Chassis/VIN number"
+              />
+            </div>
+            <div class="col-md-12" *ngIf="selectedCustomerId">
+              <label class="form-label">Customer</label>
+              <input
+                type="text"
+                class="form-control"
+                [value]="customerOrder.customerCode"
+                readonly
+                style="background-color: #f8f9fa;"
+              />
+              <small class="text-muted">Linked to selected customer (ID: {{ selectedCustomerId }})</small>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="closeVehicleModal()">
+          <i class="bi bi-x-circle me-2"></i>Cancel
+        </button>
+        <button type="button" class="btn btn-success" (click)="saveVehicle()">
+          <i class="bi bi-check-circle me-2"></i>Save
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Backdrops -->
+<div
+  *ngIf="showCustomerModal || showVehicleModal"
+  class="modal-backdrop fade show"
+  [style.display]="'block'"
+  (click)="closeCustomerModal(); closeVehicleModal()"
+></div>

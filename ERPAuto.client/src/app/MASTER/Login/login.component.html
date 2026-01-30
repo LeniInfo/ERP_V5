@@ -1,0 +1,62 @@
+<div class="login-overlay">
+  <div class="login-card">
+    <div class="login-header">
+      <h3>Login :)</h3>
+    </div>
+
+    <form #loginForm="ngForm" (ngSubmit)="onLogin()">
+
+      <!-- USER ID -->
+      <input type="text"
+             class="form-control"
+             placeholder="Username or Email"
+             name="userId"
+             [(ngModel)]="loginData.userId"
+             required />
+
+      <!-- PASSWORD -->
+      <input type="password"
+             class="form-control"
+             placeholder="Password"
+             name="password"
+             [(ngModel)]="loginData.password"
+             required />
+
+      <div class="options">
+        <label>
+          <input type="checkbox"
+                 [(ngModel)]="loginData.rememberMe"
+                 name="rememberMe" />
+          Remember me
+        </label>
+
+        <button type="submit"
+                class="btn btn-primary px-4"
+                [disabled]="loginForm.invalid">
+          Login
+        </button>
+      </div>
+
+      <div class="divider">Or login using</div>
+
+      <div class="social-buttons">
+        <button type="button" class="facebook-btn">
+          <i class="fa fa-facebook"></i> Facebook
+        </button>
+
+        <button type="button" class="google-btn">
+          <i class="fa fa-google"></i> Google
+        </button>
+      </div>
+
+      <div class="footer-links">
+        <a href="#">Forgot Password?</a>
+        <a href="#">New here? Sign Up</a>
+      </div>
+    </form>
+  </div>
+
+  <footer class="login-footer">
+    © 2025 ERP Application. All rights reserved.
+  </footer>
+</div>

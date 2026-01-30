@@ -1,0 +1,92 @@
+<div class="container mt-2">
+  <div class="card shadow-sm">
+    <div class="card-header d-flex justify-content-between align-items-center text-white">
+      <h5 class="mb-0">Journal List</h5>
+      <button class="btn btn-warning btn-sm fw-bold" (click)="goToJournalPage()">
+        Add New
+      </button>
+    </div>
+
+    <div class="card-body">
+      <!-- Search Section -->
+      <div class="row mb-3 align-items-end">
+
+        <!-- Journal Id -->
+        <div class="col-md-2">
+          <label for="searchKey" class="form-label">Journal Id</label>
+          <input type="text" id="searchKey" class="form-control" placeholder="Enter Journal Id" [(ngModel)]="searchKey" />
+        </div>
+
+        <!-- Journal Type -->
+        <div class="col-md-2">
+          <label for="journalType" class="form-label">Journal Type</label>
+          <input type="text" id="journalType" class="form-control" placeholder="Enter Journal Type" [(ngModel)]="journalType" />
+        </div>
+
+        <!-- Journal Description -->
+        <div class="col-md-3">
+          <label for="journalDescription" class="form-label">Journal Description</label>
+          <input type="text" id="journalDescription" class="form-control" placeholder="Enter Journal Description" [(ngModel)]="Description" />
+        </div>
+
+        <!-- Search Icon Button -->
+        <div class="col-md-1 d-flex align-items-end">
+          <button class="btn btn-outline-primary w-100" (click)="onSearch()">
+            <i class="bi bi-search"></i>
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Table Section -->
+  <div class="table-responsive mt-4">
+    <table class="table table-bordered table-striped text-center align-middle">
+      <thead class="table-primary">
+        <tr>
+          <th>Sl No</th>
+          <th>Journal Date</th>
+          <th>Journal ID</th>
+          <th>Journal Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr *ngIf="paginatedList.length === 0">
+          <td colspan="5" class="text-muted">
+            No data available
+          </td>
+        </tr>
+
+        <tr *ngFor="let journal of paginatedList; let i = index">
+          <td>{{ (currentPage - 1) * itemsPerPage + i + 1 }}</td>
+          <td>{{ journal.journalDate || '-' }}</td>
+          <td>{{ journal.journalId || '-' }}</td>
+          <td>{{ journal.journalType || '-' }}</td>
+          <td>{{ journal.description || '-' }}</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Pagination -->
+    <nav class="d-flex justify-content-center mt-3">
+      <ul class="pagination pagination-sm mb-0">
+        <li class="page-item" [class.disabled]="currentPage === 1">
+          <a class="page-link" (click)="changePage(currentPage - 1)">«</a>
+        </li>
+
+        <li class="page-item"
+            *ngFor="let page of totalPages"
+            [class.active]="page === currentPage">
+          <a class="page-link" (click)="changePage(page)">{{ page }}</a>
+        </li>
+
+        <li class="page-item" [class.disabled]="currentPage === totalPages.length">
+          <a class="page-link" (click)="changePage(currentPage + 1)">»</a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</div>

@@ -1,0 +1,10 @@
+export interface Supplier {
+  id?: number;
+  supplierCode: string;
+  supplierName: string;
+  arabicName?: string;
+  phone?: string;
+  email?: string;
+  address?: string;
+  vatNo?: string;
+}

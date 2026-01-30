@@ -1,0 +1,95 @@
+body {
+  background-color: #e9f2f9;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+/* Main Card Container */
+.main-card {
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 0;
+  margin-top: 2px;
+  overflow: hidden;
+}
+
+/* Navbar inside card */
+.inner-navbar {
+  background-color: #3ca2e0; /* Navbar darker blue */
+  padding: 8px 12px;
+}
+
+  .inner-navbar h5 {
+    color: white;
+    margin: 0;
+    font-weight: 600;
+  }
+
+.form-section {
+  padding: 25px 30px;
+}
+
+.table-container {
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  padding: 0px;
+  margin-top: 5px;
+}
+
+.form-label {
+  font-weight: 500;
+}
+
+/* Darker blue button */
+.btn-primary {
+  background-color: #2b85c1;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 18px;
+  color: #fff;
+  font-weight: 500;
+}
+
+  .btn-primary:hover {
+    background-color: #226fa3;
+  }
+
+/* Rounded Table */
+.table-rounded {
+  border-radius: 12px;
+  overflow: hidden; /* ensures rounded corners apply properly */
+  border: 1px solid #dee2e6;
+}
+
+/* Light blue table header */
+table thead.table-header th {
+  background-color: #b3d9f5 !important; /* light blue */
+  color: #003b63 !important;
+  font-weight: 600;
+  text-align: left;
+}
+
+.search-box {
+  width: 250px;
+}
+
+.btn-outline-primary {
+  border-color: #3ca2e0;
+  color: #3ca2e0;
+}
+
+  .btn-outline-primary:hover {
+    background-color: #3ca2e0;
+    color: white;
+  }
+
+.fixed-rows-3 {
+  max-height: 180px; /* exactly fits 3 bootstrap rows */
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+  .fixed-rows-3 table {
+    width: 100%;
+  }
