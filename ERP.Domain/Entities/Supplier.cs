@@ -3,6 +3,7 @@ namespace ERP.Domain.Entities;
 public sealed class Supplier
 {
     // PK: VendorCode (string) → Domain: SupplierCode
+    //CHECKING PULL AND PUSH 30/01/2026
     public string SupplierCode { get; set; } = null!;
     public string? Name { get; set; }
     public string? NameAr { get; set; }
