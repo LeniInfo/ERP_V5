@@ -3,6 +3,7 @@ namespace ERP.Domain.Entities;
 public sealed class FinalPart
 {
     // PK: FRAN, MAKE, PART
+    //testing
     public string Fran { get; set; } = null!;
     public string Make { get; set; } = null!;
     public string Part { get; set; } = null!;
