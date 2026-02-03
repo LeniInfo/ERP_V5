@@ -52,7 +52,20 @@ public class ParamResponse
     public string? PARAMDESC { get; set; }
 }
 
-
+public class WorkmasReq
+{
+    public string? Type { get; set; }
+    public string? Mode { get; set; }
+    public string? Fran { get; set; }
+}
+public class workmasRes
+{
+    public string? WORKID { get; set; }
+    public string? Name { get; set; }
+    public string? WORKTYPE { get; set; }
+    public string? UNITPRICE { get; set; }
+    public string? ESTIMATED { get; set; }
+}
 //public class paramreq
 //{
 //    public string? Type { get; set; }

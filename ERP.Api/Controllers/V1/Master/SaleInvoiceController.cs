@@ -113,5 +113,52 @@ public class SaleInvoiceController(ISaleInvoiceService svc) : ControllerBase
             });
         }
     }
+    [HttpPost("WORKMASLIST")]
+    public async Task<IActionResult> getworkmas( WorkmasReq input)
+    {
+
+
+        if (input == null)
+        {
+            return BadRequest(new
+            {
+                code = 0,
+                message = "Error",
+                data = new
+                {
+                    errorMessage = "Invalid request payload!",
+                    errorPath = "SalesCoreAPI/WORKMASLIST"
+                }
+
+            });
+        }
+        var result = await svc.getworkmas(input);
+
+        // 3. If Failed
+        if (result == null)
+        {
+            return BadRequest(new
+            {
+                code = 0,
+                message = "Error",
+                data = new
+                {
+                    errorMessage = "Workmaster load failed!",
+                    errorPath = "SalesCoreAPI/WORKMASLIST"
+                }
+
+            });
+        }
+        else
+        {
+            return Ok(new
+            {
+                code = 1,
+                message = "Success",
+                data = result
+
+            });
+        }
+    }
 
 }
