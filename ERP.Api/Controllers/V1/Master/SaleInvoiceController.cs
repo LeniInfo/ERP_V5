@@ -116,7 +116,7 @@ public class SaleInvoiceController(ISaleInvoiceService svc) : ControllerBase
     [HttpPost("WORKMASLIST")]
     public async Task<IActionResult> getworkmas( WorkmasReq input)
     {
-
+        //
 
         if (input == null)
         {
