@@ -25,6 +25,7 @@ namespace ERP.Domain.Entities
         public DateTime UpdateTm { get; set; } = DateTime.Now;
         public string UpdateBy { get; set; } = string.Empty;
         public string UpdateRemarks { get; set; } = string.Empty;
+
     }
 }
 

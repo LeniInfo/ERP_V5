@@ -6,8 +6,10 @@ using ERP.Application.Abstractions.Logging;
 using ERP.Application.Interfaces.Repositories;
 using ERP.Application.Interfaces.Services;
 using ERP.Application.Services;
+using ERP.Domain.Interfaces;
 using ERP.Infrastructure.DependencyInjection;
 using ERP.Infrastructure.Logging;
+using ERP.Infrastructure.Repositories;
 using ERP.Repositories.SALES;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -193,6 +195,9 @@ builder.Services.AddScoped<IReceiptsService, ReceiptsService>();
 builder.Services.AddScoped<IShipmentDetailsService, ShipmentDetailsService>();
 builder.Services.AddScoped<IPackingService, PackingService>();
 builder.Services.AddScoped<ICartonsService, CartonsService>();
+builder.Services.AddScoped<IWorkMasterService, WorkMasterService>();
+
+builder.Services.AddScoped<IRepairOrderService, RepairOrderService>();
 
 // New services for full coverage
 builder.Services.AddScoped<IAuthorityService, AuthorityService>();

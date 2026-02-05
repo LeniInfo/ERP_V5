@@ -18,7 +18,10 @@ namespace ERP.Domain.Entities
         public decimal NoOfWorks { get; set; } = 0;
         public decimal UnitPrice { get; set; } = 0;
         public decimal Discount { get; set; } = 0;
+        public decimal Qty { get; set; }
         public decimal TotalValue { get; set; } = 0;
+        public string WorkDesc { get; set; } = string.Empty;
+        public string WorkDescAr { get; set; } = string.Empty;
         public DateTime CreateTm { get; set; } = DateTime.Now;
         public string CreateBy { get; set; } = string.Empty;
         public string CreateRemarks { get; set; } = string.Empty;

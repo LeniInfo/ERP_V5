@@ -36,7 +36,7 @@
 
           <div class="col-md-3 d-flex align-items-center">
             <label class="form-label mb-1">Supplier:</label>
-            <div class="dropdown w-100 supplier-dropdown" style="position: relative;">
+            <div class="dropdown w-100 supplier-dropdown" style="position: relative;" (click)="$event.stopPropagation()">
 
               <input type="text"
                      class="form-control"
