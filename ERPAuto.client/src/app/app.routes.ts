@@ -17,11 +17,17 @@ import { WorkshopComponent } from './MASTER/Workshop/workshop.component';
 import { CustomerComponent } from './MASTER/Customer/customer.component';
 import { WorkmasterComponent } from './MASTER/Work-Master/workmaster.component';
 import { ChartOfAccountComponent } from './ACCOUNTS/Chart_of_Account/chart_of_account.component';
-import { WorkOrderComponent } from './MASTER/Work_Order/work_order.component';
+import { WorkOrderComponent } from './JOB_ORDER/work-order/work-order.component';
+import { WorkOrderInquiryComponent } from './JOB_ORDER/work-order-inquiry/work-order-inquiry.component';
+import { WorkOrderInvoiceComponent } from './JOB_ORDER/work-order-invoice/work-order-invoice.component';
+import { WorkOrderInvoiceInquiryComponent } from './JOB_ORDER/work-order-invoice-inquiry/work-order-invoice-inquiry.component';
 import { LoginComponent } from './MASTER/Login/login.component';
 import { SupplierComponent } from './MASTER/Supplier/supplier.component';
 import { PurchaseOrderComponent } from './POS/purchase-order/purchase-order.component';
 import { PoInquiryComponent } from './POS/po-inquiry/po-inquiry.component';
+import { GrnComponent } from './POS/grn/grn.component';
+import { SupplierInvoiceComponent } from './POS/Supplier-Invoice/supplier-invoice.component';
+import { SupplierInvoiceInquiryComponent } from './POS/Supplier-Invoice-Inquiry/supplier-invoice-inquiry.component';
 import { CustomerOrderComponent } from './MASTER/CustomerOrder/customer-order.component';
 import { CustomerOrderListComponent } from './MASTER/CustomerOrder/customer-order-list.component';
 // customer web portal 
@@ -32,7 +38,6 @@ export const routes: Routes = [
   /* 🔹 Standalone page (NO master layout) */
   //{ path: 'register', component: Registration },
   { path: 'login', component: LoginComponent },
-  { path: 'workorder', component: WorkOrderComponent },
   { path: 'master', component: MasterComponent },
   //{ path: 'viscard', component: ViscardComponent },
 
@@ -62,10 +67,16 @@ export const routes: Routes = [
       { path: 'supplier', component: SupplierComponent },
       { path: 'purchase-order', component: PurchaseOrderComponent },
       { path: 'po-inquiry', component: PoInquiryComponent },
+      { path: 'supplier-invoice', component: SupplierInvoiceComponent },
+      { path: 'supplier-invoice-inquiry', component: SupplierInvoiceInquiryComponent },
+      { path: 'GRN', component: GrnComponent },
       { path: 'customer-order-list', component: CustomerOrderListComponent },
       { path: 'customer-order-form', component: CustomerOrderComponent },
       { path: 'customer-order', component: CustomerOrderListComponent },
-
+      { path: 'work-order', component: WorkOrderComponent },
+      { path: 'work-order-inquiry', component: WorkOrderInquiryComponent },
+      { path: 'work-order-invoice', component: WorkOrderInvoiceComponent },
+      { path: 'work-order-invoice-inquiry', component: WorkOrderInvoiceInquiryComponent },
       //customer web portal
 
 

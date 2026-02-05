@@ -335,6 +335,63 @@ export class ApiService {
     );
   }
 
+
+  // ----------- WORK ORDER -----------
+
+  getAllWorkOrder(): Observable<any[]> {
+    return this.http.get<any[]>(
+      `${this.baseUrl}/RepairOrder`
+    );
+  }
+
+
+  getRepairOrderByKey(
+    fran: string,
+    brch: string,
+    workshop: string,
+    repairType: string,
+    repairNo: string,
+    customer: string
+  ) {
+    return this.http.get<any>(
+      `${this.baseUrl}/RepairOrder/${fran}/${brch}/${workshop}/${repairType}/${repairNo}/${customer}`
+    );
+  }
+
+  createWorkOrder(dto: any) {
+    return this.http.post<any>(
+      `${this.baseUrl}/RepairOrder`,
+      dto
+    );
+  }
+
+  updateWorkOrder(dto: any) {
+    return this.http.put(
+      `${this.baseUrl}/RepairOrder`,
+      dto
+    );
+  }
+
+  deleteWorkOrder(fran: string, customer: string, repairNo: string) {
+    return this.http.delete(
+      `${this.baseUrl}/RepairOrder/${fran}/${customer}/${repairNo}`
+    );
+  }
+
+  // lookups
+  getCustomers() { return this.http.get<any[]>('https://localhost:7231/api/v1/Master/Customers'); }
+  getWorks() { return this.http.get<any[]>('https://localhost:7231/api/v1/WorkMaster'); }
+
+
+  //ARABIC CONVERSION API
+  translate(text: string, from: string, to: string) {
+    return this.http.post<any>('https://localhost:7231/api/v1/RepairOrder/translate', {
+      text,
+      from,
+      to
+    });
+  }
+
 }
 
 
@@ -450,4 +507,7 @@ export interface DetailDTO {
   createdt: string;
   createby: string;
 }
+
+
+
 

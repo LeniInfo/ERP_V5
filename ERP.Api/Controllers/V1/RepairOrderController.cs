@@ -1,7 +1,9 @@
 using Asp.Versioning;
 using ERP.Application.Interfaces.Services;
+using ERP.Contracts.Orders;
 using ERP.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
 
 namespace ERP.Api.Controllers
 {
@@ -18,35 +20,108 @@ namespace ERP.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll() => Ok(await _service.GetAllAsync());
-
-        [HttpGet("{fran}/{brch}/{workshop}/{repairType}/{repairNo}/{repairSrl}")]
-        public async Task<IActionResult> Get(string fran, string brch, string workshop, string repairType, string repairNo, string repairSrl)
+        public async Task<IActionResult> GetAll()
         {
-            var entity = await _service.GetByIdAsync(fran, brch, workshop, repairType, repairNo, repairSrl);
-            return entity == null ? NotFound() : Ok(entity);
+            var data = await _service.GetAllAsync();
+            return Ok(data);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Create([FromBody] RepairOrder entity)
+        [HttpGet("{fran}/{brch}/{workshop}/{repairType}/{repairNo}/{customer}")]
+        public async Task<IActionResult> GetHdrDet(
+    string fran,
+    string brch,
+    string workshop,
+    string repairType,
+    string repairNo,
+    string customer)
         {
-            await _service.AddAsync(entity);
-            return CreatedAtAction(nameof(Get), new { fran = entity.Fran, brch = entity.Brch, workshop = entity.Workshop, repairType = entity.RepairType, repairNo = entity.RepairNo, repairSrl = entity.RepairSrl }, entity);
+            var result = await _service.GetHdrDetAsync(
+                fran,
+                brch,
+                workshop,
+                repairType,
+                repairNo,
+                customer
+            );
+
+            if (result.Header == null)
+                return NotFound(new { message = "Repair order not found" });
+
+            return Ok(new
+            {
+                header = result.Header,
+                details = result.Details
+            });
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> Create([FromBody] RepairOrderCreateDto dto)
+        {
+            await _service.AddAsync(dto);
+
+            return Ok(new
+            {
+                success = true,
+                message = "Repair order saved successfully"
+            });
         }
 
         [HttpPut]
-        public async Task<IActionResult> Update([FromBody] RepairOrder entity)
+        public async Task<IActionResult> Update([FromBody] RepairOrderUpdateDto dto)
         {
-            await _service.UpdateAsync(entity);
-            return NoContent();
+            await _service.UpdateAsync(dto);
+
+            return Ok(new
+            {
+                success = true,
+                message = "Repair order updated successfully"
+            });
         }
 
-        [HttpDelete("{fran}/{brch}/{workshop}/{repairType}/{repairNo}/{repairSrl}")]
-        public async Task<IActionResult> Delete(string fran, string brch, string workshop, string repairType, string repairNo, string repairSrl)
+        [HttpDelete("{fran}/{customer}/{repairNo}")]
+        public async Task<IActionResult> Delete(string fran, string customer, string repairNo)
         {
-            await _service.DeleteAsync(fran, brch, workshop, repairType, repairNo, repairSrl);
-            return NoContent();
+            await _service.DeleteAsync(fran, customer, repairNo);
+
+            return Ok(new
+            {
+                success = true,
+                message = "Repair order deleted successfully"
+            });
         }
+
+        //arabic conversion 
+        [HttpPost("translate")]
+        public async Task<IActionResult> Translate([FromBody] TranslateDto dto)
+        {
+            try
+            {
+                using var http = new HttpClient();
+
+                var url =
+                    "https://translate.googleapis.com/translate_a/single" +
+                    "?client=gtx" +
+                    "&sl=" + dto.From +
+                    "&tl=" + dto.To +
+                    "&dt=t" +
+                    "&q=" + Uri.EscapeDataString(dto.Text);
+
+                var response = await http.GetStringAsync(url);
+
+                using var doc = JsonDocument.Parse(response);
+                var translatedText = doc
+                    .RootElement[0][0][0]
+                    .GetString();
+
+                return Ok(new { translatedText });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { error = ex.Message });
+            }
+        }
+
     }
 }
 

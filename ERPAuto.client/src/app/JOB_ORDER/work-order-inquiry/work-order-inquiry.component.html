@@ -1,0 +1,101 @@
+<div class="container">
+
+  <div class="main-card">
+
+    <!-- 🔵 Top Header -->
+    <div class="inner-navbar d-flex justify-content-between align-items-center">
+      <h5>Repair Order List</h5>
+
+      <!-- ➕ Repair Order Creation Button -->
+      <button class="btn btn-primary" (click)="goToRepairCreation()">
+        Create Repair Order
+      </button>
+    </div>
+
+    <!-- 🔍 Search + Filters -->
+    <div class="form-section header-highlight">
+
+      <div class="row g-3 align-items-center">
+
+        <!-- Search -->
+        <div class="col-md-4 d-flex">
+          <label class="form-label me-2">Search</label>
+          <input type="text"
+                 class="form-control search-box"
+                 placeholder="Repair No / Customer / Phone"
+                 [(ngModel)]="searchText"
+                 (input)="filterData()">
+        </div>
+
+        <!-- Date From -->
+        <div class="col-md-3 d-flex">
+          <label class="form-label me-2">From</label>
+          <input type="date"
+                 class="form-control short-date"
+                 [(ngModel)]="fromDate"
+                 (change)="filterData()">
+        </div>
+
+        <!-- Date To -->
+        <div class="col-md-3 d-flex">
+          <label class="form-label me-2">To</label>
+          <input type="date"
+                 class="form-control short-date"
+                 [(ngModel)]="toDate"
+                 (change)="filterData()">
+        </div>
+
+        <div class="col-md-2 text-end">
+          <button class="btn btn-outline-primary" (click)="clearFilters()">Reset</button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- 🧾 Table Container -->
+
+    <div *ngIf="filteredList.length === 0" class="text-center p-4">
+      <h5 class="text-muted">No Data Found</h5>
+    </div>
+
+    <div class="table-responsive" *ngIf="filteredList.length > 0">
+      <div class="table-scroll">
+
+        <table class="table table-bordered table-striped table-hover mb-3">
+
+          <!-- Sticky Header -->
+          <thead class="table-header">
+            <tr>
+              <th>Repair No</th>
+              <th>Repair Date</th>
+              <th>No. of Jobs</th>
+              <th>Work Type</th>
+              <th>Total Value</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr *ngFor="let ro of filteredList" (dblclick)="loadRepairOrder(ro)">
+              <td>{{ ro.repairNo }}</td>
+              <td>{{ ro.repairDt | date:'dd-MM-yyyy' }}</td>
+              <td>{{ro.noOfJobs}}</td>
+              <td>{{ ro.repairType }}</td>
+              <td>{{ ro.totalValue }}</td>
+              <td>
+                <button class="btn btn-danger btn-sm"
+                        (click)="deleteRepairOrder(ro); $event.stopPropagation()">
+                  Delete
+                </button>
+              </td>
+            </tr>
+          </tbody>
+
+        </table>
+
+      </div>
+    </div>
+
+  </div>
+
+</div>

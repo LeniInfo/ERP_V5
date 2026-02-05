@@ -1,17 +1,19 @@
-﻿using System.Data;
-using Microsoft.Data.SqlClient;
-using Dapper;
+﻿using Dapper;
+using ERP.Application.Abstractions.Logging;
+using ERP.Application.Interfaces.Repositories;
 using ERP.Application.Reporting.Interfaces;
 using ERP.Application.Reporting.Interfaces.Repositories;
-using ERP.Application.Interfaces.Repositories;
-using ERP.Infrastructure.Persistence.Repositories;
 using ERP.Application.Reporting.Services;
-using ERP.Application.Abstractions.Logging;
+using ERP.Domain.Interfaces;
 using ERP.Infrastructure.Logging;
+using ERP.Infrastructure.Persistence;
+using ERP.Infrastructure.Persistence.Repositories;
+using ERP.Infrastructure.Repositories;
+using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.EntityFrameworkCore;
-using ERP.Infrastructure.Persistence;
+using System.Data;
 
 namespace ERP.Infrastructure.DependencyInjection
 {
@@ -43,7 +45,10 @@ namespace ERP.Infrastructure.DependencyInjection
             services.AddScoped<IShipmentDetailsRepository, ShipmentDetailsRepository>();
             services.AddScoped<IPackingRepository, PackingRepository>();
             services.AddScoped<ICartonsRepository, CartonsRepository>();
-            
+            services.AddScoped<IWorkMasterRepository, WorkMasterRepository>();
+
+            services.AddScoped<IRepairOrderRepository, RepairOrderRepository>();
+
             // New repositories for full coverage
             services.AddScoped<IAuthorityRepository, AuthorityRepository>();
             services.AddScoped<ICompetitorRepository, CompetitorRepository>();

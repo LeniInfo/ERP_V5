@@ -1,0 +1,526 @@
+<div (click)="onClickOutside($event)">
+  <div class="container table-scroll">
+    <div class="main-card">
+
+      <!-- 🔷 Navbar -->
+      <div class="inner-navbar d-flex align-items-center gap-3">
+
+        <!-- Title -->
+        <h5 class="mb-0">Supplier Invoice</h5>
+
+        <!-- SINV No (Edit Mode Only) -->
+        <div *ngIf="isEditMode"
+             class="sinvno-box d-flex align-items-center px-3 ms-3">
+          <strong class="me-1">SINV No:</strong> {{ header.sinvno }}
+        </div>
+
+        <!-- Push buttons to right -->
+        <div class="ms-auto d-flex gap-2">
+
+          <!-- Submit / Update -->
+          <button class="btn btn-primary px-4"
+                  (click)="onSubmit()">
+            {{ isEditMode ? 'Update Invoice' : 'Submit Invoice' }}
+          </button>
+
+          <!-- Inquiry -->
+          <button class="btn btn-primary"
+                  (click)="goToInvoiceInquiry()">
+            Invoice Inquiry
+          </button>
+
+        </div>
+
+      </div>
+
+
+      <!-- 🌤️ HEADER SECTION -->
+      <!--<div class="form-section header-highlight">
+    <div class="row g-3">-->
+      <!-- Supplier Dropdown -->
+      <!--<div class="col-md-3 position-relative">
+    <label class="form-label mb-1">Supplier</label>
+
+    <div class="dropdown w-100 supplier-dropdown" style="position:relative" (click)="$event.stopPropagation()">
+      <input type="text"
+             class="form-control"
+             [(ngModel)]="supplierSearch"
+             (focus)="onSupplierFocus()"
+             (input)="filterSuppliers()"
+             placeholder="Search Supplier"
+             [readonly]="supplierReadonly" />-->
+      <!-- Dropdown -->
+      <!--<ul *ngIf="showSupplierDropdown && !supplierReadonly"
+          class="dropdown-menu w-100 show mt-1 p-1"
+          style="max-height: 100px; overflow-y: auto; position: absolute; z-index: 1000;">
+
+        <li *ngIf="filteredSuppliers.length === 0"
+            class="dropdown-item text-muted">
+          No result found
+        </li>
+
+        <li *ngFor="let v of filteredSuppliers">
+          <button class="dropdown-item"
+                  type="button"
+                  (click)="onSupplierSelect(v)">
+            {{ v.name }} ({{ v.code }})
+          </button>
+        </li>
+
+      </ul>
+    </div>
+  </div>
+
+  <div class="col-md-3 position-relative">
+    <label class="form-label mb-1">Invoice Type</label>
+    <div class="dropdown w-100 sinvType-dropdown" style="position: relative;" (click)="$event.stopPropagation()">
+
+      <input type="text"
+             class="form-control"
+             [(ngModel)]="sinvTypeSearch"
+             (focus)="onsinvTypeFocus()"
+             (input)="filtersinvTypes()"
+             placeholder="Search Invoice Type"
+             [readonly]="sinvtypeReadonly" />
+
+      <ul *ngIf="showSinvTypeDropdown && !sinvtypeReadonly"
+          class="dropdown-menu w-100 show mt-1 p-1"
+          style="height: fit-content; max-height: 100px; overflow-y: auto;">
+
+        <li *ngIf="filteredSinvTypes.length === 0"
+            class="dropdown-item text-muted">
+          No result found
+        </li>
+
+        <li *ngFor="let p of filteredSinvTypes">
+          <button class="dropdown-item"
+                  type="button"
+                  (click)="selectSinvType(p)">
+            {{ p.code }}
+          </button>
+        </li>
+      </ul>
+
+    </div>
+  </div>-->
+      <!-- Doc Date -->
+      <!--<div class="col-md-3">
+    <label class="form-label mb-1">SINV Date</label>
+    <input type="date"
+           class="form-control"
+           [(ngModel)]="header.sinvdt" />
+  </div>-->
+      <!-- BL No -->
+      <!--<div class="col-md-3">
+    <label class="form-label mb-1">BL No</label>
+    <input type="text"
+           class="form-control"
+           [(ngModel)]="header.blno" />
+  </div>-->
+      <!-- BL Date -->
+      <!--<div class="col-md-3">
+    <label class="form-label mb-1">BL Date</label>
+    <input type="date"
+           class="form-control"
+           [(ngModel)]="header.bldt" />
+  </div>-->
+      <!-- Shipping Status -->
+      <!--<div class="col-md-3 position-relative">
+    <label class="form-label mb-1">Shipping Status</label>
+    <div class="dropdown w-100 shipping-dropdown" style="position: relative;" (click)="$event.stopPropagation()">
+
+      <input type="text"
+             class="form-control"
+             [(ngModel)]="shippingSearch"
+             (focus)="onshippingFocus()"
+             (input)="filtershipping()"
+             placeholder="Search shipping Type"
+             [readonly]="shippingReadonly" />
+
+      <ul *ngIf="showshippingDropdown && !shippingReadonly"
+          class="dropdown-menu w-100 show mt-1 p-1"
+          style="height: fit-content; max-height: 100px; overflow-y: auto;">
+
+        <li *ngIf="filteredshipping.length === 0"
+            class="dropdown-item text-muted">
+          No result found
+        </li>
+
+        <li *ngFor="let p of filteredshipping">
+          <button class="dropdown-item"
+                  type="button"
+                  (click)="selectshipping(p)">
+            {{ p.code }}
+          </button>
+        </li>
+      </ul>
+
+    </div>
+  </div>-->
+      <!-- ETA -->
+      <!--<div class="col-md-3">
+    <label class="form-label mb-1">ETA</label>
+    <input type="date"
+           class="form-control"
+           [(ngModel)]="header.eta" />
+  </div>-->
+      <!-- Buyer Code -->
+      <!--<div class="col-md-3">
+        <label class="form-label mb-1">Buyer Code</label>
+        <input type="text"
+               class="form-control"
+               [(ngModel)]="header.buyercode" />
+      </div>
+
+    </div>
+  </div>-->
+      <!-- 🌤️ HEADER SECTION -->
+      <div class="form-section header-highlight">
+        <div class="row g-3">
+
+          <!-- Supplier Dropdown -->
+          <div class="col-md-3 position-relative">
+            <label class="form-label mb-1">Supplier</label>
+            <div class="dropdown w-100 supplier-dropdown" style="position:relative" (click)="$event.stopPropagation()">
+              <input type="text"
+                     class="form-control"
+                     [(ngModel)]="supplierSearch"
+                     (focus)="onSupplierFocus()"
+                     (input)="filterSuppliers()"
+                     placeholder="Search Supplier"
+                     [readonly]="isEditMode || supplierReadonly" />  <!-- <-- readonly added -->
+              <ul *ngIf="showSupplierDropdown && !isEditMode && !supplierReadonly"
+                  class="dropdown-menu w-100 show mt-1 p-1"
+                  style="max-height: 100px; overflow-y: auto; position: absolute; z-index: 1000;">
+                <li *ngIf="filteredSuppliers.length === 0" class="dropdown-item text-muted">
+                  No result found
+                </li>
+                <li *ngFor="let v of filteredSuppliers">
+                  <button class="dropdown-item"
+                          type="button"
+                          (click)="onSupplierSelect(v)">
+                    {{ v.name }} ({{ v.code }})
+                  </button>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Invoice Type -->
+          <div class="col-md-3 position-relative">
+            <label class="form-label mb-1">Invoice Type</label>
+            <div class="dropdown w-100 sinvType-dropdown" style="position: relative;" (click)="$event.stopPropagation()">
+              <input type="text"
+                     class="form-control"
+                     [(ngModel)]="sinvTypeSearch"
+                     (focus)="onsinvTypeFocus()"
+                     (input)="filtersinvTypes()"
+                     placeholder="Search Invoice Type"
+                     [readonly]="isEditMode || sinvtypeReadonly" /> <!-- <-- readonly added -->
+              <ul *ngIf="showSinvTypeDropdown && !isEditMode && !sinvtypeReadonly"
+                  class="dropdown-menu w-100 show mt-1 p-1"
+                  style="height: fit-content; max-height: 100px; overflow-y: auto;">
+                <li *ngIf="filteredSinvTypes.length === 0" class="dropdown-item text-muted">No result found</li>
+                <li *ngFor="let p of filteredSinvTypes">
+                  <button class="dropdown-item" type="button" (click)="selectSinvType(p)">
+                    {{ p.code }}
+                  </button>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Doc Date -->
+          <div class="col-md-3">
+            <label class="form-label mb-1">SINV Date</label>
+            <input type="date"
+                   class="form-control"
+                   [(ngModel)]="header.sinvdt"
+                   [readonly]="isEditMode" /> <!-- <-- readonly added -->
+          </div>
+
+          <!-- BL No -->
+          <div class="col-md-3">
+            <label class="form-label mb-1">BL No</label>
+            <input type="text"
+                   class="form-control"
+                   [(ngModel)]="header.blno"
+                   [readonly]="isEditMode" /> <!-- <-- readonly added -->
+          </div>
+
+          <!-- BL Date -->
+          <div class="col-md-3">
+            <label class="form-label mb-1">BL Date</label>
+            <input type="date"
+                   class="form-control"
+                   [(ngModel)]="header.bldt"
+                   [readonly]="isEditMode" /> <!-- <-- readonly added -->
+          </div>
+
+          <!-- Shipping Status -->
+          <div class="col-md-3 position-relative">
+            <label class="form-label mb-1">Shipping Status</label>
+            <div class="dropdown w-100 shipping-dropdown" style="position: relative;" (click)="$event.stopPropagation()">
+              <input type="text"
+                     class="form-control"
+                     [(ngModel)]="shippingSearch"
+                     (focus)="onshippingFocus()"
+                     (input)="filtershipping()"
+                     placeholder="Search shipping Type"
+                     [readonly]="isEditMode || shippingReadonly" /> <!-- <-- readonly added -->
+
+              <ul *ngIf="showshippingDropdown && !isEditMode && !shippingReadonly"
+                  class="dropdown-menu w-100 show mt-1 p-1"
+                  style="height: fit-content; max-height: 100px; overflow-y: auto;">
+                <li *ngIf="filteredshipping.length === 0" class="dropdown-item text-muted">No result found</li>
+                <li *ngFor="let p of filteredshipping">
+                  <button class="dropdown-item" type="button" (click)="selectshipping(p)">
+                    {{ p.code }}
+                  </button>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- ETA -->
+          <div class="col-md-3">
+            <label class="form-label mb-1">ETA</label>
+            <input type="date"
+                   class="form-control"
+                   [(ngModel)]="header.eta"
+                   [readonly]="isEditMode" /> <!-- <-- readonly added -->
+          </div>
+
+          <!-- Buyer Code -->
+          <div class="col-md-3">
+            <label class="form-label mb-1">Buyer Code</label>
+            <input type="text"
+                   class="form-control"
+                   [(ngModel)]="header.buyercode"
+                   [readonly]="isEditMode" /> <!-- <-- readonly added -->
+          </div>
+
+        </div>
+      </div>
+
+
+
+
+      <!-- 🧩 DETAILS SECTION -->
+      <div class="form-section">
+
+        <!-- ==== ROW 1 ==== -->
+        <div class="row g-2 mb-2">
+
+          <div class="col-md-2">
+            <label class="form-label">Part</label>
+            <div class="dropdown part-dropdown" style="position:relative" (click)="$event.stopPropagation()">
+
+              <input type="text"
+                     class="form-control"
+                     [(ngModel)]="partSearch"
+                     (focus)="showPartDropdown = true"
+                     (input)="filterParts()"
+                     placeholder="Search Part" />
+
+              <ul *ngIf="showPartDropdown"
+                  class="dropdown-menu w-100 show mt-1"
+                  style="max-height:120px; overflow:auto">
+
+                <li *ngIf="filteredParts.length === 0"
+                    class="dropdown-item text-muted">
+                  No result found
+                </li>
+
+                <li *ngFor="let p of filteredParts">
+                  <button class="dropdown-item"
+                          type="button"
+                          (click)="selectPart(p)">
+                    {{ p.code }}
+                  </button>
+                </li>
+              </ul>
+
+            </div>
+          </div>
+
+          <div class="col-md-2">
+            <label class="form-label">Make</label>
+            <div class="dropdown make-dropdown" style="position:relative" (click)="$event.stopPropagation()">
+
+              <input type="text"
+                     class="form-control"
+                     [(ngModel)]="makeSearch"
+                     (focus)="showMakeDropdown = true"
+                     (input)="filterMakes()"
+                     placeholder="Search Make" />
+
+              <ul *ngIf="showMakeDropdown"
+                  class="dropdown-menu w-100 show mt-1"
+                  style="max-height:120px; overflow:auto">
+
+                <li *ngFor="let m of filteredMakes">
+                  <button class="dropdown-item"
+                          type="button"
+                          (click)="selectMake(m)">
+                    {{ m.code }}
+                  </button>
+                </li>
+              </ul>
+
+            </div>
+          </div>
+
+          <div class="col-md-2">
+            <label class="form-label">Qty</label>
+            <input type="number"
+                   class="form-control"
+                   [(ngModel)]="detail.qty"
+                   (input)="calculateDetailTotals()" />
+          </div>
+
+          <div class="col-md-2">
+            <label class="form-label">Ordered Qty</label>
+            <input type="number"
+                   class="form-control"
+                   [(ngModel)]="detail.ordqty" />
+          </div>
+
+          <div class="col-md-2">
+            <label class="form-label">Unit Price</label>
+            <input type="number"
+                   class="form-control"
+                   [(ngModel)]="detail.unitprice"
+                   (input)="calculateDetailTotals()" />
+          </div>
+
+          <div class="col-md-2">
+            <label class="form-label">Case No</label>
+            <input type="text"
+                   class="form-control"
+                   [(ngModel)]="detail.caseno" />
+          </div>
+
+        </div>
+
+        <!-- ==== ROW 2 ==== -->
+        <div class="row g-2 mb-2 align-items-end">
+
+          <!-- Container No -->
+          <div class="col-md-2">
+            <label class="form-label">Container No</label>
+            <input type="text"
+                   class="form-control"
+                   [(ngModel)]="detail.containerno" />
+          </div>
+
+          <!-- Discount % + Value -->
+          <div class="col-md-2">
+            <label class="form-label">Discount</label>
+            <div class="d-flex">
+              <input type="number"
+                     class="form-control"
+                     [(ngModel)]="detail.discount"
+                     (input)="calculateDetailTotals()"
+                     placeholder="%"
+                     style="flex: 1;" />
+              <input type="text"
+                     class="form-control bg-light"
+                     [value]="detail.discountvalue || 0"
+                     readonly
+                     style="flex: 1;" />
+            </div>
+          </div>
+
+          <!-- VAT % + Value -->
+          <div class="col-md-2">
+            <label class="form-label">VAT</label>
+            <div class="d-flex">
+              <input type="number"
+                     class="form-control"
+                     [(ngModel)]="detail.vatpercentage"
+                     (input)="calculateDetailTotals()"
+                     placeholder="%"
+                     style="flex: 1;" />
+              <input type="text"
+                     class="form-control bg-light"
+                     [value]="detail.vatvalue || 0"
+                     readonly
+                     style="flex: 1;" />
+            </div>
+          </div>
+
+
+          <!-- Total Value -->
+          <div class="col-md-2">
+            <label class="form-label">Total Value</label>
+            <input type="number"
+                   class="form-control"
+                   [(ngModel)]="detail.totalvalue"
+                   readonly />
+          </div>
+
+          <!-- Add/Update Button -->
+          <div class="col-md-2 d-flex align-items-end">
+            <button class="btn btn-primary w-100"
+                    (click)="isEditing ? updateDetail() : addDetail()">
+              {{ isEditing ? 'Update' : 'Add' }}
+            </button>
+          </div>
+
+        </div>
+
+
+
+        <!-- ==== DETAILS TABLE ==== -->
+        <div class="table-container mt-3 fixed-rows-3">
+          <div class="table-rounded">
+            <div class="table-scroll">
+              <table class="table table-striped table-hover mb-0">
+                <thead class="table-header">
+                  <tr>
+                    <th>#</th>
+                    <th>Part</th>
+                    <th>Make</th>
+                    <th>Qty</th>
+                    <th>Price</th>
+                    <th>Total</th>
+                    <th class="text-center">Action</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  <tr *ngFor="let item of details; let i = index">
+                    <td>{{ i + 1 }}</td>
+                    <td>{{ item.part }}</td>
+                    <td>{{ item.make }}</td>
+                    <td>{{ item.qty }}</td>
+                    <td>{{ item.unitprice }}</td>
+                    <td>{{ item.totalvalue }}</td>
+
+                    <td class="text-center">
+                      <button class="btn btn-sm btn-outline-primary me-1"
+                              (click)="editDetail(i)">
+                        Edit
+                      </button>
+                      <button class="btn btn-sm btn-outline-danger"
+                              (click)="removeDetail(i)">
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+
+                  <tr *ngIf="details.length === 0">
+                    <td colspan="7" class="text-center text-muted">
+                      No items added yet.
+                    </td>
+                  </tr>
+
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
