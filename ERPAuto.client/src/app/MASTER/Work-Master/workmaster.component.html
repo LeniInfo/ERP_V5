@@ -1,39 +1,114 @@
-  <!-- Main Card -->
-<div class="main-card">
-  <div class="header-bar">Work Master</div>
+<div class="container">
+  <div class="main-card">
 
-  <div class="form-section">
-    <form id="workMasterForm" class="row g-3">
+    <!-- Header -->
+    <div class="inner-navbar d-flex justify-content-between align-items-center">
+      <h5>Work Master</h5>
+    </div>
 
-      <div class="col-md-3">
-        <label for="workid" class="form-label">Work ID</label>
-        <input type="text" id="workid" class="form-control" name="workId" placeholder="Enter Work ID" required />
+    <div class="form-section">
+
+      <!-- Work Creation Form -->
+      <form (ngSubmit)="onSubmit()" #workForm="ngForm" class="row g-3">
+
+        <div class="col-md-3">
+          <label class="form-label">Work Type</label>
+          <input type="text"
+                 class="form-control"
+                 name="workType"
+                 [(ngModel)]="work.workType"
+                 required />
+        </div>
+
+        <div class="col-md-3">
+          <label class="form-label">Name</label>
+          <input type="text"
+                 class="form-control"
+                 name="name"
+                 [(ngModel)]="work.name"
+                 required />
+        </div>
+
+        <div class="col-md-3">
+          <label class="form-label">Unit Price</label>
+          <input type="number"
+                 class="form-control"
+                 name="unitPrice"
+                 [(ngModel)]="work.unitPrice"
+                 required />
+        </div>
+
+        <!-- ROW 2 -->
+        <div class="col-md-9">
+          <label class="form-label">Description</label>
+          <input type="text"
+                 class="form-control"
+                 name="description"
+                 [(ngModel)]="work.remarks" />
+        </div>
+
+        <!-- BUTTON COLUMN -->
+        <div class="col-md-3 d-flex align-items-end gap-1">
+          <button type="submit" class="btn btn-primary w-100">
+            {{ isEditing ? 'Update Work' : 'Add Work' }}
+          </button>
+
+          <button type="button"
+                  class="btn btn-outline-primary w-97"
+                  (click)="onClear()">
+            Clear
+          </button>
+        </div>
+
+      </form>
+
+      <!-- Work List Header -->
+      <div class="d-flex justify-content-between align-items-center mt-3">
+        <h6 class="mb-0">Work List</h6>
+        <input type="text"
+               [(ngModel)]="searchText"
+               (ngModelChange)="applyFilter()"
+               class="form-control search-box"
+               placeholder="Search work..." />
       </div>
 
-      <div class="col-md-3">
-        <label for="worktype" class="form-label">Work Type</label>
-        <input type="text" id="worktype" class="form-control" name="workType" placeholder="Enter Work Type" required />
+      <!-- Work Table -->
+      <div class="table-container mt-1 fixed-rows-3" style="max-width:100%; overflow:auto;">
+        <div class="table-rounded">
+          <table class="table table-striped table-hover mb-0">
+            <thead class="table-header">
+              <tr>
+                <th>#</th>
+                <th>Work Type</th>
+                <th>Name</th>
+                <th>Unit Price</th>
+                <th>Description</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr *ngFor="let w of filteredWorks; let i = index">
+                <td>{{ i + 1 }}</td>
+                <td>{{ w.workType }}</td>
+                <td>{{ w.name }}</td>
+                <td>{{ w.unitPrice }}</td>
+                <td>{{ w.remarks }}</td>
+                <td>
+                  <button class="btn btn-sm btn-outline-primary me-1"
+                          (click)="onEdit(w)">
+                    Edit
+                  </button>
+                  <button class="btn btn-sm btn-outline-danger" (click)="onDelete(w)">Delete</button>
+
+                </td>
+              </tr>
+            </tbody>
+
+          </table>
+        </div>
       </div>
 
-      <div class="col-md-3">
-        <label for="name" class="form-label">Name</label>
-        <input type="text" id="name" class="form-control" name="Name" placeholder="Enter Name" required />
-      </div>
-
-      <div class="col-md-3">
-        <label for="unitprice" class="form-label">Unit Price</label>
-        <input type="text" id="unitprice" class="form-control" name="unitPrice" placeholder="Enter Unit Price" required />
-      </div>
-
-      <div class="col-md-6">
-        <label for="desc" class="form-label">Description</label>
-        <textarea id="desc" class="form-control"
-                  name="description" placeholder="Enter Description" rows="1" required></textarea>
-      </div>
-
-      <div class="col-12 text-center mt-5">
-        <button type="submit" class="btn btn-primary px-4">Submit</button>
-      </div>
-    </form>
+    </div>
   </div>
 </div>

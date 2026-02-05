@@ -15,11 +15,13 @@ import { JournalComponent } from './ACCOUNTS/Journal/journal.component';
 import { SaleInvoiceComponent } from './SALES/Saleinvoice/sale-invoice.component';
 import { WorkshopComponent } from './MASTER/Workshop/workshop.component';
 import { CustomerComponent } from './MASTER/Customer/customer.component';
-import { WorkmasterComponent } from './MASTER/Work-Master/workmaster.component';
+import { MasterTypeComponent } from './MASTER/mastertype/mastertype.component';
+import { WorkMasterComponent } from './MASTER/Work-Master/workmaster.component';
 import { ChartOfAccountComponent } from './ACCOUNTS/Chart_of_Account/chart_of_account.component';
 import { WorkOrderComponent } from './MASTER/Work_Order/work_order.component';
 import { LoginComponent } from './MASTER/Login/login.component';
 import { SupplierComponent } from './MASTER/Supplier/supplier.component';
+import { SaasCustomerComponent } from './MASTER/saas-customer/saas-customer.component';
 import { PurchaseOrderComponent } from './POS/purchase-order/purchase-order.component';
 import { PoInquiryComponent } from './POS/po-inquiry/po-inquiry.component';
 import { CustomerOrderComponent } from './MASTER/CustomerOrder/customer-order.component';
@@ -57,18 +59,20 @@ export const routes: Routes = [
       { path: 'saleinvoice', component: SaleInvoiceComponent },
       { path: 'workshop', component: WorkshopComponent },
       { path: 'customer', component: CustomerComponent },
-      { path: 'workmaster', component: WorkmasterComponent },
+      { path: 'mastertype', component: MasterTypeComponent },
+      { path: 'workmaster', component: WorkMasterComponent },
       { path: 'chartofaccount', component: ChartOfAccountComponent },
       { path: 'supplier', component: SupplierComponent },
+      { path: 'saas-customer', component: SaasCustomerComponent },
       { path: 'purchase-order', component: PurchaseOrderComponent },
       { path: 'po-inquiry', component: PoInquiryComponent },
       { path: 'customer-order-list', component: CustomerOrderListComponent },
       { path: 'customer-order-form', component: CustomerOrderComponent },
-      { path: 'customer-order', component: CustomerOrderListComponent },
-
+      { path: 'customer-order', component: CustomerOrderListComponent }
       //customer web portal
 
 
     ]
   }
 ];
+

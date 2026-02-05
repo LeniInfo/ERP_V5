@@ -173,8 +173,10 @@ builder.Services.AddAuthorization(options =>
 builder.Services.AddSingleton<IAuthorizationHandler, ScopeAuthorizationHandler>();
 builder.Services.AddScoped<IPartsService, PartsService>();
 builder.Services.AddScoped<ISuppliersService, SuppliersService>();
+builder.Services.AddScoped<ISaasCustomerService, SaasCustomerService>();
 builder.Services.AddScoped<IInventoryLocationsService, InventoryLocationsService>();
 builder.Services.AddScoped<IPurchaseOrdersService, PurchaseOrdersService>();
+builder.Services.AddScoped<IMasterTypesService, MasterTypesService>();
 builder.Services.AddScoped<IShipmentsService, ShipmentsService>();
 builder.Services.AddScoped<IBranchesService, BranchesService>();
 builder.Services.AddScoped<IFranchisesService, FranchisesService>();
@@ -188,6 +190,7 @@ builder.Services.AddScoped<IJournalEntryLinesService, JournalEntryLinesService>(
 builder.Services.AddScoped<ICustomersService, CustomersService>();
 builder.Services.AddScoped<IUsersService, UsersService>();
 builder.Services.AddScoped<IWorkshopsService, WorkshopsService>();
+builder.Services.AddScoped<IWorkMasterService, WorkMasterService>();
 builder.Services.AddScoped<ISalesService, SalesService>();
 builder.Services.AddScoped<IReceiptsService, ReceiptsService>();
 builder.Services.AddScoped<IShipmentDetailsService, ShipmentDetailsService>();

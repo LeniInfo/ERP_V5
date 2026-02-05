@@ -1,273 +1,36 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Customer } from './customer.model';
+import { CustomerService } from './customer.service';
 import { FormsModule } from '@angular/forms';
-import Swal from 'sweetalert2';
-import * as XLSX from 'xlsx';
-
-import { ApiService, Customer } from '../../services/api.service';
+import { CommonModule } from '@angular/common';
+import { HttpClientModule } from '@angular/common/http';
 
 @Component({
   selector: 'app-customer',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, HttpClientModule],
   templateUrl: './customer.component.html',
   styleUrls: ['./customer.component.css']
 })
 export class CustomerComponent implements OnInit {
 
-  // ================= DATA =================
+  customer: Customer = this.getEmptyCustomer();
+
   customers: Customer[] = [];
   filteredCustomers: Customer[] = [];
-  paginatedCustomers: Customer[] = [];
 
-  // ================= SEARCH =================
-  searchFilters: any = {
-    customerName: '',
-    nameAr: '',
-    phone: '',
-    email: '',
-    address: '',
-    vatNo: ''
-  };
+  isEditing = false;
+  searchText = '';
+  originalCustomerName = '';
+  arabicManuallyEdited = false;
 
-  // ================= PAGINATION =================
-  currentPage = 1;
-  itemsPerPage = 5;
-  totalPages = 1;
-  totalItems = 0;
+  constructor(private customerService: CustomerService) { }
 
-  // ================= MODAL =================
-  showModal = false;
-  isEditMode = false;
-  customerForm: Customer = this.getEmptyCustomer();
-
-  // ================= VALIDATION =================
-  emailError = '';
-  phoneError = '';
-
-  // ================= LOADING =================
-  isLoading = false;
-
-  constructor(private apiService: ApiService) { }
-
-  // ================= INIT =================
   ngOnInit(): void {
     this.loadCustomers();
   }
 
-  // ================= LOAD =================
-  loadCustomers(): void {
-    this.isLoading = true;
-
-    this.apiService.getAllCustomers().subscribe({
-      next: (data) => {
-        const customers = Array.isArray(data) ? data : [];
-        this.customers = customers;
-        this.filteredCustomers = customers;
-        this.totalItems = customers.length;
-        this.currentPage = 1;
-        this.updatePagination();
-        this.isLoading = false;
-      },
-      error: (err) => {
-        this.isLoading = false;
-        Swal.fire('Error', err.message || 'Failed to load customers', 'error');
-      }
-    });
-  }
-
-  // ================= SEARCH =================
-  onColumnSearch(): void {
-    this.filteredCustomers = this.customers.filter(c =>
-      (!this.searchFilters.customerName || c.name?.toLowerCase().includes(this.searchFilters.customerName.toLowerCase())) &&
-      (!this.searchFilters.nameAr || c.nameAr?.toLowerCase().includes(this.searchFilters.nameAr.toLowerCase())) &&
-      (!this.searchFilters.phone || c.phone?.includes(this.searchFilters.phone)) &&
-      (!this.searchFilters.email || c.email?.toLowerCase().includes(this.searchFilters.email.toLowerCase())) &&
-      (!this.searchFilters.address || c.address?.toLowerCase().includes(this.searchFilters.address.toLowerCase())) &&
-      (!this.searchFilters.vatNo || c.vatNo?.toLowerCase().includes(this.searchFilters.vatNo.toLowerCase()))
-    );
-
-    this.currentPage = 1;
-    this.updatePagination();
-  }
-
-  clearAllFilters(): void {
-    this.searchFilters = {
-      customerName: '',
-      nameAr: '',
-      phone: '',
-      email: '',
-      address: '',
-      vatNo: ''
-    };
-    this.onColumnSearch();
-  }
-
-  // ================= PAGINATION =================
-  updatePagination(): void {
-    this.totalItems = this.filteredCustomers.length;
-
-    if (this.itemsPerPage === 0) {
-      this.paginatedCustomers = this.filteredCustomers;
-      this.totalPages = 1;
-      return;
-    }
-
-    this.totalPages = Math.ceil(this.totalItems / this.itemsPerPage) || 1;
-    const start = (this.currentPage - 1) * this.itemsPerPage;
-    const end = start + this.itemsPerPage;
-    this.paginatedCustomers = this.filteredCustomers.slice(start, end);
-  }
-
-  changePage(page: number): void {
-    if (page >= 1 && page <= this.totalPages) {
-      this.currentPage = page;
-      this.updatePagination();
-    }
-  }
-
-  onItemsPerPageChange(): void {
-    this.currentPage = 1;
-    this.updatePagination();
-  }
-
-  getPageNumbers(): number[] {
-    return Array.from({ length: this.totalPages }, (_, i) => i + 1);
-  }
-
-  // ================= MODAL =================
-  openAddModal(): void {
-    this.isEditMode = false;
-    this.customerForm = this.getEmptyCustomer();
-    this.emailError = '';
-    this.phoneError = '';
-    this.showModal = true;
-  }
-
-  openEditModal(customer: Customer): void {
-    this.isEditMode = true;
-    this.customerForm = { ...customer };
-    this.showModal = true;
-  }
-
-  closeModal(): void {
-    this.showModal = false;
-    this.customerForm = this.getEmptyCustomer();
-    this.isEditMode = false;
-  }
-
-  // ================= VALIDATION =================
-  validateEmail(email: string): boolean {
-    const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    return regex.test(email);
-  }
-
-  validatePhone(phone: string): boolean {
-    return /^[0-9]+$/.test(phone);
-  }
-
-  validateForm(): boolean {
-    if (!this.customerForm.customerCode) {
-      Swal.fire('Validation Error', 'Customer Code is required', 'warning');
-      return false;
-    }
-    if (!this.customerForm.name) {
-      Swal.fire('Validation Error', 'Customer Name is required', 'warning');
-      return false;
-    }
-    if (!this.customerForm.nameAr) {
-      Swal.fire('Validation Error', 'Arabic Name is required', 'warning');
-      return false;
-    }
-    if (!this.validatePhone(this.customerForm.phone)) {
-      Swal.fire('Validation Error', 'Phone must contain only numbers', 'warning');
-      return false;
-    }
-    if (!this.validateEmail(this.customerForm.email)) {
-      Swal.fire('Validation Error', 'Invalid Email Address', 'warning');
-      return false;
-    }
-    if (!this.customerForm.address) {
-      Swal.fire('Validation Error', 'Address is required', 'warning');
-      return false;
-    }
-    if (!this.customerForm.vatNo) {
-      Swal.fire('Validation Error', 'VAT No is required', 'warning');
-      return false;
-    }
-    return true;
-  }
-
-  // ================= SAVE =================
-  saveCustomer(): void {
-    if (!this.validateForm()) return;
-
-    if (this.isEditMode) {
-      this.apiService.updateCustomer(this.customerForm.customerCode, this.customerForm).subscribe({
-        next: () => {
-          Swal.fire('Success', 'Customer updated successfully', 'success');
-          this.closeModal();
-          this.loadCustomers();
-        },
-        error: err => Swal.fire('Error', err.message, 'error')
-      });
-    } else {
-      this.apiService.addCustomer(this.customerForm).subscribe({
-        next: () => {
-          Swal.fire('Success', 'Customer added successfully', 'success');
-          this.closeModal();
-          this.loadCustomers();
-        },
-        error: err => Swal.fire('Error', err.message, 'error')
-      });
-    }
-  }
-
-  // ================= DELETE =================
-  deleteCustomer(customer: Customer): void {
-    Swal.fire({
-      title: 'Are you sure?',
-      text: `Delete ${customer.name}?`,
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#d33'
-    }).then(res => {
-      if (res.isConfirmed) {
-        this.apiService.deleteCustomer(customer.customerCode).subscribe({
-          next: () => {
-            Swal.fire('Deleted', 'Customer deleted successfully', 'success');
-            this.loadCustomers();
-          },
-          error: err => Swal.fire('Error', err.message, 'error')
-        });
-      }
-    });
-  }
-
-  // ================= EXPORT =================
-  exportToExcel(): void {
-    const data = this.filteredCustomers.map((c, i) => ({
-      'S.No': i + 1,
-      'Customer Code': c.customerCode,
-      'Name': c.name,
-      'Name(AR)': c.nameAr,
-      'Phone': c.phone,
-      'Email': c.email,
-      'Address': c.address,
-      'VAT No': c.vatNo
-    }));
-
-    const worksheet = XLSX.utils.json_to_sheet(data);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, 'Customers');
-
-    XLSX.writeFile(
-      workbook,
-      `Customers_${new Date().toISOString().split('T')[0]}.xlsx`
-    );
-  }
-
-  // ================= UTILS =================
+  // 🔹 Centralized empty model
   getEmptyCustomer(): Customer {
     return {
       customerCode: '',
@@ -280,5 +43,113 @@ export class CustomerComponent implements OnInit {
     };
   }
 
-  Math = Math;
+  // 🔹 Load customers
+  loadCustomers(): void {
+    this.customerService.getCustomers().subscribe({
+      next: (data) => {
+        this.customers = data || [];
+        this.applyFilter();
+      },
+      error: (err) => {
+        alert(err.error?.message || 'Error fetching customers');
+      }
+    });
+  }
+
+  // 🔹 Save / Update
+  onSubmit(): void {
+    if (!this.customer.customerCode?.trim() || !this.customer.name?.trim()) {
+      alert('Customer Code and Name are required!');
+      return;
+    }
+
+    console.log(this.customer);
+    const apiCall$ = this.isEditing
+      ? this.customerService.updateCustomer(this.customer.customerCode, this.customer)
+      : this.customerService.createCustomer(this.customer);
+
+    apiCall$.subscribe({
+      next: () => {
+        alert(`Customer ${this.isEditing ? 'updated' : 'created'} successfully`);
+        this.resetForm();
+        this.loadCustomers();
+      },
+      error: (err) => {
+        alert(err.error?.message || 'Error saving customer');
+      }
+    });
+  }
+
+  // 🔹 Edit
+  onEdit(v: Customer): void {
+    this.customer = { ...v };
+    this.originalCustomerName = v.name;
+    this.arabicManuallyEdited = false;
+    this.isEditing = true;
+  }
+
+  // 🔹 Delete
+  onDelete(customerCode: string): void {
+    if (!customerCode) return;
+
+    if (confirm('Are you sure you want to delete this customer?')) {
+      this.customerService.deleteCustomer(customerCode).subscribe({
+        next: () => {
+          this.loadCustomers();
+          this.resetForm();
+        },
+        error: (err) => {
+          alert(err.error?.message || 'Error deleting customer');
+        }
+      });
+    }
+  }
+
+  // 🔹 Reset form
+  resetForm(): void {
+    this.customer = this.getEmptyCustomer();
+    this.isEditing = false;
+  }
+
+  // 🔹 Search
+  applyFilter(): void {
+    const search = this.searchText.toLowerCase().trim();
+
+    this.filteredCustomers = this.customers.filter(v =>
+      v.customerCode.toLowerCase().includes(search) ||
+      v.name.toLowerCase().includes(search)
+    );
+  }
+
+  onClear(): void {
+    this.originalCustomerName = '';
+    this.arabicManuallyEdited = false;
+    this.resetForm();
+  }
+
+  // 🔹 Arabic conversion
+  onCustomerNameChange(value: string): void {
+    if (!value) return;
+
+    const nameChanged = value !== this.originalCustomerName;
+
+    if ((!this.isEditing || nameChanged) && !this.arabicManuallyEdited) {
+      this.customer.nameAr = this.toArabic(value);
+    }
+  }
+
+  toArabic(text: string): string {
+    const map: { [key: string]: string } = {
+      a: 'ا', b: 'ب', t: 'ت', j: 'ج', h: 'ح',
+      d: 'د', r: 'ر', s: 'س', f: 'ف',
+      k: 'ك', l: 'ل', m: 'م', n: 'ن',
+      w: 'و', y: 'ي'
+    };
+
+    return text
+      .toLowerCase()
+      .split('')
+      .map(c => map[c] || c)
+      .join('');
+  }
 }

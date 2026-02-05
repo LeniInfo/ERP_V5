@@ -66,9 +66,35 @@
           <li><a [routerLink]="['./fran']" class="menu-link">Fran</a></li>
           <li><a [routerLink]="['./inquiry']" class="menu-link">Parts</a></li>
           <li><a [routerLink]="['./supplier']" class="menu-link">Supplier</a></li>
+          <li>
+            <a [routerLink]="['/mastertype']"
+               [queryParams]="{ type: 'COMPETITOR' }"
+               class="menu-link">Competitor</a>
+          <li>
+            <a [routerLink]="['/mastertype']"
+               [queryParams]="{ type: 'LINER' }"
+               class="menu-link">Liner</a>
+          </li>
+          <li>
+            <a [routerLink]="['/mastertype']"
+               [queryParams]="{ type: 'TRANSPORTER' }"
+               class="menu-link">Transporter</a>
+          </li>
+          <li>
+            <a [routerLink]="['/mastertype']"
+               [queryParams]="{ type: 'CONTRACTOR' }"
+               class="menu-link">Contractor</a>
+          </li>
+          <li>
+            <a [routerLink]="['/mastertype']"
+               [queryParams]="{ type: 'PARTNER' }"
+               class="menu-link">Partners</a>
+          </li>
+          <!--<li><a routerLink="mastertype" class="menu-link">Competitor</a></li>-->
           <!--<li><a [routerLink]="['./expense']" class="menu-link">Expense</a></li>-->
           <li><a [routerLink]="['./workshop']" class="menu-link">WorkShop</a></li>
           <li><a [routerLink]="['./workmaster']" class="menu-link">Work Master</a></li>
+          <li><a [routerLink]="['./saas-customer']" class="menu-link">Saas Customer</a></li>
         </ul>
       </div>
 

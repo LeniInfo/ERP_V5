@@ -9,22 +9,22 @@ namespace ERP.Domain.Entities
 {
     //added by: Vaishnavi
     //added on: 27-12-2025
-    public sealed class SAASCUSTOMER
+    public sealed class SaasCustomer
 
     {
         // PK: SAASCUSTOMERID 
-    public string? SaasCustomerId { get; set; }
+    public string? SaasCustomerId { get; set; } = null!;
     public string SaasCustomerName { get; set; } = string.Empty;
-    public decimal Phone1 { get; set; } = 0;
-    public decimal Phone2 { get; set; } = 0;
+    public string? Phone1 { get; set; }
+    public string? Phone2 { get; set; }
     public string Email { get; set; } = string.Empty;
     public string Address { get; set; } = string.Empty;
-    public DateOnly CreateDt { get; set; }
-    public DateTime CreateTm { get; set; }
+    public DateTime? CreateDt { get; set; }
+    public DateTime? CreateTm { get; set; }
     public string CreateBy { get; set; } = string.Empty;
     public string CreateRemarks { get; set; } = string.Empty;
-    public DateOnly UpdateDt { get; set; }
-    public DateOnly UpdateTm { get; set; }
+    public DateTime? UpdateDt { get; set; }
+    public DateTime? UpdateTm { get; set; }
     public string UpdateBy { get; set; } = string.Empty;
     public string UpdateMarks { get; set; } = string.Empty;
 }

@@ -9,14 +9,14 @@ using System.Threading.Tasks;
 
 namespace ERP.Infrastructure.Persistence.Configurations
 { 
-    public sealed class SAASCUSTOMERConfiguration : IEntityTypeConfiguration<SAASCUSTOMER>
+    public sealed class SaasCustomerConfiguration : IEntityTypeConfiguration<SaasCustomer>
     {
         //added by: Vaishnavi
         //added on: 27-12-2025
-    public void Configure(EntityTypeBuilder<SAASCUSTOMER> builder)
+    public void Configure(EntityTypeBuilder<SaasCustomer> builder)
     {
         // Table name
-        builder.ToTable("SAASCUSTOMER");
+        builder.ToTable("SaasCustomer");
 
         // Primary Key + Identity
         builder.HasKey(x => x.SaasCustomerId);

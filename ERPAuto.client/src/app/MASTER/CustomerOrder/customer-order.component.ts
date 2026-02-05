@@ -2205,12 +2205,12 @@ export class CustomerOrderComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.customerService.create(this.customerForm).subscribe({
+    this.customerService.createCustomer(this.customerForm).subscribe({
       next: (response) => {
         Swal.fire({
           icon: 'success',
           title: 'Success!',
-          text: response.message || 'Customer added successfully',
+          text: 'Customer added successfully',
           confirmButtonColor: '#3085d6',
           timer: 1500
         });
@@ -2269,9 +2269,7 @@ export class CustomerOrderComponent implements OnInit, OnDestroy {
       phone: '',
       email: '',
       address: '',
-      vatNo: '',
-      createBy: 'SYSTEM',
-      createRemarks: 'Created via Customer Order'
+      vatNo: ''
     };
   }
 
@@ -2294,15 +2292,15 @@ export class CustomerOrderComponent implements OnInit, OnDestroy {
       });
       return false;
     }
-    if (!this.validateEmail(this.customerForm.email)) {
-      Swal.fire({
-        icon: 'warning',
-        title: 'Validation Error',
-        text: 'Please enter a valid email address',
-        confirmButtonColor: '#3085d6'
-      });
-      return false;
-    }
+    //if (!this.validateEmail(this.customerForm.email)) {
+    //  Swal.fire({
+    //    icon: 'warning',
+    //    title: 'Validation Error',
+    //    text: 'Please enter a valid email address',
+    //    confirmButtonColor: '#3085d6'
+    //  });
+    //  return false;
+    //}
     return true;
   }
 

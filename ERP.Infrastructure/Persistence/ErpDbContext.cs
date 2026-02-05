@@ -5,8 +5,11 @@ namespace ERP.Infrastructure.Persistence;
 
 public sealed class ErpDbContext(DbContextOptions<ErpDbContext> options) : DbContext(options)
 {
+    public readonly object SaasCustomers;
+
     public DbSet<Part> Parts => Set<Part>();
     public DbSet<Supplier> Suppliers => Set<Supplier>();
+    public DbSet<MasterType> MasterTypes => Set<MasterType>();
     public DbSet<InventoryLocation> InventoryLocations => Set<InventoryLocation>();
     public DbSet<PurchaseOrder> PurchaseOrders => Set<PurchaseOrder>();
     public DbSet<PurchaseOrderLine> PurchaseOrderLines => Set<PurchaseOrderLine>();
@@ -62,7 +65,7 @@ public sealed class ErpDbContext(DbContextOptions<ErpDbContext> options) : DbCon
     public DbSet<WorkInvHdr> WorkInvHdrs => Set<WorkInvHdr>();
     public DbSet<WorkInvDet> WorkInvDets => Set<WorkInvDet>();
     public DbSet<WorkshopMaster> WorkshopMasters => Set<WorkshopMaster>();
-    public DbSet<SAASCUSTOMER> SAASCUSTOMER => Set<SAASCUSTOMER>();
+    public DbSet<SaasCustomer> SaasCustomer => Set<SaasCustomer>();
 
     //Procedure
     //added by: Vaishnavi

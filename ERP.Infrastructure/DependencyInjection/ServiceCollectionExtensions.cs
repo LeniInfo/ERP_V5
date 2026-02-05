@@ -12,6 +12,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using ERP.Infrastructure.Persistence;
+using ERP.Domain.Interfaces;
+using ERP.Infrastructure.Repositories;
 
 namespace ERP.Infrastructure.DependencyInjection
 {
@@ -25,6 +27,8 @@ namespace ERP.Infrastructure.DependencyInjection
             services.AddSingleton(typeof(IAppLogger<>), typeof(AppLoggerAdapter<>));
             services.AddScoped<IPartsRepository, PartsRepository>();
             services.AddScoped<ISuppliersRepository, SuppliersRepository>();
+            services.AddScoped<ISaasCustomerRepository, SaasCustomerRepository>();
+            services.AddScoped<IMasterTypesRepository, MasterTypesRepository>();
             services.AddScoped<IInventoryLocationsRepository, InventoryLocationsRepository>();
             services.AddScoped<IPurchaseOrdersRepository, PurchaseOrdersRepository>();
             services.AddScoped<IShipmentsRepository, ShipmentsRepository>();
@@ -38,6 +42,7 @@ namespace ERP.Infrastructure.DependencyInjection
             services.AddScoped<ICustomersRepository, CustomersRepository>();
             services.AddScoped<IUsersRepository, UsersRepository>();
             services.AddScoped<IWorkshopsRepository, WorkshopsRepository>();
+            services.AddScoped<IWorkMasterRepository, WorkMasterRepository>();
             services.AddScoped<ISalesRepository, SalesRepository>();
             services.AddScoped<IReceiptsRepository, ReceiptsRepository>();
             services.AddScoped<IShipmentDetailsRepository, ShipmentDetailsRepository>();
