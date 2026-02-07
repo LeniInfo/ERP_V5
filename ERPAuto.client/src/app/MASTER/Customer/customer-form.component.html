@@ -1,0 +1,157 @@
+<div class="container-fluid mt-4 mb-5">
+  <div class="card shadow-sm">
+    <div class="card-header bg-primary text-white">
+      <h4 class="mb-0">
+        <i class="bi bi-person-plus-fill me-2"></i>
+        {{ isEditMode ? 'Edit Customer' : 'Add New Customer' }}
+      </h4>
+    </div>
+    <div class="card-body">
+      <form (ngSubmit)="saveCustomer()">
+        <div class="row g-3">
+          <!-- Customer Code - Hidden for new customers (auto-generated) -->
+          <div class="col-md-6" *ngIf="isEditMode">
+            <label class="form-label">
+              Customer Code <span class="text-danger">*</span>
+            </label>
+            <input
+              type="text"
+              class="form-control"
+              [(ngModel)]="customerForm.customerCode"
+              name="customerCode"
+              readonly
+              style="background-color: #f8f9fa;"
+            />
+            <small class="text-muted">Customer code cannot be changed</small>
+          </div>
+
+          <!-- Name -->
+          <div class="col-md-6">
+            <label class="form-label">
+              Name <span class="text-danger">*</span>
+            </label>
+            <input
+              type="text"
+              class="form-control"
+              [(ngModel)]="customerForm.name"
+              name="name"
+              required
+              maxlength="100"
+              (ngModelChange)="onCustomerNameChange($event)"
+            />
+          </div>
+
+          <!-- Name(AR) -->
+          <div class="col-md-6">
+            <label class="form-label">
+              Name(AR) <span class="text-danger">*</span>
+            </label>
+            <input
+              type="text"
+              class="form-control"
+              [(ngModel)]="customerForm.nameAr"
+              name="nameAr"
+              required
+              maxlength="100"
+              (ngModelChange)="nameArManuallyEdited = true"
+            />
+            <small class="text-muted">Auto-filled from Name, but can be edited</small>
+          </div>
+
+          <!-- Phone -->
+          <div class="col-md-6">
+            <label class="form-label">
+              Phone
+            </label>
+            <input
+              type="text"
+              class="form-control"
+              [class.is-invalid]="phoneError"
+              [(ngModel)]="customerForm.phone"
+              name="phone"
+              (blur)="onPhoneBlur()"
+              maxlength="50"
+              placeholder="1234567890"
+            />
+            <div class="invalid-feedback" *ngIf="phoneError">
+              {{ phoneError }}
+            </div>
+            <small class="text-muted" *ngIf="!phoneError">Enter numbers only</small>
+          </div>
+
+          <!-- Email -->
+          <div class="col-md-6">
+            <label class="form-label">
+              Email
+            </label>
+            <input
+              type="email"
+              class="form-control"
+              [class.is-invalid]="emailError"
+              [(ngModel)]="customerForm.email"
+              name="email"
+              (blur)="onEmailBlur()"
+              maxlength="100"
+              placeholder="example@domain.com"
+            />
+            <div class="invalid-feedback" *ngIf="emailError">
+              {{ emailError }}
+            </div>
+            <small class="text-muted" *ngIf="!emailError">Enter a valid email address</small>
+          </div>
+
+          <!-- Address -->
+          <div class="col-12">
+            <label class="form-label">
+              Address
+            </label>
+            <textarea
+              class="form-control"
+              rows="2"
+              [(ngModel)]="customerForm.address"
+              name="address"
+              maxlength="200"
+            ></textarea>
+          </div>
+
+          <!-- VAT No -->
+          <div class="col-md-12">
+            <label class="form-label">
+              VAT No
+            </label>
+            <input
+              type="text"
+              class="form-control"
+              [(ngModel)]="customerForm.vatNo"
+              name="vatNo"
+              maxlength="50"
+            />
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="row mt-4">
+          <div class="col-12 text-end">
+            <button
+              type="button"
+              class="btn btn-secondary me-2"
+              (click)="cancel()"
+              [disabled]="isLoading"
+            >
+              <i class="bi bi-x-circle me-2"></i>Cancel
+            </button>
+            <button
+              type="submit"
+              class="btn btn-primary"
+              [disabled]="isLoading"
+            >
+              <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2" role="status"></span>
+              <i *ngIf="!isLoading" class="bi bi-save me-2"></i>
+              {{ isLoading ? 'Saving...' : (isEditMode ? 'Update' : 'Save') }} Customer
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

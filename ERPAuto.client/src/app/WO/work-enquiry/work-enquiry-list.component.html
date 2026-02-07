@@ -1,0 +1,172 @@
+<div class="customer-quotation-container">
+  <div class="container-fluid mt-4 mb-5">
+
+    <!-- Work Enquiry List Card -->
+    <div class="card shadow-sm mb-4">
+      <div class="card-header bg-secondary text-white d-flex justify-content-between align-items-center">
+        <h4 class="mb-0">
+          <i class="bi bi-list-ul me-2"></i> Work Enquiry List
+        </h4>
+        <button type="button" class="btn btn-primary" (click)="goToAddWorkEnquiry()">
+          <i class="bi bi-plus-circle me-2"></i>Add New Work Enquiry
+        </button>
+      </div>
+
+      <div class="card-body">
+
+        <!-- Loading (static placeholder) -->
+        <div class="text-center py-5 d-none">
+          <div class="spinner-border text-primary"></div>
+          <p class="mt-2 text-muted">Loading work enquiries...</p>
+        </div>
+
+        <!-- Work Enquiry Table -->
+        <div class="table-responsive">
+          <table class="table table-bordered table-hover align-middle">
+            <thead class="table-primary">
+              <tr>
+                <th style="width: 4%;">S.No</th>
+                <th style="width: 12%;">Enquiry #</th>
+                <th style="width: 25%;">Customer</th>
+                <th style="width: 10%;">Date</th>
+                <th style="width: 10%;">Status</th>
+                <th style="width: 12%;" class="text-end">Total</th>
+                <th style="width: 27%;" class="text-center">Actions</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr>
+                <td class="text-center">1</td>
+                <td><strong>WE-001</strong></td>
+                <td>
+                  <div class="fw-bold">Customer Name</div>
+                  <small class="text-muted">CUST001</small>
+
+                </td>
+                <td>12-01-2026</td>
+                <td>
+                  <span class="badge bg-success">OPEN</span>
+                </td>
+                <td class="text-end fw-bold">1,250.00</td>
+                <td>
+                  <div class="d-flex justify-content-center gap-1">
+                    <button class="btn btn-sm btn-primary" title="Edit">
+                      <i class="bi bi-pencil-square"></i>
+                    </button>
+                    <button class="btn btn-sm btn-danger" title="Delete">
+                      <i class="bi bi-trash"></i>
+                    </button>
+                    <button class="btn btn-sm btn-info text-white" title="View">
+                      <i class="bi bi-eye"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+
+              <!-- Empty State -->
+              <tr>
+                <td colspan="7" class="text-center text-muted py-4 d-none">
+                  <i class="bi bi-inbox me-2"></i>
+                  No work enquiries found.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Work Enquiry Detail Modal -->
+<div class="modal fade show" style="display:none;" tabindex="-1">
+  <div class="modal-dialog modal-lg modal-dialog-scrollable">
+    <div class="modal-content">
+
+      <div class="modal-header bg-info text-white">
+        <h5 class="modal-title">
+          <i class="bi bi-eye me-2"></i> Work Enquiry Details
+        </h5>
+        <button type="button" class="btn-close btn-close-white"></button>
+      </div>
+
+      <div class="modal-body">
+        <div class="row g-3">
+
+          <div class="col-md-6">
+            <strong>Enquiry Number:</strong>
+            <p>WE-001</p>
+          </div>
+
+          <div class="col-md-6">
+            <strong>Date:</strong>
+            <p>12-01-2026</p>
+          </div>
+
+          <div class="col-md-6">
+            <strong>Customer:</strong>
+            <p>Customer Name</p>
+          </div>
+
+          <div class="col-md-6">
+            <strong>Status:</strong>
+            <span class="badge bg-success">OPEN</span>
+          </div>
+
+          <div class="col-md-6">
+            <strong>Grand Total:</strong>
+            <p class="fw-bold">1,250.00</p>
+          </div>
+
+          <div class="col-12">
+            <strong>Work Enquiry Items:</strong>
+
+            <div class="table-responsive mt-2">
+              <table class="table table-sm table-bordered">
+                <thead class="table-secondary">
+                  <tr>
+                    <th>S.No</th>
+                    <th>Part Name</th>
+                    <th class="text-end">Price</th>
+                    <th class="text-end">Qty</th>
+                    <th class="text-end">Discount</th>
+                    <th class="text-end">Total</th>
+                  </tr>
+
+                </thead>
+
+                <tbody>
+                  <tr>
+                    <td class="text-center">1</td>
+                    <td>Brake Pad</td>
+                    <td class="text-end">500.00</td>
+                    <td class="text-end">2</td>
+                    <td class="text-end">50.00</td>
+                    <td class="text-end fw-bold">950.00</td>
+                  </tr>
+
+                  
+
+                  <tr class="table-info">
+                    <td colspan="5" class="text-end fw-bold">Grand Total:</td>
+                    <td class="text-end fw-bold">1,250.00</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-secondary">
+          <i class="bi bi-x-circle me-2"></i>Close
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>

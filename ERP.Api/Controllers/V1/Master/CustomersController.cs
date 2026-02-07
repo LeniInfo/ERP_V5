@@ -19,6 +19,11 @@ public sealed class CustomersController(ICustomersService svc) : ControllerBase
     public async Task<ActionResult<IEnumerable<CustomerDto>>> Get(CancellationToken ct)
         => Ok(await svc.GetAllAsync(ct));
 
+    [HttpGet("search")]
+    [Authorize(Policy = "erp.api.read")]
+    public async Task<ActionResult<IEnumerable<CustomerDto>>> Search([FromQuery] string name, CancellationToken ct)
+        => Ok(await svc.SearchByNameAsync(name ?? string.Empty, ct));
+
     [HttpGet("{customerCode}")]
     [Authorize(Policy = "erp.api.read")]
     public async Task<ActionResult<CustomerDto>> GetByCode(string customerCode, CancellationToken ct)

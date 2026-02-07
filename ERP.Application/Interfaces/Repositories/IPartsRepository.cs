@@ -18,6 +18,5 @@ public interface IPartsRepository
 
     Task<Part?> GetByCodeAsync(string partCode, CancellationToken ct);
     Task<IReadOnlyList<Part>> GetAllAsync(CancellationToken ct);
-
-
+    Task<IReadOnlyList<Part>> SearchByNameAsync(string name, CancellationToken ct);
 }

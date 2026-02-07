@@ -58,8 +58,8 @@ export class CustomerService {
   // Create new customer
   create(customer: Customer): Observable<any> {
     // Prepare request matching backend CreateCustomerRequest
-    const createRequest = {
-      customerCode: customer.customerCode,
+    // CustomerCode is optional - backend will auto-generate if not provided
+    const createRequest: any = {
       name: customer.name,
       nameAr: customer.nameAr,
       phone: customer.phone,
@@ -67,6 +67,11 @@ export class CustomerService {
       address: customer.address,
       vatNo: customer.vatNo
     };
+    
+    // Only include customerCode if it's provided and not empty
+    if (customer.customerCode && customer.customerCode.trim() !== '') {
+      createRequest.customerCode = customer.customerCode;
+    }
 
     return this.http.post<any>(API_BASE_URL, createRequest).pipe(
       catchError(this.handleError)

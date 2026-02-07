@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
 import * as XLSX from 'xlsx';
 
-import { ApiService, Customer } from '../../services/api.service';
+import { CustomerService, Customer } from './customer.service';
 
 @Component({
   selector: 'app-customer',
@@ -36,19 +37,15 @@ export class CustomerComponent implements OnInit {
   totalPages = 1;
   totalItems = 0;
 
-  // ================= MODAL =================
-  showModal = false;
-  isEditMode = false;
-  customerForm: Customer = this.getEmptyCustomer();
 
-  // ================= VALIDATION =================
-  emailError = '';
-  phoneError = '';
 
   // ================= LOADING =================
   isLoading = false;
 
-  constructor(private apiService: ApiService) { }
+  constructor(
+    private customerService: CustomerService,
+    private router: Router
+  ) { }
 
   // ================= INIT =================
   ngOnInit(): void {
@@ -59,7 +56,7 @@ export class CustomerComponent implements OnInit {
   loadCustomers(): void {
     this.isLoading = true;
 
-    this.apiService.getAllCustomers().subscribe({
+    this.customerService.getAll().subscribe({
       next: (data) => {
         const customers = Array.isArray(data) ? data : [];
         this.customers = customers;
@@ -135,93 +132,16 @@ export class CustomerComponent implements OnInit {
     return Array.from({ length: this.totalPages }, (_, i) => i + 1);
   }
 
-  // ================= MODAL =================
+  // ================= NAVIGATION =================
   openAddModal(): void {
-    this.isEditMode = false;
-    this.customerForm = this.getEmptyCustomer();
-    this.emailError = '';
-    this.phoneError = '';
-    this.showModal = true;
+    this.router.navigate(['./customer/add']);
   }
 
   openEditModal(customer: Customer): void {
-    this.isEditMode = true;
-    this.customerForm = { ...customer };
-    this.showModal = true;
+    this.router.navigate(['./customer/edit', customer.customerCode]);
   }
 
-  closeModal(): void {
-    this.showModal = false;
-    this.customerForm = this.getEmptyCustomer();
-    this.isEditMode = false;
-  }
 
-  // ================= VALIDATION =================
-  validateEmail(email: string): boolean {
-    const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    return regex.test(email);
-  }
-
-  validatePhone(phone: string): boolean {
-    return /^[0-9]+$/.test(phone);
-  }
-
-  validateForm(): boolean {
-    if (!this.customerForm.customerCode) {
-      Swal.fire('Validation Error', 'Customer Code is required', 'warning');
-      return false;
-    }
-    if (!this.customerForm.name) {
-      Swal.fire('Validation Error', 'Customer Name is required', 'warning');
-      return false;
-    }
-    if (!this.customerForm.nameAr) {
-      Swal.fire('Validation Error', 'Arabic Name is required', 'warning');
-      return false;
-    }
-    if (!this.validatePhone(this.customerForm.phone)) {
-      Swal.fire('Validation Error', 'Phone must contain only numbers', 'warning');
-      return false;
-    }
-    if (!this.validateEmail(this.customerForm.email)) {
-      Swal.fire('Validation Error', 'Invalid Email Address', 'warning');
-      return false;
-    }
-    if (!this.customerForm.address) {
-      Swal.fire('Validation Error', 'Address is required', 'warning');
-      return false;
-    }
-    if (!this.customerForm.vatNo) {
-      Swal.fire('Validation Error', 'VAT No is required', 'warning');
-      return false;
-    }
-    return true;
-  }
-
-  // ================= SAVE =================
-  saveCustomer(): void {
-    if (!this.validateForm()) return;
-
-    if (this.isEditMode) {
-      this.apiService.updateCustomer(this.customerForm.customerCode, this.customerForm).subscribe({
-        next: () => {
-          Swal.fire('Success', 'Customer updated successfully', 'success');
-          this.closeModal();
-          this.loadCustomers();
-        },
-        error: err => Swal.fire('Error', err.message, 'error')
-      });
-    } else {
-      this.apiService.addCustomer(this.customerForm).subscribe({
-        next: () => {
-          Swal.fire('Success', 'Customer added successfully', 'success');
-          this.closeModal();
-          this.loadCustomers();
-        },
-        error: err => Swal.fire('Error', err.message, 'error')
-      });
-    }
-  }
 
   // ================= DELETE =================
   deleteCustomer(customer: Customer): void {
@@ -233,7 +153,7 @@ export class CustomerComponent implements OnInit {
       confirmButtonColor: '#d33'
     }).then(res => {
       if (res.isConfirmed) {
-        this.apiService.deleteCustomer(customer.customerCode).subscribe({
+        this.customerService.delete(customer.customerCode).subscribe({
           next: () => {
             Swal.fire('Deleted', 'Customer deleted successfully', 'success');
             this.loadCustomers();
@@ -267,18 +187,6 @@ export class CustomerComponent implements OnInit {
     );
   }
 
-  // ================= UTILS =================
-  getEmptyCustomer(): Customer {
-    return {
-      customerCode: '',
-      name: '',
-      nameAr: '',
-      phone: '',
-      email: '',
-      address: '',
-      vatNo: ''
-    };
-  }
 
   Math = Math;
 }

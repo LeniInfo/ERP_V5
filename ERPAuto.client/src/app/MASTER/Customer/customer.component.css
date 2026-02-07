@@ -2,23 +2,28 @@
 .container-fluid {
   padding-bottom: 4rem;
   min-height: fit-content;
-  overflow: visible;
+  overflow-x: hidden;
+  overflow-y: auto;
+  max-width: 100%;
 }
 
 .card {
   margin-bottom: 2rem;
   padding-bottom: 1rem;
   min-height: fit-content;
-  overflow: visible;
+  overflow: hidden;
+  max-width: 100%;
 }
 
 .card-body {
-  overflow: visible;
+  overflow-x: hidden;
+  overflow-y: visible;
   min-height: fit-content;
   padding-bottom: 1rem;
   position: relative;
   display: flex;
   flex-direction: column;
+  max-width: 100%;
 }
 
 /* Ensure table is always visible */
@@ -42,10 +47,12 @@
 }
 
 .table-responsive {
-  overflow: visible;
+  overflow-x: auto;
+  overflow-y: visible;
   position: relative;
   display: block;
   width: 100%;
+  max-width: 100%;
   border: 1px solid #66b3ff;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 74, 153, 0.1);
@@ -58,9 +65,10 @@
 .table {
   margin-bottom: 0;
   width: 100%;
-  min-width: 1200px;
+  min-width: 100%;
   border-collapse: separate;
   border-spacing: 0;
+  table-layout: auto;
 }
 
   .table tbody tr {

@@ -40,6 +40,38 @@ public sealed class CustomersRepository : ICustomersRepository
             .ToListAsync(ct);
     }
 
+    public async Task<string> GetNextCustomerCodeAsync(CancellationToken ct)
+    {
+        // Get all customer codes (filter in memory to avoid EF translation issues)
+        var allCodes = await _db.Set<Customer>()
+            .AsNoTracking()
+            .Select(c => c.CustomerCode)
+            .ToListAsync(ct);
+
+        // Find the highest 4-digit number from existing codes
+        int maxNumber = 0;
+        foreach (var code in allCodes)
+        {
+            if (!string.IsNullOrEmpty(code) && 
+                code.Length == 4 && 
+                code.All(char.IsDigit) &&
+                int.TryParse(code, out int num) && 
+                num > maxNumber)
+            {
+                maxNumber = num;
+            }
+        }
+
+        // Generate next 4-digit code (0001 to 9999)
+        int nextNumber = maxNumber + 1;
+        if (nextNumber > 9999)
+        {
+            throw new InvalidOperationException("Maximum customer code limit reached (9999)");
+        }
+
+        return nextNumber.ToString("D4"); // Format as 4-digit string with leading zeros
+    }
+
     public async Task CreateAsync(Customer entity, CancellationToken ct)
     {
         _db.Set<Customer>().Add(entity);

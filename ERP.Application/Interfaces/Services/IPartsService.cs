@@ -10,6 +10,7 @@ namespace ERP.Application.Interfaces.Services
     {
         Task<PartDto?> GetByCodeAsync(string partCode, CancellationToken ct);
         Task<IReadOnlyList<PartDto>> GetAllAsync(CancellationToken ct);
+        Task<IReadOnlyList<PartDto>> SearchByNameAsync(string name, CancellationToken ct);
 
         // Added: Added to store parts
         // Added by: Vaishnavi
@@ -20,7 +21,5 @@ namespace ERP.Application.Interfaces.Services
         // Added by: Vaishnavi
         // Added on: 10-12-2025
         Task<IReadOnlyList<PartDto>> GetAllPartsByStoredProcAsync(CancellationToken ct);
-
-
     }
 }

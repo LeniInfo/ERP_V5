@@ -46,9 +46,10 @@ onLogin() {
           text: 'Welcome to ERP',
           timer: 1500,
           showConfirmButton: false
-        });
-
-        this.router.navigate(['/master']); 
+        }).then(() => {
+          // Navigate to default page after login (redirects to customer list)
+          this.router.navigate(['/']);
+        }); 
 
       } else {
         Swal.fire({
