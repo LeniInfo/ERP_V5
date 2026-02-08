@@ -6,11 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ERP.Infrastructure.Migrations
 {
     /// <inheritdoc />
-<<<<<<<< HEAD:ERP.Infrastructure/Migrations/20260205092159_ERPV4.cs
-    public partial class ERPV4 : Migration
-========
     public partial class ERPV5 : Migration
->>>>>>>> 279b0d3b8db769180d8826cbd515bcf02c83bd90:ERP.Infrastructure/Migrations/20260131063957_ERPV5.cs
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

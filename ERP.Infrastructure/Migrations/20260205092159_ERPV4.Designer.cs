@@ -12,13 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ERP.Infrastructure.Migrations
 {
     [DbContext(typeof(ErpDbContext))]
-<<<<<<<< HEAD:ERP.Infrastructure/Migrations/20260205092159_ERPV4.Designer.cs
     [Migration("20260205092159_ERPV4")]
     partial class ERPV4
-========
-    [Migration("20260131063957_ERPV5")]
-    partial class ERPV5
->>>>>>>> 279b0d3b8db769180d8826cbd515bcf02c83bd90:ERP.Infrastructure/Migrations/20260131063957_ERPV5.Designer.cs
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
