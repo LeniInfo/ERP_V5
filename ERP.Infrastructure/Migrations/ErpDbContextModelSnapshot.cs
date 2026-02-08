@@ -4947,6 +4947,9 @@ namespace ERP.Infrastructure.Migrations
                         .HasDefaultValue(0m)
                         .HasColumnName("NOOFWORKS");
 
+                    b.Property<decimal>("Qty")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<decimal>("TotalValue")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("numeric(22,3)")
@@ -4986,6 +4989,14 @@ namespace ERP.Infrastructure.Migrations
                         .HasColumnType("numeric(22,0)")
                         .HasDefaultValue(0m)
                         .HasColumnName("VEHICLEID");
+
+                    b.Property<string>("WorkDesc")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("WorkDescAr")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("WorkDt")
                         .ValueGeneratedOnAdd()

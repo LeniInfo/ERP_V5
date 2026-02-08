@@ -1,4 +1,5 @@
 using ERP.Application.Interfaces.Services;
+using ERP.Contracts.Orders;
 using ERP.Domain.Entities;
 using ERP.Domain.Interfaces;
 using System.Collections.Generic;
@@ -15,17 +16,41 @@ namespace ERP.Application.Services
             _repository = repository;
         }
 
-        public Task<IEnumerable<RepairOrder>> GetAllAsync() => _repository.GetAllAsync();
+        public async Task<List<RepairHdr>> GetAllAsync()
+        {
+            return await _repository.GetAllAsync();
+        }
 
-        public Task<RepairOrder?> GetByIdAsync(string fran, string brch, string workshop, string repairType, string repairNo, string repairSrl) =>
-            _repository.GetByIdAsync(fran, brch, workshop, repairType, repairNo, repairSrl);
+        public async Task<(RepairHdr Header, List<RepairOrder> Details)> GetHdrDetAsync(
+    string fran,
+    string brch,
+    string workshop,
+    string repairType,
+    string repairNo,
+    string customer)
+        {
+            return await _repository.GetHdrDetAsync(
+                fran,
+                brch,
+                workshop,
+                repairType,
+                repairNo,
+                customer
+            );
+        }
 
-        public Task AddAsync(RepairOrder entity) => _repository.AddAsync(entity);
 
-        public Task UpdateAsync(RepairOrder entity) => _repository.UpdateAsync(entity);
+        public async Task UpdateAsync(RepairOrderUpdateDto dto)
+        {
+            await _repository.UpdateAsync(dto);
+        }
 
-        public Task DeleteAsync(string fran, string brch, string workshop, string repairType, string repairNo, string repairSrl) => 
-            _repository.DeleteAsync(fran, brch, workshop, repairType, repairNo, repairSrl);
+        public async Task DeleteAsync(string fran, string customer, string repairNo)
+        {
+            await _repository.DeleteAsync(fran, customer, repairNo);
+        }
+        public Task AddAsync(RepairOrderCreateDto dto) => _repository.AddAsync(dto);
+
     }
 }
 
