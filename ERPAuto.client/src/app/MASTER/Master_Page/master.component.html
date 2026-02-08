@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm fixed-top">
   <div class="container-fluid">
     <!-- Logo -->
@@ -51,7 +50,6 @@
         <span class="icon-text">WO</span>
       </div>
 
-
       <div class="icon-item" [class.active]="activeMenu === 'reports'" (click)="toggleMenu('reports')">
         <i class="bi bi-bar-chart-fill"></i>
         <span class="icon-text">REPORTS</span>
@@ -70,159 +68,6 @@
         <ul class="menu-list">
           <li><a [routerLink]="['./customer']" class="menu-link">Customer</a></li>
           <li><a [routerLink]="['./customer/add']" class="menu-link">Add New Customer</a></li>
-        
-          <li><a [routerLink]="['./fran']" class="menu-link">Fran</a></li>
-          <li><a [routerLink]="['./inquiry']" class="menu-link">Parts</a></li>
-          <li><a [routerLink]="['./supplier']" class="menu-link">Supplier</a></li>
-          <!--<li><a [routerLink]="['./expense']" class="menu-link">Expense</a></li>-->
-          <li><a [routerLink]="['./workshop']" class="menu-link">WorkShop</a></li>
-          <li><a [routerLink]="['./workmaster']" class="menu-link">Work Master</a></li>
-
-        </ul>
-      </div>
-
-      <div *ngIf="activeMenu === 'account'">
-        <h6 class="menu-title">ACCOUNT</h6>
-        <ul class="menu-list">
-          <li><a [routerLink]="['./accountreceivable']" class="menu-link">Customer Invoice</a></li>
-          <li><a [routerLink]="['./accountpayable']" class="menu-link">Supplier Invoice</a></li>
-          <li><a [routerLink]="['./chartofaccount']" class="menu-link">Chart Of Account</a></li>
-          <li><a [routerLink]="['./journal']" class="menu-link">Journal</a></li>
-          <!--<li><a [routerLink]="['./invoicear']" class="menu-link">Invoice Account Receivable</a></li>
-      <li><a [routerLink]="['./invoiceap']" class="menu-link">Invoice Account Payable</a></li>-->
-        </ul>
-      </div>
-
-      <div *ngIf="activeMenu === 'sales'">
-        <h6 class="menu-title">SALES</h6>
-        <ul class="menu-list">
-          <li><a routerLink="pos" class="menu-link">POS</a></li>
-          <li><a routerLink="customer-order-list" class="menu-link">Customer Order</a></li>
-          <li><a routerLink="/saleinvoice" class="menu-link">Sale Invoice</a></li>
-        </ul>
-      </div>
-
-      <div *ngIf="activeMenu === 'po'">
-        <h6 class="menu-title">PO</h6>
-        <ul class="menu-list">
-          <li><a routerLink="purchase-order" class="menu-link">Create PO</a></li>
-          <li><a routerLink="po-inquiry" class="menu-link">PO Inquiry</a></li>
-          <!--<li><a routerLink="purchase-order" class="menu-link">Purchase Order</a></li>-->
-        </ul>
-      </div>
-      <div *ngIf="activeMenu === 'wo'">
-        <h6 class="menu-title">WO</h6>
-        <ul class="menu-list">
-          <li><a class="menu-link">W1- Work Master</a></li>
-          <li><a class="menu-link">W2-Work Order Creation</a></li>
-          <li><a class="menu-link">W3-Work order Inquiry</a></li>
-          <li><a class="menu-link">W4-Work order Invoice</a></li>
-          <li><a class="menu-link">W5-Work order invoice Inquiry</a></li>        
-          <li><a [routerLink]="['./work-quotation-form']" class="menu-link">W6-Work Quotation Creation</a></li>
-          <li><a [routerLink]="['./work-quotation-list']" class="menu-link">W7-Work Quotation Inquiry</a></li>
-          <li><a [routerLink]="['./work-enquiry']" class="menu-link">W8-Work Inquiry Creation</a></li>
-          <li><a [routerLink]="['./work-enquiry-list']" class="menu-link">W9-Work Inquiry</a></li>
-          <li><a class="menu-link">W10-Work costing</a></li>
-        </ul>
-      </div>
-
-
-
-      <div *ngIf="activeMenu === 'reports'">
-        <h6 class="menu-title">REPORTS</h6>
-        <ul class="menu-list">
-          <li><a routerLink="po-reports" class="menu-link">PO Reports</a></li>
-          <li><a routerLink="sales-reports" class="menu-link">Sales Reports</a></li>
-          <li><a routerLink="accounts-reports" class="menu-link">Accounts Reports</a></li>
-        </ul>
-      </div>
-
-      <div *ngIf="activeMenu === 'notification'">
-        <h6 class="menu-title">NOTIFICATIONS</h6>
-        <ul class="menu-list">
-          <li><a routerLink="alerts" class="menu-link">Alerts</a></li>
-          <li><a routerLink="messages" class="menu-link">Messages</a></li>
-          <li><a routerLink="reminders" class="menu-link">Reminders</a></li>
-        </ul>
-      </div>
-    </div>
-  </div>
-
-  <!-- Main Content -->
-  <div class="content-panel shadow-sm">
-    <router-outlet></router-outlet>
-  </div>
-</div>
-
-<footer class="footer text-light text-center">
-  © 2025 ERP Application. All rights reserved.
-</footer>
-=======
-<nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm fixed-top">
-  <div class="container-fluid">
-    <!-- Logo -->
-    <a class="navbar-brand d-flex align-items-center" routerLink="/">
-      <img src="" alt="ERP Logo" class="logo-img" />
-    </a>
-
-    <!-- Center text -->
-    <div class="navbar-center mx-auto">
-      <span class="brand-text text-light">
-        Welcome to {{ fran }}
-      </span>
-    </div>
-
-    <!-- Logout -->
-    <button class="logout-btn" title="Logout" (click)="onLogout()">
-      <i class="bi bi-box-arrow-right"></i>
-    </button>
-  </div>
-</nav>
-
-<!-- Sidebar + Main Content -->
-<div class="main-container" [class.sidebar-expanded]="sidebarExpanded">
-  <!-- Fixed Sidebar -->
-  <div class="sidebar d-flex">
-    <!-- Light Blue Icon Bar -->
-    <div class="icon-bar d-flex flex-column align-items-center py-3">
-      <div class="icon-item" [class.active]="activeMenu === 'master'" (click)="toggleMenu('master')">
-        <i class="bi bi-grid-fill"></i>
-        <span class="icon-text">MASTER</span>
-      </div>
-
-      <div class="icon-item" [class.active]="activeMenu === 'account'" (click)="toggleMenu('account')">
-        <i class="bi bi-receipt-cutoff"></i>
-        <span class="icon-text">ACCOUNT</span>
-      </div>
-
-      <div class="icon-item" [class.active]="activeMenu === 'sales'" (click)="toggleMenu('sales')">
-        <i class="bi bi-basket2-fill"></i>
-        <span class="icon-text">SALES</span>
-      </div>
-
-      <div class="icon-item" [class.active]="activeMenu === 'po'" (click)="toggleMenu('po')">
-        <i class="bi bi-file-earmark-text-fill"></i>
-        <span class="icon-text">PO</span>
-      </div>
-
-      <div class="icon-item" [class.active]="activeMenu === 'reports'" (click)="toggleMenu('reports')">
-        <i class="bi bi-bar-chart-fill"></i>
-        <span class="icon-text">REPORTS</span>
-      </div>
-
-      <div class="icon-item" [class.active]="activeMenu === 'notification'" (click)="toggleMenu('notification')">
-        <i class="bi bi-bell-fill"></i>
-        <span class="icon-text">NOTIFY</span>
-      </div>
-    </div>
-
-    <!-- Expandable Panel -->
-    <div class="expand-panel" [class.show]="sidebarExpanded">
-      <div *ngIf="activeMenu === 'master'">
-        <h6 class="menu-title">MASTER</h6>
-        <ul class="menu-list">
-          <li><a [routerLink]="['./customer-order-form']" class="menu-link">Add New Customer</a></li>
-          <li><a routerLink="/customer" class="menu-link">Customer Inquiry</a></li>
           <li><a [routerLink]="['./fran']" class="menu-link">Fran</a></li>
           <li><a [routerLink]="['./inquiry']" class="menu-link">Parts</a></li>
           <li><a [routerLink]="['./supplier']" class="menu-link">Supplier</a></li>
@@ -248,7 +93,7 @@
         <h6 class="menu-title">SALES</h6>
         <ul class="menu-list">
           <li><a routerLink="pos" class="menu-link">POS</a></li>
-          <li><a routerLink="customer-order" class="menu-link">Customer Order</a></li>
+          <li><a routerLink="customer-order-list" class="menu-link">Customer Order</a></li>
           <li><a routerLink="/saleinvoice" class="menu-link">Sale Invoice</a></li>
         </ul>
       </div>
@@ -265,6 +110,22 @@
           <li><a routerLink="work-order-inquiry" class="menu-link">WO Inquiry</a></li>
           <li><a routerLink="work-order-invoice" class="menu-link">Work Order Invoice</a></li>
           <li><a routerLink="work-order-invoice-inquiry" class="menu-link">Work Order Invoice Inquiry</a></li>
+        </ul>
+      </div>
+
+      <div *ngIf="activeMenu === 'wo'">
+        <h6 class="menu-title">WO</h6>
+        <ul class="menu-list">
+          <li><a class="menu-link">W1- Work Master</a></li>
+          <li><a class="menu-link">W2-Work Order Creation</a></li>
+          <li><a class="menu-link">W3-Work order Inquiry</a></li>
+          <li><a class="menu-link">W4-Work order Invoice</a></li>
+          <li><a class="menu-link">W5-Work order invoice Inquiry</a></li>        
+          <li><a [routerLink]="['./work-quotation-form']" class="menu-link">W6-Work Quotation Creation</a></li>
+          <li><a [routerLink]="['./work-quotation-list']" class="menu-link">W7-Work Quotation Inquiry</a></li>
+          <li><a [routerLink]="['./work-enquiry']" class="menu-link">W8-Work Inquiry Creation</a></li>
+          <li><a [routerLink]="['./work-enquiry-list']" class="menu-link">W9-Work Inquiry</a></li>
+          <li><a class="menu-link">W10-Work costing</a></li>
         </ul>
       </div>
 
@@ -297,4 +158,3 @@
 <footer class="footer text-light text-center">
   © 2025 ERP Application. All rights reserved.
 </footer>
->>>>>>> 279b0d3b8db769180d8826cbd515bcf02c83bd90

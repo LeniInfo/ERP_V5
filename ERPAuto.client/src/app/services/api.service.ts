@@ -508,24 +508,3 @@ export interface DetailDTO {
   createby: string;
 }
 
-
-<<<<<<< HEAD
-//@Injectable({
-//  providedIn: 'root'
-//})
-//export class CustomerOrderApiService {
-
-//  private baseUrl = 'https://localhost:7231/api/v1';
-
-//  constructor(private http: HttpClient) { }
-
-//  getCustomers(search: string = '') {
-//    return this.http.get<any[]>(
-//      `${this.baseUrl}/master/customers?search=${search}`
-//    );
-//  }
-//}
-=======
-
-
->>>>>>> 279b0d3b8db769180d8826cbd515bcf02c83bd90
