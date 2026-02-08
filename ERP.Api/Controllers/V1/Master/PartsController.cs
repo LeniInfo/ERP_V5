@@ -22,16 +22,19 @@ namespace ERP.Api.Controllers.V1.Master
 
         /// <summary>List all parts.</summary>
         [HttpGet]
-        [Authorize(Policy = "erp.inventory.read")]
         public async Task<ActionResult<IEnumerable<PartDto>>> Get(CancellationToken ct)
         {
             var items = await _svc.GetAllAsync(ct);
             return Ok(items);
         }
 
+        /// <summary>Search parts by name.</summary>
+        [HttpGet("search")]
+        public async Task<ActionResult<IEnumerable<PartDto>>> Search([FromQuery] string name, CancellationToken ct)
+            => Ok(await _svc.SearchByNameAsync(name ?? string.Empty, ct));
+
         /// <summary>Get a part by code.</summary>
         [HttpGet("{partCode}")]
-        [Authorize(Policy = "erp.inventory.read")]
         public async Task<ActionResult<PartDto>> GetByCode(string partCode, CancellationToken ct)
         {
             var item = await _svc.GetByCodeAsync(partCode, ct);

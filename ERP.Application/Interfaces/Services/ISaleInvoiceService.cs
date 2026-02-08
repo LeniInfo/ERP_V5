@@ -11,7 +11,7 @@ namespace ERP.Application.Interfaces.Services
     {
         Task<int> SaveSaleInvoiceAsync(SaleInvoiceDtos request);
         Task<List<ParamResponse>> GetParams(ParamRequest request);
-
+        Task<List<workmasRes>> getworkmas(WorkmasReq request);
         //warning changes (02-01-2026)
         //Task<List<paramres>> GetParams(paramreq request);
     }

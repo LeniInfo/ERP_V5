@@ -75,6 +75,9 @@ public sealed class CustomerOrdersService(ICustomerOrdersRepository repo) : ICus
     public Task<bool> DeleteHeaderAsync(string fran, string branch, string warehouse, string cordType, string cordNo, CancellationToken ct)
         => repo.DeleteHeaderAsync(fran, branch, warehouse, cordType, cordNo, ct);
 
+    public Task<string> GetNextOrderNumberAsync(CancellationToken ct)
+        => repo.GetNextOrderNumberAsync(ct);
+
     // Details
     public async Task<IReadOnlyList<CustomerOrderDetailDto>> GetAllDetailsAsync(CancellationToken ct)
     {

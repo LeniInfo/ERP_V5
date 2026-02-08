@@ -1,3 +1,4 @@
+using System;
 using Asp.Versioning;
 using ERP.Application.Interfaces.Services;
 using ERP.Contracts.Orders;
@@ -59,6 +60,22 @@ public class CustomerOrdersController(ICustomerOrdersService svc) : ControllerBa
     [HttpDelete("headers/{fran}/{branch}/{warehouse}/{cordType}/{cordNo}")]
     public async Task<IActionResult> DeleteHeader(string fran, string branch, string warehouse, string cordType, string cordNo, CancellationToken ct)
         => await svc.DeleteHeaderAsync(fran, branch, warehouse, cordType, cordNo, ct) ? NoContent() : NotFound();
+
+    [HttpGet("next-order-number")]
+    [ProducesResponseType(typeof(string), 200)]
+    public async Task<ActionResult<string>> GetNextOrderNumber(CancellationToken ct)
+    {
+        try
+        {
+            var orderNo = await svc.GetNextOrderNumberAsync(ct);
+            // Return as JSON string - Ok() will serialize it properly
+            return Ok(orderNo);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { message = ex.Message, error = ex.GetType().Name });
+        }
+    }
 
     // Details
     [HttpGet("lines")]
