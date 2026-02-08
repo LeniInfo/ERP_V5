@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using Microsoft.Extensions.Logging;
 using ERP.Application.Interfaces.Repositories;
 using ERP.Domain.Entities;
@@ -42,7 +43,6 @@ public sealed class RequestHeaderRepository(ErpDbContext db, ILogger<RequestHead
         existing.SeqPrefix = entity.SeqPrefix;
         existing.Currency = entity.Currency;
         existing.NoOfItems = entity.NoOfItems;
-        existing.Discount = entity.Discount;
         existing.VatValue = entity.VatValue;
         existing.TotalValue = entity.TotalValue;
         existing.UpdateDt = entity.UpdateDt;
@@ -68,33 +68,54 @@ public sealed class RequestHeaderRepository(ErpDbContext db, ILogger<RequestHead
 
     public async Task<string> GetNextRequestNumberAsync(CancellationToken ct)
     {
-        // Get all request numbers (filter in memory to avoid EF translation issues)
-        var allRequestNos = await db.RequestHeaders
-            .AsNoTracking()
-            .Select(h => h.RequestNo)
-            .ToListAsync(ct);
-
-        // Find the highest 4-digit number from existing request numbers
-        int maxNumber = 0;
-        foreach (var requestNo in allRequestNos)
+        try
         {
-            if (!string.IsNullOrEmpty(requestNo) && 
-                requestNo.Length == 4 && 
-                requestNo.All(char.IsDigit) &&
-                int.TryParse(requestNo, out int num) && 
-                num > maxNumber)
+            // Get all request numbers (filter in memory to avoid EF translation issues)
+            var allRequestNos = await db.RequestHeaders
+                .AsNoTracking()
+                .Select(h => h.RequestNo)
+                .ToListAsync(ct);
+
+            log.LogInformation("Retrieved {Count} request numbers from database", allRequestNos.Count);
+
+            // Find the highest numeric number from existing request numbers
+            // Try to parse any numeric part of the request number
+            int maxNumber = 0;
+            foreach (var requestNo in allRequestNos)
             {
-                maxNumber = num;
+                if (string.IsNullOrEmpty(requestNo))
+                    continue;
+
+                // Try to extract numeric part (handle formats like "0001", "REQ001", etc.)
+                string numericPart = new string(requestNo.Where(char.IsDigit).ToArray());
+                
+                if (!string.IsNullOrEmpty(numericPart) && 
+                    int.TryParse(numericPart, out int num) && 
+                    num > maxNumber)
+                {
+                    maxNumber = num;
+                }
             }
-        }
 
-        // Generate next 4-digit request number (0001 to 9999)
-        int nextNumber = maxNumber + 1;
-        if (nextNumber > 9999)
+            // Generate next request number starting from 0001
+            int nextNumber = maxNumber + 1;
+            if (nextNumber > 9999)
+            {
+                log.LogWarning("Request number exceeded 9999, resetting to 0001");
+                nextNumber = 1; // Reset to 1 instead of throwing error
+            }
+
+            string nextRequestNo = nextNumber.ToString("D4"); // Format as 4-digit string with leading zeros
+            log.LogInformation("Generated next request number: {RequestNo}", nextRequestNo);
+            
+            return nextRequestNo;
+        }
+        catch (Exception ex)
         {
-            throw new InvalidOperationException("Maximum request number limit reached (9999)");
+            log.LogError(ex, "Error generating next request number");
+            // Return a default number if there's an error (e.g., database connection issue)
+            // This allows the system to continue working even if there's a temporary issue
+            return "0001";
         }
-
-        return nextNumber.ToString("D4"); // Format as 4-digit string with leading zeros
     }
 }

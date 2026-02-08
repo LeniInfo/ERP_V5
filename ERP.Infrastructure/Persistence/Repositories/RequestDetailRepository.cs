@@ -46,10 +46,6 @@ public sealed class RequestDetailRepository(ErpDbContext db, ILogger<RequestDeta
         existing.Part = entity.Part;
         existing.Qty = entity.Qty;
         existing.UnitPrice = entity.UnitPrice;
-        existing.Discount = entity.Discount;
-        existing.VatPercentage = entity.VatPercentage;
-        existing.VatValue = entity.VatValue;
-        existing.DiscountValue = entity.DiscountValue;
         existing.TotalValue = entity.TotalValue;
         existing.UpdateDt = entity.UpdateDt;
         existing.UpdateTm = entity.UpdateTm;

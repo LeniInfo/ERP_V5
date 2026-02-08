@@ -32,6 +32,16 @@ public class RequestHeaderController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<RequestHeader>> Create([FromBody] RequestHeader entity, CancellationToken ct)
     {
+        // Validate DESCEN and DESARABIC max length
+        if (entity.DescEn != null && entity.DescEn.Length > 300)
+        {
+            return BadRequest(new { message = "DESCEN cannot exceed 300 characters." });
+        }
+        if (entity.DescArabic != null && entity.DescArabic.Length > 300)
+        {
+            return BadRequest(new { message = "DESCARABIC cannot exceed 300 characters." });
+        }
+
         var created = await _service.CreateAsync(entity, ct);
         return CreatedAtAction(nameof(Get), new { fran = created.Fran, branch = created.Branch, warehouse = created.Warehouse, requestType = created.RequestType, requestNo = created.RequestNo }, created);
     }
@@ -46,6 +56,16 @@ public class RequestHeaderController : ControllerBase
         entity.RequestType = requestType;
         entity.RequestNo = requestNo;
 
+        // Validate DESCEN and DESARABIC max length
+        if (entity.DescEn != null && entity.DescEn.Length > 300)
+        {
+            return BadRequest(new { message = "DESCEN cannot exceed 300 characters." });
+        }
+        if (entity.DescArabic != null && entity.DescArabic.Length > 300)
+        {
+            return BadRequest(new { message = "DESCARABIC cannot exceed 300 characters." });
+        }
+
         var updated = await _service.UpdateAsync(entity, ct);
         return updated == null ? NotFound() : Ok(updated);
     }
@@ -56,6 +76,7 @@ public class RequestHeaderController : ControllerBase
 
     [HttpGet("next-request-number")]
     [ProducesResponseType(typeof(string), 200)]
+    [ProducesResponseType(typeof(object), 500)]
     public async Task<ActionResult<string>> GetNextRequestNumber(CancellationToken ct)
     {
         try
@@ -65,7 +86,12 @@ public class RequestHeaderController : ControllerBase
         }
         catch (Exception ex)
         {
-            return StatusCode(500, new { message = ex.Message, error = ex.GetType().Name });
+            // Log the full exception details for debugging
+            return StatusCode(500, new { 
+                message = $"Failed to generate request number: {ex.Message}", 
+                error = ex.GetType().Name,
+                stackTrace = ex.StackTrace 
+            });
         }
     }
 }

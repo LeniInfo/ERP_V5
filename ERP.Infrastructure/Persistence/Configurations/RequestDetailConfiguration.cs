@@ -21,14 +21,10 @@ public sealed class RequestDetailConfiguration : IEntityTypeConfiguration<Reques
             v => v.ToDateTime(TimeOnly.MinValue),
             v => DateOnly.FromDateTime(v)).IsRequired();
         b.Ignore(x => x.WorkId);
-        b.Property(x => x.Make).HasColumnName("MAKE").HasMaxLength(10).IsRequired();
+        b.Property(x => x.Make).HasColumnName("MAKE").HasMaxLength(50).IsRequired();
         b.Property(x => x.Part).HasColumnName("PART").HasMaxLength(10).IsRequired();
         b.Property(x => x.Qty).HasColumnName("QTY").HasPrecision(22, 0).IsRequired();
         b.Property(x => x.UnitPrice).HasColumnName("UNITPRICE").HasPrecision(22, 3).IsRequired();
-        b.Property(x => x.Discount).HasColumnName("DISCOUNT").HasPrecision(22, 3).IsRequired();
-        b.Property(x => x.VatPercentage).HasColumnName("VATPERCENTAGE").HasPrecision(22, 3).IsRequired();
-        b.Property(x => x.VatValue).HasColumnName("VATVALUE").HasPrecision(22, 3).IsRequired();
-        b.Property(x => x.DiscountValue).HasColumnName("DISCOUNTVALUE").HasPrecision(22, 3).IsRequired();
         b.Property(x => x.TotalValue).HasColumnName("TOTALVALUE").HasPrecision(22, 3).IsRequired();
 
         // Audit

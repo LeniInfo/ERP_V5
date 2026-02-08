@@ -18,9 +18,10 @@ public sealed class RequestHeader
     public string SeqPrefix { get; set; } = string.Empty;
     public string Currency { get; set; } = string.Empty;
     public decimal NoOfItems { get; set; }
-    public decimal Discount { get; set; }
     public decimal VatValue { get; set; }
     public decimal TotalValue { get; set; }
+    public string DescEn { get; set; } = string.Empty;
+    public string DescArabic { get; set; } = string.Empty;
     
     // Audit
     public DateOnly CreateDt { get; set; }

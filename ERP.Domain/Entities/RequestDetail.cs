@@ -16,10 +16,6 @@ public sealed class RequestDetail
     public string Part { get; set; } = string.Empty;
     public decimal Qty { get; set; }
     public decimal UnitPrice { get; set; }
-    public decimal Discount { get; set; }
-    public decimal VatPercentage { get; set; }
-    public decimal VatValue { get; set; }
-    public decimal DiscountValue { get; set; }
     public decimal TotalValue { get; set; }
     
     // Audit

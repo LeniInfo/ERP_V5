@@ -29,9 +29,10 @@ public sealed class RequestHeaderConfiguration : IEntityTypeConfiguration<Reques
         b.Property(x => x.SeqPrefix).HasColumnName("SEQPREFIX").HasMaxLength(10).IsRequired();
         b.Property(x => x.Currency).HasColumnName("CURRENCY").HasMaxLength(10).IsRequired();
         b.Property(x => x.NoOfItems).HasColumnName("NOOFITEMS").HasPrecision(22, 0).IsRequired();
-        b.Property(x => x.Discount).HasColumnName("DISCOUNT").HasPrecision(22, 3).IsRequired();
         b.Property(x => x.VatValue).HasColumnName("VATVALUE").HasPrecision(22, 3).IsRequired();
         b.Property(x => x.TotalValue).HasColumnName("TOTALVALUE").HasPrecision(22, 3).IsRequired();
+        b.Property(x => x.DescEn).HasColumnName("DESCEN").HasMaxLength(300).IsRequired(false);
+        b.Property(x => x.DescArabic).HasColumnName("DESCARABIC").HasMaxLength(300).IsRequired(false);
 
         // Audit
         b.Property(x => x.CreateDt).HasColumnName("CREATEDT").HasConversion(

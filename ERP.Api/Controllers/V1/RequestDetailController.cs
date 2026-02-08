@@ -35,6 +35,36 @@ public class RequestDetailController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<RequestDetail>> Create([FromBody] RequestDetail entity, CancellationToken ct)
     {
+        // Validate MAKE - IF VALUE HAVE VALUES ELSE "no"
+        if (string.IsNullOrWhiteSpace(entity.Make))
+        {
+            entity.Make = "no";
+        }
+        
+        // Validate PART - should be selected line item ID
+        if (string.IsNullOrWhiteSpace(entity.Part))
+        {
+            return BadRequest(new { message = "PART (Line Item ID) is required." });
+        }
+        
+        // Validate QTY - IF VALUE HAVE VALUES ELSE 0
+        if (entity.Qty < 0)
+        {
+            entity.Qty = 0;
+        }
+        
+        // Validate UNITPRICE - IF VALUE HAVE VALUES ELSE 0
+        if (entity.UnitPrice < 0)
+        {
+            entity.UnitPrice = 0;
+        }
+        
+        // Validate TOTALVALUE - IF VALUE HAVE VALUES ELSE 0
+        if (entity.TotalValue < 0)
+        {
+            entity.TotalValue = 0;
+        }
+
         var created = await _service.CreateDetailAsync(entity, ct);
         return CreatedAtAction(nameof(Get), new { fran = created.Fran, branch = created.Branch, warehouse = created.Warehouse, requestType = created.RequestType, requestNo = created.RequestNo, requestSrl = created.RequestSrl }, created);
     }
@@ -49,6 +79,36 @@ public class RequestDetailController : ControllerBase
         entity.RequestType = requestType;
         entity.RequestNo = requestNo;
         entity.RequestSrl = requestSrl;
+
+        // Validate MAKE - IF VALUE HAVE VALUES ELSE "no"
+        if (string.IsNullOrWhiteSpace(entity.Make))
+        {
+            entity.Make = "no";
+        }
+        
+        // Validate PART - should be selected line item ID
+        if (string.IsNullOrWhiteSpace(entity.Part))
+        {
+            return BadRequest(new { message = "PART (Line Item ID) is required." });
+        }
+        
+        // Validate QTY - IF VALUE HAVE VALUES ELSE 0
+        if (entity.Qty < 0)
+        {
+            entity.Qty = 0;
+        }
+        
+        // Validate UNITPRICE - IF VALUE HAVE VALUES ELSE 0
+        if (entity.UnitPrice < 0)
+        {
+            entity.UnitPrice = 0;
+        }
+        
+        // Validate TOTALVALUE - IF VALUE HAVE VALUES ELSE 0
+        if (entity.TotalValue < 0)
+        {
+            entity.TotalValue = 0;
+        }
 
         var updated = await _service.UpdateDetailAsync(entity, ct);
         return updated == null ? NotFound() : Ok(updated);
