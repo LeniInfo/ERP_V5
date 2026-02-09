@@ -1,4 +1,6 @@
+﻿using ERP.Contracts.Master;
 using ERP.Domain.Entities;
+using ERP.Infrastructure.Persistence.Configurations;
 using Microsoft.EntityFrameworkCore;
 
 namespace ERP.Infrastructure.Persistence;
@@ -79,5 +81,25 @@ public sealed class ErpDbContext(DbContextOptions<ErpDbContext> options) : DbCon
                     .HasNoKey()
                     .ToView(null);
 
+        // Added by: Nishanth
+        // Added on: 04-02-2026
+
+        base.OnModelCreating(modelBuilder);
+
+        modelBuilder.ApplyConfiguration(new FranchiseConfiguration());
+
+        // 🔥 ADD THIS (Customer Currency Dropdown)
+        modelBuilder.Entity<CustomerCurrencyDrpDto>()
+                    .HasNoKey()
+                    .ToView(null);
+
     }
+
+    //added by: Nishanth
+    //added on: 05-02-2026
+    public DbSet<CustomerCurrencyDrpDto> CustomerCurrencyDrp { get; set; }
+
+    
+
+
 }

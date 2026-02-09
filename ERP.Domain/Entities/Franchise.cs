@@ -9,13 +9,14 @@ public sealed class Franchise
     //added by: Vaishnavi
     //added on: 27-12-2025
 
-    
-    public string SAASCUSTOMERID { get; set; } = string.Empty;
+     // Added by: Nishanth
+    // Added on: 04-02-2026
+    public string SaasCustomerId { get; set; } = string.Empty;
 
     // 12-01-2026 Changes Jegan
-    public string VATENABLED { get; set; } = string.Empty;
-    public string NATUREOFBUSINESS { get; set; } = string.Empty;
-    public string CUSTOMERCURRENCY { get; set; } = string.Empty;
+    public string VatEnabled { get; set; }  = string.Empty;
+    public string NatureOfBusiness { get; set; } = string.Empty;
+    public string CustomerCurrency { get; set; } = string.Empty;
 
     // 12-01-2026 Changes Ends Jegan
 

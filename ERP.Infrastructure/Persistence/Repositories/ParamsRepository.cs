@@ -3,6 +3,7 @@ using ERP.Contracts.Finance;
 using ERP.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
+
 namespace ERP.Infrastructure.Persistence.Repositories;
 
 public sealed class ParamsRepository(ErpDbContext db) : IParamsRepository

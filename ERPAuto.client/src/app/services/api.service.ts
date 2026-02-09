@@ -8,14 +8,27 @@ import { Observable } from 'rxjs';
 
 
 // ----------- FRAN INTERFACE -----------
-// Added by: Nishanth
+// Added by: Nishanth`
 // Added on: 12-12-2025
 export interface Fran {
-  fran?: string;
-  franCode: string;
+  fran: string;
   name: string;
-  nameAr: string;
+  nameAr?: string;
+  saasCustomerId?: string;
+  customerCurrency?: string;
+  paramValue?: string;   // nature of business
+  paramDesc?: string;
+  natureOfBusiness?: string;
+  vatEnabled: boolean;
+
 }
+
+interface LoadParam {
+  paramValue: string;
+  paramDesc: string;
+}
+
+
 
 @Injectable({
   providedIn: 'root'
@@ -43,14 +56,39 @@ export class ApiService {
       `${this.baseUrl}/master/Franchises`
     );
   }
+  // Added by: Nishanth
+  // Added on: 04-02-2026
+  getFranDropdown(): Observable<FranDropdown[]> {
+    return this.http.get<FranDropdown[]>(
+      `${this.baseUrl}/master/Franchises`
+    );
+  }
+  // Added by: Nishanth
+  // Added on: 05-02-2026
+  
+
+  getFranchises() {
+    return this.http.get<Fran[]>(
+      `${this.baseUrl}/master/franchises`
+    );
+  }
+
+  getCurrencies() {
+    return this.http.get<Currency[]>(
+      `${this.baseUrl}/master/Currencies`
+    );
+  }
 
   // ----------- CREATE FRAN -----------
   createFran(data: Fran): Observable<any> {
 
     const payload = {
-      fran: data.franCode,
+      fran: data.fran,
       name: data.name,
-      nameAr: data.nameAr
+      nameAr: data.nameAr,
+      customerCurrency: data.customerCurrency, // 🔥 map correctly
+      natureOfBusiness: data.natureOfBusiness,
+      vatEnabled: data.vatEnabled
     };
 
     return this.http.post(
@@ -65,7 +103,10 @@ export class ApiService {
     const payload = {
       fran: franCode,
       name: data.name,
-      nameAr: data.nameAr
+      nameAr: data.nameAr,
+      customerCurrency: data.customerCurrency, // 🔥 map correctly
+      natureOfBusiness: data.natureOfBusiness,
+      vatEnabled: data.vatEnabled
     };
 
     return this.http.put(
@@ -450,4 +491,24 @@ export interface DetailDTO {
   createdt: string;
   createby: string;
 }
+  //added by : Nishanth //added on : 04-02-2026
+
+
+
+//added by : Nishanth //added on : 04-02-2026
+
+export interface FranDropdown {
+  saasCustomerId: string;
+}
+
+
+export interface Currency {
+  currencyCode: string;
+  baseCurrency: string;
+  factor1: number;
+  factor2: number;
+  decimalPlace: number;
+
+}
+
 

@@ -1,48 +1,117 @@
 <div class="container mt-4 p-4 shadow rounded bg-light">
+
   <h2 class="text-center mb-4 text-primary fw-bold">FRAN Master</h2>
 
-  <!-- ✅ Form Section -->
+  <!-- ===== FORM ===== -->
   <form (ngSubmit)="onSubmit()" class="row g-3">
+
+    <!-- FRAN -->
     <div class="col-md-4">
       <label class="form-label fw-semibold">FRAN</label>
       <input type="text"
              class="form-control"
-             placeholder="Enter FRAN "
-             [(ngModel)]="franObj.franCode"
-             name="franCode"
+             [(ngModel)]="franObj.fran"
+             name="fran"
              [readonly]="isEditMode"
              required />
     </div>
 
+    <!-- NAME -->
     <div class="col-md-4">
       <label class="form-label fw-semibold">Name</label>
       <input type="text"
              class="form-control"
-             placeholder="Enter Name"
              [(ngModel)]="franObj.name"
              name="name"
              required />
     </div>
 
+    <!-- NAME AR -->
     <div class="col-md-4">
-      <label class="form-label fw-semibold">NameAr</label>
+      <label class="form-label fw-semibold">Name (Arabic)</label>
       <input type="text"
              class="form-control"
-             placeholder="Enter NameAr"
              [(ngModel)]="franObj.nameAr"
-             name="nameAr"
-             required />
+             name="nameAr" />
     </div>
 
+    <!-- SAAS CUSTOMER -->
+    <!--<div class="col-md-4">
+    <label class="form-label fw-semibold">SaaS Customer</label>
+    <select class="form-select"
+            [(ngModel)]="franObj.saasCustomerId"
+            name="saasCustomerId"
+            required>
+      <option value="">Select</option>
+      <option *ngFor="let c of saasCustomerList"
+              [value]="c.saasCustomerId">
+        {{ c.saasCustomerId }}
+      </option>
+    </select>
+  </div>-->
+
+    <div class="col-md-4">
+      <label class="form-label fw-semibold">Base Currency</label>
+
+      <select class="form-select"
+              [(ngModel)]="franObj.customerCurrency"
+              name="customerCurrency">
+
+        <option value="" disabled>Select</option>
+
+        <option *ngFor="let c of currencies"
+                [value]="c.baseCurrency">
+          {{ c.baseCurrency }}
+        </option>
+      </select>
+    </div>
+
+
+    <!-- NATURE OF BUSINESS -->
+    <!-- NATURE OF BUSINESS -->
+    <div class="col-md-4">
+      <label class="form-label fw-semibold">Nature of Business</label>
+      <select class="form-select"
+              [(ngModel)]="franObj.natureOfBusiness"
+              name="natureOfBusiness"
+              required>
+        <option value="" disabled>Select</option>
+        <option *ngFor="let n of natureOfBusinessList"
+                [value]="n.paramValue">
+          {{ n.paramDesc }}
+        </option>
+      </select>
+    </div>
+
+
+    <!-- VAT ENABLED -->
+    <div class="col-md-3">
+      <label class="form-label fw-semibold">VAT Enabled</label>
+      <div class="form-check">
+        <input class="form-check-input"
+               type="checkbox"
+               [(ngModel)]="franObj.vatEnabled"
+               name="vatEnabled" />
+        <label class="form-check-label">Yes</label>
+      </div>
+    </div>
+
+    <!-- BUTTONS -->
     <div class="col-12 text-center mt-3">
       <button type="submit" class="btn btn-edit">
         {{ isEditMode ? 'Update' : 'Save' }}
-      </button>&nbsp;
-      <button type="button" class="btn btn-delete" (click)="resetForm()">Clear</button>
+      </button>
+      &nbsp;
+      <button type="button"
+              class="btn btn-delete"
+              (click)="resetForm()">
+        Clear
+      </button>
     </div>
+
   </form>
 
-  <!-- ✅ Table Section -->
+  <!-- ===== TABLE ===== -->
   <div class="table-responsive mt-5">
     <table class="table table-bordered table-striped align-middle text-center">
       <thead class="table-primary">
@@ -50,27 +119,49 @@
           <th>ID</th>
           <th>FRAN</th>
           <th>Name</th>
-          <th>NameAr</th>
+          <th>Name (Arabic)</th>
+          <!--<th>SaaS Customer</th>
+          <th>Currency</th>-->
+          <th>Nature of Business</th>
+          <th>VAT</th>
           <th>Actions</th>
+          <th>Base Currency</th>
         </tr>
       </thead>
+
       <tbody>
         <tr *ngFor="let f of franList; let i = index">
           <td>{{ i + 1 }}</td>
           <td>{{ f.fran }}</td>
           <td>{{ f.name }}</td>
           <td>{{ f.nameAr }}</td>
+          <td>{{ f.customerCurrency}}</td>
+          <td>{{ f.paramDesc }}</td>
+
+          <!--<td>{{ f.saasCustomerId }}</td>-->
+          <!--<td>{{ f.customerCurrency }}</td>-->
+          <!--<td>{{ f.natureOfBusiness }}</td>-->
+
           <td>
-            <button class="btn btn-edit" (click)="editFran(f)">Edit</button>&nbsp;
-            <button class="btn btn-delete" (click)="deleteFran(f.franCode)">Delete</button>
+            <span class="badge"
+                  [ngClass]="f.vatEnabled ? 'bg-success' : 'bg-secondary'">
+              {{ f.vatEnabled ? 'Y' : 'N' }}
+            </span>
+          </td>
+          <td>
+            <button class="btn btn-edit" (click)="editFran(f)">Edit</button>
+            &nbsp;
+            <button class="btn btn-delete" (click)="deleteFran(f.fran)">Delete</button>
           </td>
         </tr>
+
         <tr *ngIf="franList.length === 0">
-          <td colspan="5" class="text-muted text-center py-3">
+          <td colspan="9" class="text-muted text-center py-3">
             No FRAN records found
           </td>
         </tr>
       </tbody>
     </table>
   </div>
+
 </div>

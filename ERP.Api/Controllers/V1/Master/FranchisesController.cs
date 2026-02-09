@@ -1,5 +1,6 @@
 using Asp.Versioning;
 using ERP.Application.Interfaces.Services;
+using ERP.Contracts.Finance;
 using ERP.Contracts.Master;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -64,4 +65,37 @@ public sealed class FranchisesController(IFranchisesService svc) : ControllerBas
         var ok = await _svc.DeleteAsync(fran, ct);
         return ok ? NoContent() : NotFound();
     }
+
+//    // Added by: Nishanth
+//    // Added on: 04-02-2026
+
+//#if DEBUG
+//    [AllowAnonymous]
+//#endif
+//    [HttpGet("dropdown")]
+//    [Authorize(Policy = "erp.api.read")]
+//    public async Task<IActionResult> GetSaasCustomerDropdown(CancellationToken ct)
+//    {
+//        var result = await _svc.GetSaasCustomerDropdownAsync();
+//        return Ok(result);
+//    }
+
+//#if DEBUG
+//    [AllowAnonymous]
+//#endif
+//    [HttpGet("customer-currency/dropdown")]
+//    [Authorize(Policy = "erp.api.read")]
+
+//    public async Task<IActionResult> GetCustomerCurrencyDropdown()
+//    {
+//        var result = await _svc.GetCustomerCurrencyDropdownAsync();
+//        return Ok(result);
+//    }
+//    // Added: Added method to loadparam
+//    // Added by: Nishanth
+//    // Added on: 06-02-2026
+
+//    [HttpGet("load/{fran}/{paramType}")]
+//    public async Task<ActionResult<IReadOnlyList<LoadParam>>> LoadParam(string fran, string paramType, CancellationToken ct)
+//        => Ok(await svc.LoadByParamAsync(fran, paramType, ct));
 }

@@ -8,6 +8,7 @@ using ERP.Application.Interfaces.Services;
 using ERP.Application.Services;
 using ERP.Infrastructure.DependencyInjection;
 using ERP.Infrastructure.Logging;
+using ERP.Infrastructure.Persistence.Repositories;
 using ERP.Repositories.SALES;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -178,6 +179,9 @@ builder.Services.AddScoped<IPurchaseOrdersService, PurchaseOrdersService>();
 builder.Services.AddScoped<IShipmentsService, ShipmentsService>();
 builder.Services.AddScoped<IBranchesService, BranchesService>();
 builder.Services.AddScoped<IFranchisesService, FranchisesService>();
+// Added by: Nishanth
+// Added on: 04-02-2026
+builder.Services.AddScoped<IFranchisesRepository, FranchisesRepository>();
 builder.Services.AddScoped<ICurrenciesService, CurrenciesService>();
 builder.Services.AddScoped<IMakesService, MakesService>();
 builder.Services.AddScoped<IStoresService, StoresService>();
@@ -193,6 +197,8 @@ builder.Services.AddScoped<IReceiptsService, ReceiptsService>();
 builder.Services.AddScoped<IShipmentDetailsService, ShipmentDetailsService>();
 builder.Services.AddScoped<IPackingService, PackingService>();
 builder.Services.AddScoped<ICartonsService, CartonsService>();
+
+
 
 // New services for full coverage
 builder.Services.AddScoped<IAuthorityService, AuthorityService>();

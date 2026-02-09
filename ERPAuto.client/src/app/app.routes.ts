@@ -25,12 +25,12 @@ import { PoInquiryComponent } from './POS/po-inquiry/po-inquiry.component';
 import { CustomerOrderComponent } from './MASTER/CustomerOrder/customer-order.component';
 import { CustomerOrderListComponent } from './MASTER/CustomerOrder/customer-order-list.component';
 // customer web portal 
-//import { Registration } from './registration/registration';
+import { Registration } from './registration/registration';
 //import { ViscardComponent } from './viscard/viscard';
 
 export const routes: Routes = [
   /* 🔹 Standalone page (NO master layout) */
-  //{ path: 'register', component: Registration },
+  { path: 'register', component: Registration },
   { path: 'login', component: LoginComponent },
   { path: 'workorder', component: WorkOrderComponent },
   { path: 'master', component: MasterComponent },
