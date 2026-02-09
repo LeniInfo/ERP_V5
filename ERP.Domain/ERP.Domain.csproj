@@ -8,7 +8,11 @@
 
   <ItemGroup>
     <PackageReference Include="Dapper" Version="2.1.66" />
+<<<<<<< HEAD
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.1">
+=======
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.0">
+>>>>>>> bf4536ad25e42144e3814695c42fad2bb6622520
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>

@@ -10,6 +10,7 @@ public interface ICustomerOrdersRepository
     Task<CustomerOrderHeader> AddHeaderAsync(CustomerOrderHeader entity, CancellationToken ct);
     Task<CustomerOrderHeader?> UpdateHeaderAsync(CustomerOrderHeader entity, CancellationToken ct);
     Task<bool> DeleteHeaderAsync(string fran, string branch, string warehouse, string cordType, string cordNo, CancellationToken ct);
+    Task<string> GetNextOrderNumberAsync(CancellationToken ct);
 
     // Details
     Task<CustomerOrderDetail?> GetDetailByKeyAsync(string fran, string branch, string warehouse, string cordType, string cordNo, string cordSrl, CancellationToken ct);

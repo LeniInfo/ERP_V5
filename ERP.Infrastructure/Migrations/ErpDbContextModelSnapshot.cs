@@ -223,13 +223,11 @@ namespace ERP.Infrastructure.Migrations
 
             modelBuilder.Entity("ERP.Domain.Entities.Branch", b =>
                 {
-                    b.Property<decimal>("BranchCode")
+                    b.Property<string>("BranchCode")
                         .ValueGeneratedOnAdd()
                         .HasPrecision(22)
-                        .HasColumnType("decimal(22,0)")
+                        .HasColumnType("nvarchar(450)")
                         .HasColumnName("BRCH");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<decimal>("BranchCode"));
 
                     b.Property<string>("CreateBy")
                         .IsRequired()
@@ -269,12 +267,6 @@ namespace ERP.Infrastructure.Migrations
                         .IsUnicode(true)
                         .HasColumnType("nvarchar(100)")
                         .HasColumnName("NAMEAR");
-
-                    b.Property<string>("RefNo")
-                        .IsRequired()
-                        .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)")
-                        .HasColumnName("REFNO");
 
                     b.Property<string>("UpdateBy")
                         .IsRequired()
@@ -1474,6 +1466,12 @@ namespace ERP.Infrastructure.Migrations
                         .HasColumnType("nvarchar(10)")
                         .HasColumnName("FRAN");
 
+                    b.Property<string>("CUSTOMERCURRENCY")
+                        .IsRequired()
+                        .HasMaxLength(1)
+                        .HasColumnType("nvarchar(1)")
+                        .HasColumnName("CUSTOMERCURRENCY");
+
                     b.Property<string>("CreateBy")
                         .IsRequired()
                         .HasMaxLength(10)
@@ -1493,6 +1491,12 @@ namespace ERP.Infrastructure.Migrations
                     b.Property<DateTime>("CreateTm")
                         .HasColumnType("datetime2")
                         .HasColumnName("CREATETM");
+
+                    b.Property<string>("NATUREOFBUSINESS")
+                        .IsRequired()
+                        .HasMaxLength(1)
+                        .HasColumnType("nvarchar(1)")
+                        .HasColumnName("NATUREOFBUSINESS");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -1532,6 +1536,12 @@ namespace ERP.Infrastructure.Migrations
                     b.Property<DateTime>("UpdateTm")
                         .HasColumnType("datetime2")
                         .HasColumnName("UPDATETM");
+
+                    b.Property<string>("VATENABLED")
+                        .IsRequired()
+                        .HasMaxLength(1)
+                        .HasColumnType("nvarchar(1)")
+                        .HasColumnName("VATENABLED");
 
                     b.HasKey("Fran");
 
@@ -4937,6 +4947,9 @@ namespace ERP.Infrastructure.Migrations
                         .HasDefaultValue(0m)
                         .HasColumnName("NOOFWORKS");
 
+                    b.Property<decimal>("Qty")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<decimal>("TotalValue")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("numeric(22,3)")
@@ -4976,6 +4989,14 @@ namespace ERP.Infrastructure.Migrations
                         .HasColumnType("numeric(22,0)")
                         .HasDefaultValue(0m)
                         .HasColumnName("VEHICLEID");
+
+                    b.Property<string>("WorkDesc")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("WorkDescAr")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("WorkDt")
                         .ValueGeneratedOnAdd()
@@ -5763,103 +5784,6 @@ namespace ERP.Infrastructure.Migrations
                     b.HasKey("Fran", "Branch", "WarehouseCode", "ShipmentType", "ShipmentNumber", "ShipmentSerial");
 
                     b.ToTable("SINVDET", "dbo");
-                });
-
-            modelBuilder.Entity("ERP.Domain.Entities.SpGetPartsResult", b =>
-                {
-                    b.Property<bool>("ACTIVE")
-                        .HasColumnType("bit");
-
-                    b.Property<decimal?>("AVGM6")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("BARCODE")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CATEGORY")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal?>("CMSALE")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("COO")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CREATEBY")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("CREATEDT")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CREATEREMARKS")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("DESC")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("FINALPART")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal?>("FOB")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("FRAN")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("GROUP")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal>("ID")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("INVCLASS")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal?>("LC")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal?>("LMSALE")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal?>("M12SALE")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal?>("M3SALE")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal?>("M6SALE")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("MAKE")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal?>("NETWEIGHT")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("PART")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal?>("STOCK")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("STOCKKEY")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("SUBSPART")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("UPDATEBY")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("UPDATEDT")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("UPDATEMARKS")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.ToTable((string)null);
-
-                    b.ToView(null, (string)null);
                 });
 
             modelBuilder.Entity("ERP.Domain.Entities.Store", b =>
