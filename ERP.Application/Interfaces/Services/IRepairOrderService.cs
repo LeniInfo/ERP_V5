@@ -9,14 +9,7 @@ namespace ERP.Application.Interfaces.Services
     {
         Task<List<RepairHdr>> GetAllAsync();
 
-        Task<(RepairHdr Header, List<RepairOrder> Details)> GetHdrDetAsync(
-    string fran,
-    string brch,
-    string workshop,
-    string repairType,
-    string repairNo,
-    string customer
-);
+        Task<(RepairHdr Header, List<RepairOrder> Details)> GetHdrDetAsync(string fran, string brch, string workshop, string repairType, string repairNo, string customer);
 
         Task AddAsync(RepairOrderCreateDto dto);
 
