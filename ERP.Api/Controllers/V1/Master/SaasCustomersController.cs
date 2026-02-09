@@ -20,17 +20,11 @@ namespace ERP.Api.Controllers.V1.Master
     public sealed class SaasCustomersController : ControllerBase
     {
         private readonly ISaasCustomerService _svc;
-    
-
-        public SaasCustomersController(ISaasCustomerService svc)
-        {
-            _svc = svc;
-        }
-
         private readonly ErpDbContext _context;
 
-        public SaasCustomersController(ErpDbContext context)
+        public SaasCustomersController(ISaasCustomerService svc, ErpDbContext context)
         {
+            _svc = svc;
             _context = context;
         }
 
@@ -66,7 +60,8 @@ namespace ERP.Api.Controllers.V1.Master
             if (string.IsNullOrEmpty(lastId))
                 return "A";
 
-            char nextChar = (char)(lastId[0] + 1);
+            char current = char.ToUpperInvariant(lastId[0]);
+            char nextChar = (char)(current + 1);
 
             return nextChar.ToString();
         }

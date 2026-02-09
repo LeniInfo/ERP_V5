@@ -5,8 +5,6 @@ namespace ERP.Infrastructure.Persistence;
 
 public sealed class ErpDbContext(DbContextOptions<ErpDbContext> options) : DbContext(options)
 {
-    public readonly object SaasCustomers;
-
     public DbSet<Part> Parts => Set<Part>();
     public DbSet<Supplier> Suppliers => Set<Supplier>();
     public DbSet<MasterType> MasterTypes => Set<MasterType>();

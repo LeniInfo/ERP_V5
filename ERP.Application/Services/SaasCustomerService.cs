@@ -108,12 +108,12 @@ namespace ERP.Application.Services
             Phone2 = e.Phone2,
             Email = e.Email,
             Address = e.Address,
-            CreateDate = e.CreateDt,
-            CreateTime = e.CreateTm,
+            CreateDt = e.CreateDt,
+            CreateTm = e.CreateTm,
             CreateBy = e.CreateBy,
             CreateRemarks = e.CreateRemarks,
-            UpdateDate = e.UpdateDt,
-            UpdateTime = e.UpdateTm,
+            UpdateDt = e.UpdateDt,
+            UpdateTm = e.UpdateTm,
             UpdateBy = e.UpdateBy,
             UpdateRemarks = e.UpdateMarks
         };

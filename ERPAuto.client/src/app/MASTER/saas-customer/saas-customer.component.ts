@@ -45,6 +45,7 @@ export class SaasCustomerComponent implements OnInit {
   loadNextCustomerId(): void {
     this.customerService.getNextCustomerId().subscribe({
       next: (id) => {
+        console.log(id);
         this.customer.saasCustomerId = id;
       },
       error: () => {

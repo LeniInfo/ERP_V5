@@ -197,7 +197,7 @@ export class MasterTypeComponent implements OnInit {
     this.http.delete(url).subscribe({
       next: () => {
         alert('Deleted successfully');
-        this.loadMasterTypeList();   // reload table
+        this.loadMasterTypesByType();   // reload table
         this.resetForm();            // optional
       },
       error: () => alert('Delete failed')

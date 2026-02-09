@@ -39,10 +39,12 @@ export class SaasCustomerService {
   }
 
   getNextCustomerId(): Observable<string> {
-    return this.http.get<string>(
-      `${this.baseUrl}/next-id`
+    return this.http.get(
+      `${this.baseUrl}/next-id`,
+      { responseType: 'text' }
     );
   }
+
   // 🔹 Get customer by ID (optional but recommended)
   getCustomerById(saasCustomerId: string): Observable<SaasCustomer> {
     return this.http.get<SaasCustomer>(

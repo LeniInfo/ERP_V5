@@ -4,7 +4,7 @@
     public sealed class SaasCustomerDto
     {
         /// <summary>SaaS Customer ID (Primary Key)</summary>
-        public string? SaasCustomerId { get; set; } = null!;
+        public string SaasCustomerId { get; set; } = string.Empty;
 
         public string? SaasCustomerName { get; set; }
 
@@ -16,17 +16,17 @@
 
         public string? Address { get; set; }
 
-        public DateTime? CreateDate { get; set; }
+        public DateTime? CreateDt { get; set; }
 
-        public DateTime? CreateTime { get; set; }
+        public DateTime? CreateTm { get; set; }
 
         public string? CreateBy { get; set; }
 
         public string? CreateRemarks { get; set; }
 
-        public DateTime? UpdateDate { get; set; }
+        public DateTime? UpdateDt { get; set; }
 
-        public DateTime? UpdateTime { get; set; }
+        public DateTime? UpdateTm { get; set; }
 
         public string? UpdateBy { get; set; }
 
