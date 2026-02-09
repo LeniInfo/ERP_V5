@@ -65,6 +65,38 @@ public sealed class CustomerOrdersRepository(ErpDbContext db, ILogger<CustomerOr
         return true;
     }
 
+    public async Task<string> GetNextOrderNumberAsync(CancellationToken ct)
+    {
+        // Get all order numbers (filter in memory to avoid EF translation issues)
+        var allOrderNos = await db.CustomerOrderHeaders
+            .AsNoTracking()
+            .Select(h => h.CordNo)
+            .ToListAsync(ct);
+
+        // Find the highest 4-digit number from existing order numbers
+        int maxNumber = 0;
+        foreach (var orderNo in allOrderNos)
+        {
+            if (!string.IsNullOrEmpty(orderNo) && 
+                orderNo.Length == 4 && 
+                orderNo.All(char.IsDigit) &&
+                int.TryParse(orderNo, out int num) && 
+                num > maxNumber)
+            {
+                maxNumber = num;
+            }
+        }
+
+        // Generate next 4-digit order number (0001 to 9999)
+        int nextNumber = maxNumber + 1;
+        if (nextNumber > 9999)
+        {
+            throw new InvalidOperationException("Maximum order number limit reached (9999)");
+        }
+
+        return nextNumber.ToString("D4"); // Format as 4-digit string with leading zeros
+    }
+
     // Details
     public async Task<CustomerOrderDetail?> GetDetailByKeyAsync(string fran, string branch, string warehouse, string cordType, string cordNo, string cordSrl, CancellationToken ct)
     {

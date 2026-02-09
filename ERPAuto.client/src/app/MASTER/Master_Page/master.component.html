@@ -2,7 +2,7 @@
   <div class="container-fluid">
     <!-- Logo -->
     <a class="navbar-brand d-flex align-items-center" routerLink="/">
-      <img src="" alt="ERP Logo" class="logo-img" />
+      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQj3WmoXUtFbboUlVY2cKwRhpA4dHc9RvVIFAuEG2WxXSTkmmbelOJFkHE&s" alt="ERP Logo" class="logo-img" />
     </a>
 
     <!-- Center text -->
@@ -44,6 +44,11 @@
         <i class="bi bi-file-earmark-text-fill"></i>
         <span class="icon-text">PO</span>
       </div>
+    
+      <div class="icon-item" [class.active]="activeMenu === 'WO'" (click)="toggleMenu('wo')">
+        <i class="bi bi-file-earmark-text-fill"></i>
+        <span class="icon-text">WO</span>
+      </div>
 
       <div class="icon-item" [class.active]="activeMenu === 'reports'" (click)="toggleMenu('reports')">
         <i class="bi bi-bar-chart-fill"></i>
@@ -61,8 +66,8 @@
       <div *ngIf="activeMenu === 'master'">
         <h6 class="menu-title">MASTER</h6>
         <ul class="menu-list">
-          <li><a [routerLink]="['./customer-order-form']" class="menu-link">Add New Customer</a></li>
-          <li><a routerLink="/customer" class="menu-link">Customer Inquiry</a></li>
+          <li><a [routerLink]="['./customer']" class="menu-link">Customer</a></li>
+          <li><a [routerLink]="['./customer/add']" class="menu-link">Add New Customer</a></li>
           <li><a [routerLink]="['./fran']" class="menu-link">Fran</a></li>
           <li><a [routerLink]="['./inquiry']" class="menu-link">Parts</a></li>
           <li><a [routerLink]="['./supplier']" class="menu-link">Supplier</a></li>
@@ -88,7 +93,7 @@
         <h6 class="menu-title">SALES</h6>
         <ul class="menu-list">
           <li><a routerLink="pos" class="menu-link">POS</a></li>
-          <li><a routerLink="customer-order" class="menu-link">Customer Order</a></li>
+          <li><a routerLink="customer-order-list" class="menu-link">Customer Order</a></li>
           <li><a routerLink="/saleinvoice" class="menu-link">Sale Invoice</a></li>
         </ul>
       </div>
@@ -98,7 +103,29 @@
         <ul class="menu-list">
           <li><a routerLink="purchase-order" class="menu-link">Create PO</a></li>
           <li><a routerLink="po-inquiry" class="menu-link">PO Inquiry</a></li>
-          <!--<li><a routerLink="purchase-order" class="menu-link">Purchase Order</a></li>-->
+          <li><a routerLink="supplier-invoice" class="menu-link">Create Supplier Invoice</a></li>
+          <li><a routerLink="supplier-invoice-inquiry" class="menu-link">Supplier Invoice Inquiry</a></li>
+          <li><a routerLink="GRN" class="menu-link">GRN</a></li>
+          <li><a routerLink="work-order" class="menu-link">Work Order</a></li>
+          <li><a routerLink="work-order-inquiry" class="menu-link">WO Inquiry</a></li>
+          <li><a routerLink="work-order-invoice" class="menu-link">Work Order Invoice</a></li>
+          <li><a routerLink="work-order-invoice-inquiry" class="menu-link">Work Order Invoice Inquiry</a></li>
+        </ul>
+      </div>
+
+      <div *ngIf="activeMenu === 'wo'">
+        <h6 class="menu-title">WO</h6>
+        <ul class="menu-list">
+          <li><a class="menu-link">W1- Work Master</a></li>
+          <li><a class="menu-link">W2-Work Order Creation</a></li>
+          <li><a class="menu-link">W3-Work order Inquiry</a></li>
+          <li><a class="menu-link">W4-Work order Invoice</a></li>
+          <li><a class="menu-link">W5-Work order invoice Inquiry</a></li>        
+          <li><a [routerLink]="['./work-quotation-form']" class="menu-link">W6-Work Quotation Creation</a></li>
+          <li><a [routerLink]="['./work-quotation-list']" class="menu-link">W7-Work Quotation Inquiry</a></li>
+          <li><a [routerLink]="['./work-enquiry']" class="menu-link">W8-Work Inquiry Creation</a></li>
+          <li><a [routerLink]="['./work-enquiry-list']" class="menu-link">W9-Work Inquiry</a></li>
+          <li><a class="menu-link">W10-Work costing</a></li>
         </ul>
       </div>
 
