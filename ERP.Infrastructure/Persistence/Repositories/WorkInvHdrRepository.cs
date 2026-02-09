@@ -110,7 +110,7 @@ namespace ERP.Infrastructure.Repositories
                         Workshop = dto.Header.Workshop,
                         WorkInvType = dto.Header.WorkInvType,
                         WorkInvDt = dto.Header.WorkInvDt,
-                        Customer = dto.Header.Customer,
+                        Customer = dto.Header.Customer, 
                         VehicleId = dto.Header.VehicleId,
                         Currency = dto.Header.Currency,
                         NoOfJobs = dto.Header.NoOfJobs,
