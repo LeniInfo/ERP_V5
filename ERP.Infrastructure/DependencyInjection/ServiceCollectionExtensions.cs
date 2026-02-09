@@ -1,19 +1,19 @@
-﻿using Dapper;
-using ERP.Application.Abstractions.Logging;
-using ERP.Application.Interfaces.Repositories;
+﻿using System.Data;
+using Microsoft.Data.SqlClient;
+using Dapper;
 using ERP.Application.Reporting.Interfaces;
 using ERP.Application.Reporting.Interfaces.Repositories;
-using ERP.Application.Reporting.Services;
-using ERP.Domain.Interfaces;
-using ERP.Infrastructure.Logging;
-using ERP.Infrastructure.Persistence;
+using ERP.Application.Interfaces.Repositories;
 using ERP.Infrastructure.Persistence.Repositories;
 using ERP.Infrastructure.Repositories;
-using Microsoft.Data.SqlClient;
-using Microsoft.EntityFrameworkCore;
+using ERP.Application.Reporting.Services;
+using ERP.Application.Abstractions.Logging;
+using ERP.Infrastructure.Logging;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using System.Data;
+using Microsoft.EntityFrameworkCore;
+using ERP.Infrastructure.Persistence;
+using ERP.Domain.Interfaces;
 
 namespace ERP.Infrastructure.DependencyInjection
 {
@@ -46,9 +46,8 @@ namespace ERP.Infrastructure.DependencyInjection
             services.AddScoped<IPackingRepository, PackingRepository>();
             services.AddScoped<ICartonsRepository, CartonsRepository>();
             services.AddScoped<IWorkMasterRepository, WorkMasterRepository>();
-
             services.AddScoped<IRepairOrderRepository, RepairOrderRepository>();
-
+            
             // New repositories for full coverage
             services.AddScoped<IAuthorityRepository, AuthorityRepository>();
             services.AddScoped<ICompetitorRepository, CompetitorRepository>();
@@ -63,6 +62,10 @@ namespace ERP.Infrastructure.DependencyInjection
             services.AddScoped<IPoB2BRepository, PoB2BRepository>();
             services.AddScoped<IChartOfAccountsRepository, ChartOfAccountsRepository>();
             services.AddScoped<IParamsRepository, ParamsRepository>();
+            services.AddScoped<IQuotationHeaderRepository, QuotationHeaderRepository>();
+            services.AddScoped<IQuotationDetailRepository, QuotationDetailRepository>();
+            services.AddScoped<IRequestHeaderRepository, RequestHeaderRepository>();
+            services.AddScoped<IRequestDetailRepository, RequestDetailRepository>();
             
             SqlMapper.AddTypeHandler(new DateOnlyTypeHandler());
             return services;

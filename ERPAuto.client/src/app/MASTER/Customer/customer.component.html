@@ -29,8 +29,8 @@
       </div>
 
       <!-- Customer Table -->
-      <div *ngIf="!isLoading" class="table-responsive">
-        <table class="table table-hover table-bordered align-middle">
+      <div *ngIf="!isLoading" class="table-responsive" style="max-width: 100%; overflow-x: auto;">
+        <table class="table table-hover table-bordered align-middle" style="width: 100%; min-width: 800px;">
           <thead>
             <tr>
               <th>S.No</th>
@@ -176,11 +176,3 @@
   </div>
 </div>
 
-<!-- Add/Edit Modal -->
-<div class="modal fade"
-     [class.show]="showModal"
-     [style.display]="showModal ? 'block' : 'none'"
-     tabindex="-1"
-     role="dialog"
-     [attr.aria-hidden]="!showModal">
-  (file created)

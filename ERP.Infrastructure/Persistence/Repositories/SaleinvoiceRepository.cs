@@ -107,6 +107,48 @@ namespace ERP.Repositories.SALES
             }
 
             return result;
+        } 
+        
+        public async Task<List<workmasRes>> getworkmas(WorkmasReq request)
+        {
+            List<workmasRes> result = new List<workmasRes>();
+
+            using (SqlConnection con = new SqlConnection(_configuration.GetConnectionString("ERP")))
+            using (SqlCommand cmd = new SqlCommand("SP_GetWorkMaster", con))
+            {
+                cmd.CommandType = CommandType.StoredProcedure;
+
+                cmd.Parameters.Add("@Mode", SqlDbType.NVarChar, 50).Value = "getWork";
+                cmd.Parameters.Add("@Type", SqlDbType.NVarChar, 50).Value = request.Type;
+                cmd.Parameters.Add("@Fran", SqlDbType.NVarChar, 10).Value = request.Fran;
+
+                await con.OpenAsync();
+
+                using (SqlDataReader rdr = await cmd.ExecuteReaderAsync())
+                {
+                    while (await rdr.ReadAsync())
+                    {
+                        //warning changes(02-01-2026)
+                        result.Add(new workmasRes
+                        {
+                            WORKID = rdr["WORKID"] as string ?? string.Empty,
+                            Name = rdr["Name"] as string ?? string.Empty,
+                            UNITPRICE = rdr["UNITPRICE"] as string ?? string.Empty,
+                            ESTIMATED = rdr["ESTIMATED"] as string ?? string.Empty,
+                            WORKTYPE = rdr["WORKTYPE"] as string ?? string.Empty
+
+                        });
+
+                        //result.Add(new paramres
+                        //{
+                        //    PARAMVALUE = rdr["PARAMVALUE"]?.ToString(),
+                        //    PARAMDESC = rdr["PARAMDESC"]?.ToString()
+                        //});
+                    }
+                }
+            }
+
+            return result;
         }
 
     }

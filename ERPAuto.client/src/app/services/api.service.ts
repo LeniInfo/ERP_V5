@@ -508,6 +508,3 @@ export interface DetailDTO {
   createby: string;
 }
 
-
-
-

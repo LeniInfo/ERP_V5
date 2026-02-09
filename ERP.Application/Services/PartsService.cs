@@ -36,6 +36,13 @@ namespace ERP.Application.Services
             return list.Select(ToDto).ToList();
         }
 
+        /// <summary>Search parts by name.</summary>
+        public async Task<IReadOnlyList<PartDto>> SearchByNameAsync(string name, CancellationToken ct)
+        {
+            var rows = await _repo.SearchByNameAsync(name, ct);
+            return rows.Select(ToDto).ToList();
+        }
+
         // Added: Added to store parts
         // Added by: Vaishnavi
         // Added on: 10-12-2025
@@ -53,6 +60,7 @@ namespace ERP.Application.Services
             Description = e.Description,
             Make = e.Make,
             Active = e.Active,
+            Fob = e.Fob,
             Category = e.Category,
             SubsPart = e.SubsPart,
             FinalPart = e.FinalPart
