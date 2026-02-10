@@ -1,4 +1,4 @@
-﻿using System.Data;
+using System.Data;
 using Microsoft.Data.SqlClient;
 using Dapper;
 using ERP.Application.Reporting.Interfaces;
@@ -22,11 +22,16 @@ namespace ERP.Infrastructure.DependencyInjection
         public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration cfg)
         {
             services.AddScoped<IDbConnection>(_ => new SqlConnection(cfg.GetConnectionString("DefaultConnection")));
+
             services.AddDbContext<ErpDbContext>(opt =>
                 opt.UseSqlServer(cfg.GetConnectionString("DefaultConnection")));
+
             services.AddSingleton(typeof(IAppLogger<>), typeof(AppLoggerAdapter<>));
+
             services.AddScoped<IPartsRepository, PartsRepository>();
             services.AddScoped<ISuppliersRepository, SuppliersRepository>();
+            services.AddScoped<ISaasCustomerRepository, SaasCustomerRepository>();
+            services.AddScoped<IMasterTypesRepository, MasterTypesRepository>();
             services.AddScoped<IInventoryLocationsRepository, InventoryLocationsRepository>();
             services.AddScoped<IPurchaseOrdersRepository, PurchaseOrdersRepository>();
             services.AddScoped<IShipmentsRepository, ShipmentsRepository>();
@@ -40,14 +45,14 @@ namespace ERP.Infrastructure.DependencyInjection
             services.AddScoped<ICustomersRepository, CustomersRepository>();
             services.AddScoped<IUsersRepository, UsersRepository>();
             services.AddScoped<IWorkshopsRepository, WorkshopsRepository>();
+            services.AddScoped<IWorkMasterRepository, WorkMasterRepository>();
             services.AddScoped<ISalesRepository, SalesRepository>();
             services.AddScoped<IReceiptsRepository, ReceiptsRepository>();
             services.AddScoped<IShipmentDetailsRepository, ShipmentDetailsRepository>();
             services.AddScoped<IPackingRepository, PackingRepository>();
             services.AddScoped<ICartonsRepository, CartonsRepository>();
-            services.AddScoped<IWorkMasterRepository, WorkMasterRepository>();
             services.AddScoped<IRepairOrderRepository, RepairOrderRepository>();
-            
+
             // New repositories for full coverage
             services.AddScoped<IAuthorityRepository, AuthorityRepository>();
             services.AddScoped<ICompetitorRepository, CompetitorRepository>();
@@ -66,7 +71,7 @@ namespace ERP.Infrastructure.DependencyInjection
             services.AddScoped<IQuotationDetailRepository, QuotationDetailRepository>();
             services.AddScoped<IRequestHeaderRepository, RequestHeaderRepository>();
             services.AddScoped<IRequestDetailRepository, RequestDetailRepository>();
-            
+
             SqlMapper.AddTypeHandler(new DateOnlyTypeHandler());
             return services;
         }

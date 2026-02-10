@@ -1,178 +1,152 @@
-<div class="container-fluid mt-4 mb-5">
-  <div class="card shadow-sm mb-4">
-    <div class="card-header bg-primary text-white">
-      <h4 class="mb-0">
-        <i class="bi bi-people-fill me-2"></i>Customer
-      </h4>
+<div class="container">
+  <div class="main-card">
+    <div class="inner-navbar d-flex justify-content-between align-items-center">
+      <h5>Customer Master</h5>
     </div>
-    <div class="card-body">
-      <!-- Add Button and Export -->
-      <div class="row mb-3">
-        <div class="col-12 text-end">
-          <button class="btn btn-success" (click)="openAddModal()">
-            <i class="bi bi-plus-circle me-2"></i>Add New Customer
-          </button>
-          <button class="btn btn-outline-secondary ms-2" type="button" (click)="clearAllFilters()">
-            <i class="bi bi-x-circle me-2"></i>Clear All Filters
-          </button>
-          <button class="btn btn-info ms-2 text-white" (click)="exportToExcel()">
-            <i class="bi bi-file-earmark-excel me-2"></i>Export to Excel
-          </button>
-        </div>
-      </div>
 
-      <!-- Loading Spinner -->
-      <div *ngIf="isLoading" class="text-center py-5">
-        <div class="spinner-border text-primary" role="status">
-          <span class="visually-hidden">Loading...</span>
+    <div class="form-section">
+      <!-- Customer Creation Form -->
+      <form (ngSubmit)="onSubmit()" #customerForm="ngForm" class="row g-3">
+
+        <input type="hidden" name="customerCode" [(ngModel)]="customer.customerCode" />
+
+        <!-- ROW 1 -->
+        <div class="col-md-3">
+          <label class="form-label">Customer Code</label>
+          <input type="text"
+                 class="form-control"
+                 name="customerCode"
+                 [class.bg-light]="isEditing"
+                 [readonly]="isEditing"
+                 [(ngModel)]="customer.customerCode"
+                 readonly/>
         </div>
+
+        <div class="col-md-3">
+          <label class="form-label">Customer Name</label>
+          <input type="text"
+                 class="form-control"
+                 name="name"
+                 [(ngModel)]="customer.name"
+                 (ngModelChange)="onCustomerNameChange($event)"
+                 required />
+        </div>
+
+        <div class="col-md-3">
+          <label class="form-label">Arabic Name</label>
+          <input type="text"
+                 class="form-control"
+                 name="nameAr"
+                 [(ngModel)]="customer.nameAr"
+                 (ngModelChange)="arabicManuallyEdited = true"
+                 dir="rtl"/>
+        </div>
+
+        <div class="col-md-3">
+          <label class="form-label">Phone</label>
+          <input type="text"
+                 class="form-control"
+                 name="phone"
+                 [(ngModel)]="customer.phone" />
+        </div>
+
+        <!-- ROW 2 -->
+        <div class="col-md-3">
+          <label class="form-label">Email</label>
+          <input type="email"
+                 class="form-control"
+                 name="email"
+                 [(ngModel)]="customer.email" />
+        </div>
+
+        <div class="col-md-3">
+          <label class="form-label">Address</label>
+          <input type="text"
+                 class="form-control"
+                 name="address"
+                 [(ngModel)]="customer.address" />
+        </div>
+
+        <div class="col-md-3">
+          <label class="form-label">VAT No</label>
+          <input type="text"
+                 class="form-control"
+                 name="vatNo"
+                 [(ngModel)]="customer.vatNo" />
+        </div>
+
+        <!-- BUTTON COLUMN -->
+        <div class="col-md-3 d-flex align-items-end gap-1">
+
+          <button type="submit" class="btn btn-primary w-100">
+            {{ isEditing ? 'Update Customer' : 'Add Customer' }}
+          </button>
+
+          <button type="button"
+                  class="btn btn-outline-primary w-97"
+                  (click)="onClear()">
+            Clear
+          </button>
+
+        </div>
+
+      </form>
+
+      <!-- Customer List -->
+      <div class="d-flex align-items-center mt-3 gap-2 flex-nowrap">
+        <h6 class="mb-0 me-2 text-nowrap">Customer List</h6>
+        <input type="text"
+               [(ngModel)]="searchText"
+               (ngModelChange)="applyFilter()"
+               class="form-control search-box flex-grow-1"
+               placeholder="Search customer..." />
       </div>
 
       <!-- Customer Table -->
-      <div *ngIf="!isLoading" class="table-responsive" style="max-width: 100%; overflow-x: auto;">
-        <table class="table table-hover table-bordered align-middle" style="width: 100%; min-width: 800px;">
-          <thead>
-            <tr>
-              <th>S.No</th>
-              <th>Customer Code</th>
-              <th>Name</th>
-              <th>Name(AR)</th>
-              <th>Phone</th>
-              <th>Email</th>
-              <th>Address</th>
-              <th>VAT No</th>
-              <th class="text-center" style="width: 120px;">Actions</th>
-            </tr>
-            <tr class="bg-light">
-              <th></th>
-              <th></th>
-              <th>
-                <input type="text"
-                       class="form-control form-control-sm"
-                       placeholder="Search..."
-                       [(ngModel)]="searchFilters.customerName"
-                       (keyup)="onColumnSearch()" />
-              </th>
-              <th>
-                <input type="text"
-                       class="form-control form-control-sm"
-                       placeholder="Search..."
-                       [(ngModel)]="searchFilters.nameAr"
-                       (keyup)="onColumnSearch()" />
-              </th>
-              <th>
-                <input type="text"
-                       class="form-control form-control-sm"
-                       placeholder="Search..."
-                       [(ngModel)]="searchFilters.phone"
-                       (keyup)="onColumnSearch()" />
-              </th>
-              <th>
-                <input type="text"
-                       class="form-control form-control-sm"
-                       placeholder="Search..."
-                       [(ngModel)]="searchFilters.email"
-                       (keyup)="onColumnSearch()" />
-              </th>
-              <th>
-                <input type="text"
-                       class="form-control form-control-sm"
-                       placeholder="Search..."
-                       [(ngModel)]="searchFilters.address"
-                       (keyup)="onColumnSearch()" />
-              </th>
-              <th>
-                <input type="text"
-                       class="form-control form-control-sm"
-                       placeholder="Search..."
-                       [(ngModel)]="searchFilters.vatNo"
-                       (keyup)="onColumnSearch()" />
-              </th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let customer of paginatedCustomers; let i = index">
-              <td>{{ (currentPage - 1) * itemsPerPage + i + 1 }}</td>
-              <td><strong>{{ customer.customerCode }}</strong></td>
-              <td>{{ customer.name }}</td>
-              <td>{{ customer.nameAr }}</td>
-              <td>{{ customer.phone }}</td>
-              <td>{{ customer.email }}</td>
-              <td>{{ customer.address }}</td>
-              <td>{{ customer.vatNo }}</td>
-              <td>
-                <div class="d-flex justify-content-center align-items-center gap-1">
-                  <button class="btn btn-sm btn-primary"
-                          (click)="openEditModal(customer)"
-                          title="Edit">
-                    <i class="bi bi-pencil-square"></i>
+      <div class="table-container mt-1 fixed-rows-3" style="max-width:100%; overflow:auto;">
+        <div class="table-rounded">
+          <table class="table table-striped table-hover mb-0">
+            <thead class="table-header">
+              <tr>
+                <th>#</th>
+                <th>Customer Code</th>
+                <th>Customer Name</th>
+                <th>Arabic Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Address</th>
+                <th>VAT No</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr *ngFor="let c of filteredCustomers; let i = index">
+                <td>{{ i + 1 }}</td>
+                <td>{{ c.customerCode }}</td>
+                <td>{{ c.name }}</td>
+                <td>{{ c.nameAr }}</td>
+                <td>{{ c.email }}</td>
+                <td>{{ c.phone }}</td>
+                <td>{{ c.address }}</td>
+                <td>{{ c.vatNo }}</td>
+                <td>
+                  <button class="btn btn-sm btn-outline-primary me-1"
+                          (click)="onEdit(c)">
+                    Edit
                   </button>
-                  <button class="btn btn-sm btn-danger"
-                          (click)="deleteCustomer(customer)"
-                          title="Delete">
-                    <i class="bi bi-trash"></i>
+                  <button class="btn btn-sm btn-outline-danger"
+                          (click)="onDelete(c.customerCode)">
+                    Delete
                   </button>
-                </div>
-              </td>
-            </tr>
-            <tr *ngIf="paginatedCustomers.length === 0">
-              <td colspan="9" class="text-center text-muted py-4">
-                <i class="bi bi-inbox me-2"></i>No customers found
-              </td>
-            </tr>
-          </tbody>
-        </table>
+                </td>
+              </tr>
+            </tbody>
+
+          </table>
+        </div>
       </div>
 
-      <!-- Pagination -->
-      <div *ngIf="!isLoading" class="d-flex justify-content-between align-items-center mt-3 mb-0 flex-wrap gap-2" style="min-height: 50px;">
-        <div class="d-flex align-items-center gap-2 flex-wrap">
-          <span class="text-muted">Show:</span>
-          <select class="form-select form-select-sm"
-                  style="width: auto;"
-                  [(ngModel)]="itemsPerPage"
-                  (change)="onItemsPerPageChange()">
-            <option [value]="5">5</option>
-            <option [value]="10">10</option>
-            <option [value]="25">25</option>
-            <option [value]="50">50</option>
-            <option [value]="100">100</option>
-            <option [value]="0">All</option>
-          </select>
-          <span class="text-muted ms-2">
-            <span *ngIf="itemsPerPage > 0">
-              Showing {{ (currentPage - 1) * itemsPerPage + 1 }} to
-              {{ Math.min(currentPage * itemsPerPage, totalItems) }} of {{ totalItems }} entries
-            </span>
-            <span *ngIf="itemsPerPage === 0">
-              Showing all {{ totalItems }} entries
-            </span>
-          </span>
-        </div>
-        <nav *ngIf="totalPages > 1" class="d-flex align-items-center">
-          <ul class="pagination mb-0">
-            <li class="page-item" [class.disabled]="currentPage === 1">
-              <a class="page-link" (click)="changePage(currentPage - 1)" style="cursor: pointer;">
-                Previous
-              </a>
-            </li>
-            <li *ngFor="let page of getPageNumbers()"
-                class="page-item"
-                [class.active]="page === currentPage">
-              <a class="page-link" (click)="changePage(page)" style="cursor: pointer;">
-                {{ page }}
-              </a>
-            </li>
-            <li class="page-item" [class.disabled]="currentPage === totalPages">
-              <a class="page-link" (click)="changePage(currentPage + 1)" style="cursor: pointer;">
-                Next
-              </a>
-            </li>
-          </ul>
-        </nav>
-      </div>
     </div>
   </div>
 </div>
-

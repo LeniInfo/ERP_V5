@@ -73,8 +73,33 @@
           <li><a [routerLink]="['./supplier']" class="menu-link">Supplier</a></li>
           <!--<li><a [routerLink]="['./expense']" class="menu-link">Expense</a></li>-->
           <li><a [routerLink]="['./workshop']" class="menu-link">WorkShop</a></li>
-          <li><a [routerLink]="['./workmaster']" class="menu-link">Work Master</a></li>
+          <li>
+            <a [routerLink]="['/mastertype']"
+               [queryParams]="{ type: 'COMPETITOR' }"
+               class="menu-link">Competitor</a>
+          <li>
+            <a [routerLink]="['/mastertype']"
+               [queryParams]="{ type: 'LINER' }"
+               class="menu-link">Liner</a>
+          </li>
+          <li>
+            <a [routerLink]="['/mastertype']"
+               [queryParams]="{ type: 'TRANSPORTER' }"
+               class="menu-link">Transporter</a>
+          </li>
+          <li>
+            <a [routerLink]="['/mastertype']"
+               [queryParams]="{ type: 'CONTRACTOR' }"
+               class="menu-link">Contractor</a>
+          </li>
+          <li>
+            <a [routerLink]="['/mastertype']"
+               [queryParams]="{ type: 'PARTNER' }"
+               class="menu-link">Partners</a>
+          </li>
+          <li><a [routerLink]="['./saas-customer']" class="menu-link">Saas Customer</a></li>
         </ul>
+
       </div>
 
       <div *ngIf="activeMenu === 'account'">
@@ -116,7 +141,7 @@
       <div *ngIf="activeMenu === 'wo'">
         <h6 class="menu-title">WO</h6>
         <ul class="menu-list">
-          <li><a class="menu-link">W1- Work Master</a></li>
+          <li><a [routerLink]="['./workmaster']" class="menu-link">W1- Work Master</a></li>
           <li><a class="menu-link">W2-Work Order Creation</a></li>
           <li><a class="menu-link">W3-Work order Inquiry</a></li>
           <li><a class="menu-link">W4-Work order Invoice</a></li>
@@ -158,3 +183,4 @@
 <footer class="footer text-light text-center">
   © 2025 ERP Application. All rights reserved.
 </footer>
+>>>>>>> bf4536ad25e42144e3814695c42fad2bb6622520

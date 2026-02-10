@@ -154,7 +154,7 @@ export class CustomerOrderComponent implements OnInit, OnDestroy {
   // Search debounce
   private searchTimeout: any = null;
   private currentSearchRow: OrderRow | null = null;
-  
+
   // Default values for order header (can be made configurable)
   defaultFran: string = 'MAIN';
   defaultBranch: string = 'MAIN';
@@ -166,7 +166,7 @@ export class CustomerOrderComponent implements OnInit, OnDestroy {
     private apiService: ApiService,
     private router: Router,
     private route: ActivatedRoute
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     // No longer loading all parts upfront - will search on demand
@@ -175,7 +175,7 @@ export class CustomerOrderComponent implements OnInit, OnDestroy {
     this.loadStatusOptions();
     // Always add initial row
     this.addNewRow();
-    
+
     // Check if editing an existing order from query params
     this.route.queryParams.subscribe(params => {
       if (params['orderNo']) {
@@ -195,11 +195,11 @@ export class CustomerOrderComponent implements OnInit, OnDestroy {
         // Set default status to "Registered" when creating (not editing)
         if (!this.isEditMode && !this.customerOrder.status) {
           // Find "Registered" status or use first available
-          const registeredStatus = this.statusOptions.find(s => 
+          const registeredStatus = this.statusOptions.find(s =>
             this.getStatusValue(s).toUpperCase() === 'REGISTERED'
           );
-          this.customerOrder.status = registeredStatus 
-            ? this.getStatusValue(registeredStatus) 
+          this.customerOrder.status = registeredStatus
+            ? this.getStatusValue(registeredStatus)
             : (this.statusOptions.length > 0 ? this.getStatusValue(this.statusOptions[0]) : 'Registered');
         }
       },
@@ -258,7 +258,7 @@ export class CustomerOrderComponent implements OnInit, OnDestroy {
         const createTm = header.createTm || header.CreateTm;
         const updateDt = header.updateDt || header.UpdateDt;
         const updateTm = header.updateTm || header.UpdateTm;
-        
+
         this.customerOrder = {
           customerCode: customerCode,
           orderDate: header.cordDate || header.CordDate || new Date().toISOString().split('T')[0],
@@ -432,22 +432,22 @@ export class CustomerOrderComponent implements OnInit, OnDestroy {
     if (row.partId && selectedPart) {
       // Use the provided part object directly
       const part = selectedPart;
-      
+
       // Set part name for display
       row.partName = this.getPartDisplayName(part);
       // Set search term to display name
       row.partSearchTerm = this.getPartDisplayName(part);
-      
+
       // Always auto-fill make from selected part
       // API returns camelCase: "make", but also check PascalCase for compatibility
       const makeValue = part.make || part.Make || (part as any)['make'] || (part as any)['Make'] || '';
       row.make = makeValue;
-      
+
       // Always auto-fill price (FOB) from selected part
       // API returns camelCase: "fob" (from DTO property "Fob")
       const fobValue = part.fob || (part as any)['fob'] || part.FOB || (part as any)['Fob'] || (part as any)['FOB'] || 0;
       row.price = typeof fobValue === 'number' ? fobValue : parseFloat(fobValue) || 0;
-      
+
       console.log('Auto-filled from part:', {
         partObject: part,
         make: row.make,
@@ -455,33 +455,33 @@ export class CustomerOrderComponent implements OnInit, OnDestroy {
         partMake: part.make,
         partFob: part.fob
       });
-      
+
       this.calculateTotal(row);
     } else if (row.partId) {
       // Fallback: try to find part in allParts array
-      const part = this.allParts.find(p => 
+      const part = this.allParts.find(p =>
         (p.id && p.id.toString() === row.partId) ||
         (p.PART && p.PART === row.partId) ||
         (p.partCode && p.partCode === row.partId) ||
         (p.PartCode && p.PartCode === row.partId)
       );
-      
+
       if (part) {
         // Set part name for display
         row.partName = this.getPartDisplayName(part);
         // Set search term to display name
         row.partSearchTerm = this.getPartDisplayName(part);
-        
+
         // Always auto-fill make from selected part
         // API returns camelCase: "make"
         const makeValue = part.make || part.Make || (part as any)['make'] || (part as any)['Make'] || '';
         row.make = makeValue;
-        
+
         // Always auto-fill price (FOB) from selected part
         // API returns camelCase: "fob" (from DTO property "Fob")
         const fobValue = part.fob || (part as any)['fob'] || part.FOB || (part as any)['Fob'] || (part as any)['FOB'] || 0;
         row.price = typeof fobValue === 'number' ? fobValue : parseFloat(fobValue) || 0;
-        
+
         console.log('Auto-filled from part (fallback):', {
           partObject: part,
           make: row.make,
@@ -489,7 +489,7 @@ export class CustomerOrderComponent implements OnInit, OnDestroy {
           partMake: part.make,
           partFob: part.fob
         });
-        
+
         this.calculateTotal(row);
       }
     } else {
@@ -512,7 +512,7 @@ export class CustomerOrderComponent implements OnInit, OnDestroy {
     } else {
       // If a part is already selected, check if it matches the make
       if (row.partId) {
-        const part = this.allParts.find(p => 
+        const part = this.allParts.find(p =>
           (p.id && p.id.toString() === row.partId) ||
           (p.PART && p.PART === row.partId)
         );
@@ -551,28 +551,28 @@ export class CustomerOrderComponent implements OnInit, OnDestroy {
     const makesFromParts = this.allParts
       .map(p => p.make || p.Make || (p as any)['make'] || (p as any)['Make'] || '')
       .filter((make): make is string => !!make && make.trim() !== '');
-    
+
     // Combine with stored makes list and remove duplicates
     const allMakes = [...new Set([...makesFromParts, ...this.allMakesList])]
       .filter((make): make is string => !!make && make.trim() !== '')
       .sort();
-    
+
     return allMakes;
   }
-  
+
   // Update makes list when parts are loaded
   private updateMakesList(): void {
     const makes = this.allParts
       .map(p => p.make || p.Make || (p as any)['make'] || (p as any)['Make'] || '')
       .filter((make): make is string => !!make && make.trim() !== '');
-    
+
     // Add new makes to the list (avoid duplicates)
     makes.forEach(make => {
       if (!this.allMakesList.includes(make)) {
         this.allMakesList.push(make);
       }
     });
-    
+
     // Sort the list
     this.allMakesList.sort();
   }
@@ -606,10 +606,10 @@ export class CustomerOrderComponent implements OnInit, OnDestroy {
     row.partId = this.getPartId(part);
     row.partSearchTerm = this.getPartDisplayName(part); // This will show Description, not STOCKKEY
     row.showPartDropdown = false;
-    
+
     // Pass the part object directly to auto-fill make and price
     this.onPartSelected(row, part);
-    
+
     // Update makes list to ensure the selected make is available in dropdown
     this.updateMakesList();
   }
@@ -628,7 +628,7 @@ export class CustomerOrderComponent implements OnInit, OnDestroy {
     }
 
     // Check if part already exists
-    const existingPart = this.allParts.find(p => 
+    const existingPart = this.allParts.find(p =>
       (p.PartCode || p.partCode || p.PART || '').toLowerCase() === partName.toLowerCase() ||
       (p.Description || p.description || '').toLowerCase() === partName.toLowerCase()
     );
@@ -652,7 +652,7 @@ export class CustomerOrderComponent implements OnInit, OnDestroy {
       if (result.isConfirmed) {
         // Generate a part code from the name (first 10 characters, uppercase, no spaces)
         const partCode = partName.substring(0, 10).toUpperCase().replace(/\s+/g, '');
-        
+
         const newPart = {
           code: partCode,
           description: partName
@@ -667,7 +667,7 @@ export class CustomerOrderComponent implements OnInit, OnDestroy {
               confirmButtonColor: '#3085d6',
               timer: 1500
             });
-            
+
             // Add the new part to the list and select it
             const createdPart: Part = {
               partCode: response.partCode || response.PartCode || partCode,
@@ -683,7 +683,7 @@ export class CustomerOrderComponent implements OnInit, OnDestroy {
               Active: response.active !== undefined ? response.active : (response.Active !== undefined ? response.Active : true),
               id: undefined
             };
-            
+
             this.allParts.push(createdPart);
             this.selectPart(row, createdPart);
           },
@@ -1531,7 +1531,7 @@ export class CustomerOrderComponent implements OnInit, OnDestroy {
 
     // Filter out empty rows (rows without part selected)
     const validRows = this.orderRows.filter(row => row.partId && row.partId.trim() !== '');
-    
+
     if (validRows.length === 0) {
       Swal.fire({
         icon: 'warning',
@@ -1547,7 +1547,7 @@ export class CustomerOrderComponent implements OnInit, OnDestroy {
     const branch = this.customerOrder.branch || this.defaultBranch;
     const warehouse = this.customerOrder.warehouse || this.defaultWarehouse;
     const cordType = this.customerOrder.cordType || this.defaultCordType;
-    
+
     // Get CORDNO - use existing if editing, get from backend if creating
     let cordNo: string;
     if (this.isEditMode && this.customerOrder.cordNo) {
@@ -1559,14 +1559,14 @@ export class CustomerOrderComponent implements OnInit, OnDestroy {
         next: (response) => {
           // Response is a plain string like "0001" or JSON string like "\"0001\""
           let orderNo: string = response;
-          
+
           // Remove quotes if JSON-wrapped
           orderNo = orderNo.replace(/^["']|["']$/g, '').trim();
-          
+
           if (!orderNo || orderNo.length === 0) {
             throw new Error('Empty order number received from server');
           }
-          
+
           cordNo = orderNo;
           console.log('Generated order number:', cordNo);
           this.proceedWithSave(cordNo, validRows, fran, branch, warehouse, cordType);
@@ -1576,7 +1576,7 @@ export class CustomerOrderComponent implements OnInit, OnDestroy {
           console.error('Error status:', err.status);
           console.error('Error message:', err.message);
           console.error('Error body:', err.error);
-          
+
           const errorMessage = err.error?.message || err.error || err.message || 'Unknown error';
           Swal.fire({
             icon: 'error',
@@ -1602,19 +1602,19 @@ export class CustomerOrderComponent implements OnInit, OnDestroy {
     // Calculate values from order items
     // GROSSVALUE = sum of (price * quantity) for all items
     const grossValue = validRows.reduce((sum, row) => sum + ((row.price || 0) * (row.quantity || 0)), 0);
-    
+
     // DISCOUNTVALUE = sum of discounts for all items
     const discountValue = validRows.reduce((sum, row) => sum + (row.discount || 0), 0);
-    
+
     // NETVALUE = GROSSVALUE - DISCOUNTVALUE
     const netValue = grossValue - discountValue;
-    
+
     // VAT calculation (if needed in future)
     const vatValue = 0; // TODO: Calculate VAT if needed
-    
+
     // TOTALVALUE = NETVALUE + VAT (or just NETVALUE if no VAT)
     const totalValue = netValue + vatValue;
-    
+
     // NOOFITEMS = count of line items
     const noOfItems = validRows.length;
 
@@ -1637,7 +1637,7 @@ export class CustomerOrderComponent implements OnInit, OnDestroy {
       vatValue: vatValue, // VATVALUE
       totalValue: totalValue // TOTALVALUE - netValue + vatValue
     };
-    
+
     // Add status only when creating (not when updating)
     if (!this.isEditMode && this.customerOrder.status) {
       headerData.status = this.customerOrder.status;
@@ -1647,7 +1647,7 @@ export class CustomerOrderComponent implements OnInit, OnDestroy {
     const lineItems = validRows.map((row, index) => {
       // Convert partId to number if it's numeric, otherwise use 0
       const partNumber = this.parsePartNumber(row.partId);
-      
+
       return {
         fran: this.defaultFran,
         branch: this.defaultBranch,
@@ -1682,7 +1682,7 @@ export class CustomerOrderComponent implements OnInit, OnDestroy {
         vatValue: vatValue, // VATVALUE
         totalValue: totalValue // TOTALVALUE
       };
-      
+
       // Include status if it's set
       if (this.customerOrder.status) {
         updateHeaderData.status = this.customerOrder.status;
@@ -1692,7 +1692,7 @@ export class CustomerOrderComponent implements OnInit, OnDestroy {
       this.apiService.updateCustomerOrderHeader(fran, branch, warehouse, cordType, cordNo, updateHeaderData).subscribe({
         next: (headerResponse: any) => {
           console.log('Header updated:', headerResponse);
-          
+
           // Load existing line items to delete them
           this.apiService.getCustomerOrderLinesByHeader(fran, branch, warehouse, cordType, cordNo).subscribe({
             next: (existingLineItems) => {
@@ -1706,13 +1706,13 @@ export class CustomerOrderComponent implements OnInit, OnDestroy {
                 // Then create new line items
                 let completedItems = 0;
                 let hasError = false;
-                
+
                 lineItems.forEach((lineItem, index) => {
                   this.apiService.createCustomerOrderLine(lineItem).subscribe({
                     next: () => {
                       completedItems++;
                       console.log(`Line item ${index + 1} created`);
-                      
+
                       if (completedItems === lineItems.length && !hasError) {
                         Swal.fire({
                           icon: 'success',
@@ -1752,7 +1752,7 @@ export class CustomerOrderComponent implements OnInit, OnDestroy {
               // Continue anyway - try to create new line items
               let completedItems = 0;
               let hasError = false;
-              
+
               lineItems.forEach((lineItem, index) => {
                 this.apiService.createCustomerOrderLine(lineItem).subscribe({
                   next: () => {
@@ -1793,17 +1793,17 @@ export class CustomerOrderComponent implements OnInit, OnDestroy {
       this.apiService.createCustomerOrderHeader(headerData).subscribe({
         next: (headerResponse: any) => {
           console.log('Header created:', headerResponse);
-          
+
           // Then, create all line items sequentially
           let completedItems = 0;
           let hasError = false;
-          
+
           lineItems.forEach((lineItem, index) => {
             this.apiService.createCustomerOrderLine(lineItem).subscribe({
               next: () => {
                 completedItems++;
                 console.log(`Line item ${index + 1} created`);
-                
+
                 // If all items are created, show success
                 if (completedItems === lineItems.length && !hasError) {
                   Swal.fire({
@@ -2097,7 +2097,7 @@ export class CustomerOrderComponent implements OnInit, OnDestroy {
     this.allVehicles = [];
     // Silently skip vehicle loading - no error messages
     return;
-    
+
     /* Original code - commented out since vehicles not needed
     this.isLoadingVehicles = true;
     this.apiService.getAllVehicles().subscribe({
@@ -2142,7 +2142,7 @@ export class CustomerOrderComponent implements OnInit, OnDestroy {
       return this.customers.slice(0, 10); // Show first 10 if no search term
     }
     const search = this.customerSearchTerm.toLowerCase().trim();
-    return this.customers.filter(c => 
+    return this.customers.filter(c =>
       c.customerCode?.toLowerCase().includes(search) ||
       c.name?.toLowerCase().includes(search) ||
       c.nameAr?.toLowerCase().includes(search) ||
@@ -2153,7 +2153,7 @@ export class CustomerOrderComponent implements OnInit, OnDestroy {
 
   // Handle customer search input with debouncing
   private customerSearchTimeout: any = null;
-  
+
   onCustomerSearch(event: any): void {
     const searchTerm = event.target.value;
     this.customerSearchTerm = searchTerm;
@@ -2230,7 +2230,7 @@ export class CustomerOrderComponent implements OnInit, OnDestroy {
     if (!this.vehicleSearchTerm) {
       return this.vehicles;
     }
-    
+
     const search = this.vehicleSearchTerm.toLowerCase();
     return this.vehicles.filter(v =>
       v.plateNumber?.toLowerCase().includes(search) ||
@@ -2291,16 +2291,16 @@ export class CustomerOrderComponent implements OnInit, OnDestroy {
           timer: 1500
         });
         this.closeCustomerModal();
-        
+
         // Reload all customers to ensure we have the latest data (includes the newly created customer with auto-generated code)
         this.loadCustomers();
-        
+
         // Auto-select the newly created customer after a short delay to ensure list is loaded
         // The customerCode will be in the response or we'll get it from the reloaded list
         setTimeout(() => {
           // Try to find the customer by name and email (since code is auto-generated)
-          const newCustomer = this.customers.find(c => 
-            c.name === this.customerForm.name && 
+          const newCustomer = this.customers.find(c =>
+            c.name === this.customerForm.name &&
             c.email === this.customerForm.email
           );
           if (newCustomer) {
@@ -2524,4 +2524,3 @@ export class CustomerOrderComponent implements OnInit, OnDestroy {
     }
   }
 }
-

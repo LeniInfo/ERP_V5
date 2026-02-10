@@ -11,9 +11,10 @@ import { PickslipInquiryComponent } from './MASTER/pickslip-inquiry/pickslip-inq
 import { WorkshopComponent } from './MASTER/Workshop/workshop.component';
 import { CustomerComponent } from './MASTER/Customer/customer.component';
 import { CustomerFormComponent } from './MASTER/Customer/customer-form.component';
-import { WorkmasterComponent } from './MASTER/Work-Master/workmaster.component';
+import { WorkMasterComponent } from './MASTER/Work-Master/workmaster.component';
 import { SupplierComponent } from './MASTER/Supplier/supplier.component';
 import { WorkOrderComponent } from './MASTER/Work_Order/work_order.component';
+import { MasterTypeComponent } from './MASTER/mastertype/mastertype.component';
 
 /* 🔹 ACCOUNTS */
 import { AccountReceivable } from './ACCOUNTS/AccountReceivable/accountreceivable.component';
@@ -45,6 +46,7 @@ import { WorkQuotationListComponent } from './WO/work-quotation/work-quotation-l
 import { WorkQuotationComponent } from './WO/work-quotation/work-quotation.component';
 import { WorkEnquiryComponent } from './WO/work-enquiry/work-enquiry.component';
 import { WorkEnquiryListComponent } from './WO/work-enquiry/work-enquiry-list.component';
+import { SaasCustomerComponent } from './MASTER/saas-customer/saas-customer.component';
 
 export const routes: Routes = [
 
@@ -67,8 +69,10 @@ export const routes: Routes = [
       { path: 'pickslip-entry', component: PickSlipComponent },
       { path: 'pickslip-inquiry', component: PickslipInquiryComponent },
       { path: 'workshop', component: WorkshopComponent },
-      { path: 'workmaster', component: WorkmasterComponent },
+      { path: 'workmaster', component: WorkMasterComponent },
       { path: 'supplier', component: SupplierComponent },
+      { path: 'mastertype', component: MasterTypeComponent },
+      { path: 'saas-customer', component: SaasCustomerComponent },
 
       /* CUSTOMER */
       { path: 'customer', component: CustomerComponent },
