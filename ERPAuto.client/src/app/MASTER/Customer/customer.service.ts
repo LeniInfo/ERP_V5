@@ -1,14 +1,21 @@
-<<<<<<< HEAD
-import { HttpClient } from '@angular/common/http';
+
+
+// Re-export Customer interface for backward compatibility
+export type Customer = ApiCustomer;
+
+
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-import { Customer } from './customer.model';
+import { Observable, throwError } from 'rxjs';
+import { CustomerModel } from './customer.model';
+import { catchError, map } from 'rxjs/operators';
+import { ApiService, Customer as ApiCustomer } from '../../services/api.service';
 
 @Injectable({ providedIn: 'root' })
 export class CustomerService {
   private baseUrl = 'https://localhost:7231/api/v1/master/Customers';
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private apiService: ApiService) { }
 
   getNextCustomerCode(): Observable<string> {
     return this.http.get(
@@ -18,48 +25,33 @@ export class CustomerService {
   }
 
   // Get all customers
-  getCustomers(): Observable<Customer[]> {
-    return this.http.get<Customer[]>(this.baseUrl);
+  getCustomers(): Observable<CustomerModel[]> {
+    return this.http.get<CustomerModel[]>(this.baseUrl);
   }
 
   // Get customer by code
-  getCustomerByCode(customerCode: string): Observable<Customer> {
-    return this.http.get<Customer>(`${this.baseUrl}/${customerCode}`);
+  getCustomerByCode(customerCode: string): Observable<CustomerModel> {
+    return this.http.get<CustomerModel>(`${this.baseUrl}/${customerCode}`);
   }
 
   // Create a new customer
-  createCustomer(customer: Customer): Observable<Customer> {
-    return this.http.post<Customer>(this.baseUrl, customer);
+  createCustomer(customer: CustomerModel): Observable<CustomerModel> {
+    return this.http.post<CustomerModel>(this.baseUrl, customer);
   }
 
   // Update existing customer
-  updateCustomer(customerCode: string, customer: Customer): Observable<Customer> {
-    return this.http.put<Customer>(`${this.baseUrl}/${customerCode}`, customer);
+  updateCustomer(customerCode: string, customer: CustomerModel): Observable<CustomerModel> {
+    return this.http.put<CustomerModel>(`${this.baseUrl}/${customerCode}`, customer);
   }
 
   // Delete customer
   deleteCustomer(customerCode: string): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/${customerCode}`);
   }
-}
 
-export { Customer };
-=======
-import { Injectable } from '@angular/core';
-import { HttpErrorResponse } from '@angular/common/http';
-import { Observable, throwError } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
-import { ApiService, Customer as ApiCustomer } from '../../services/api.service';
 
-// Re-export Customer interface for backward compatibility
-export type Customer = ApiCustomer;
 
-@Injectable({
-  providedIn: 'root'
-})
-export class CustomerService {
-  constructor(private apiService: ApiService) { }
-
+  //////////////////////
   // Get all customers
   getAll(): Observable<Customer[]> {
     return this.apiService.getAllCustomers().pipe(
@@ -96,7 +88,7 @@ export class CustomerService {
       address: customer.address,
       vatNo: customer.vatNo
     };
-    
+
     // Only include customerCode if it's provided and not empty
     if (customer.customerCode && customer.customerCode.trim() !== '') {
       createRequest.customerCode = customer.customerCode;
@@ -188,4 +180,4 @@ export class CustomerService {
     }));
   }
 }
->>>>>>> bf4536ad25e42144e3814695c42fad2bb6622520
+
