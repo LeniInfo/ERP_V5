@@ -71,10 +71,12 @@ table thead.table-header th {
 }
 
 .search-box {
-  width: 250px;
+  /* Adjust width as you like */
+  border: 2px solid #2b85c1;
+  border-radius: 7px;
 }
 
-.btn-outline-primary {
+  .btn-outline-primary {
   border-color: #3ca2e0;
   color: #3ca2e0;
 }

@@ -9,6 +9,13 @@ export class CustomerService {
 
   constructor(private http: HttpClient) { }
 
+  getNextCustomerCode(): Observable<string> {
+    return this.http.get(
+      `${this.baseUrl}/next-code`,
+      { responseType: 'text' }
+    );
+  }
+
   // Get all customers
   getCustomers(): Observable<Customer[]> {
     return this.http.get<Customer[]>(this.baseUrl);

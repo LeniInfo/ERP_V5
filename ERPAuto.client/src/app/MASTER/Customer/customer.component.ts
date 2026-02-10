@@ -28,6 +28,7 @@ export class CustomerComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadCustomers();
+    this.loadNextCustomerCode();
   }
 
   // 🔹 Centralized empty model
@@ -41,6 +42,17 @@ export class CustomerComponent implements OnInit {
       address: '',
       vatNo: ''
     };
+  }
+
+  loadNextCustomerCode(): void {
+    this.customerService.getNextCustomerCode().subscribe({
+      next: (code) => {
+        this.customer.customerCode = code;
+      },
+      error: () => {
+        alert('Failed to generate Customer Code');
+      }
+    });
   }
 
   // 🔹 Load customers
@@ -73,6 +85,7 @@ export class CustomerComponent implements OnInit {
         alert(`Customer ${this.isEditing ? 'updated' : 'created'} successfully`);
         this.resetForm();
         this.loadCustomers();
+        this.loadNextCustomerCode();
       },
       error: (err) => {
         alert(err.error?.message || 'Error saving customer');
@@ -97,6 +110,7 @@ export class CustomerComponent implements OnInit {
         next: () => {
           this.loadCustomers();
           this.resetForm();
+          this.loadNextCustomerCode();
         },
         error: (err) => {
           alert(err.error?.message || 'Error deleting customer');
@@ -125,11 +139,17 @@ export class CustomerComponent implements OnInit {
     this.originalCustomerName = '';
     this.arabicManuallyEdited = false;
     this.resetForm();
+    this.loadNextCustomerCode();
   }
 
   // 🔹 Arabic conversion
   onCustomerNameChange(value: string): void {
-    if (!value) return;
+
+    if (!value) {
+      this.customer.nameAr = '';
+      this.arabicManuallyEdited = false;
+      return;
+    }
 
     const nameChanged = value !== this.originalCustomerName;
 
@@ -138,18 +158,58 @@ export class CustomerComponent implements OnInit {
     }
   }
 
+
   toArabic(text: string): string {
-    const map: { [key: string]: string } = {
-      a: 'ا', b: 'ب', t: 'ت', j: 'ج', h: 'ح',
-      d: 'د', r: 'ر', s: 'س', f: 'ف',
-      k: 'ك', l: 'ل', m: 'م', n: 'ن',
-      w: 'و', y: 'ي'
+
+    const combos: any = {
+      sh: 'ش',
+      kh: 'خ',
+      th: 'ث',
+      dh: 'ذ',
+      gh: 'غ'
     };
 
+    const singles: any = {
+      a: 'ا',
+      b: 'ب',
+      c: 'ك',
+      d: 'د',
+      e: 'ي',
+      f: 'ف',
+      g: 'ج',
+      h: 'ه',
+      i: 'ي',
+      j: 'ج',
+      k: 'ك',
+      l: 'ل',
+      m: 'م',
+      n: 'ن',
+      o: 'و',
+      p: 'ب',
+      q: 'ق',
+      r: 'ر',
+      s: 'س',
+      t: 'ت',
+      u: 'و',
+      v: 'ف',
+      w: 'و',
+      x: 'كس',
+      y: 'ي',
+      z: 'ز'
+    };
+
+    text = text.toLowerCase();
+
+    // Replace combos first
+    Object.keys(combos).forEach(c => {
+      text = text.replaceAll(c, combos[c]);
+    });
+
+    // Replace single letters
     return text
-      .toLowerCase()
       .split('')
-      .map(c => map[c] || c)
+      .map(c => singles[c] || c)
       .join('');
   }
+
 }

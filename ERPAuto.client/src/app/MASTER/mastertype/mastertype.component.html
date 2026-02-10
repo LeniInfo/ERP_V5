@@ -84,14 +84,14 @@
       </form>
 
       <!-- Search + Table Header -->
-      <div class="d-flex align-items-center mt-3">
-        <h6 class="mb-0 me-2">{{ typeLabel }} List</h6>
+      <div class="d-flex align-items-center mt-3 gap-2 flex-nowrap">
+        <h6 class="mb-0 me-2 text-nowrap">{{ typeLabel }} List</h6>
 
         
           <input type="text"
                  [(ngModel)]="searchText"
                  (ngModelChange)="filterData()"
-                 class="form-control search-box"
+                 class="form-control search-box flex-grow-1"
                  placeholder="Search {{ typeLabel }}..." />
         
       </div>
