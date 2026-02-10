@@ -28,6 +28,29 @@ public sealed class RequestDetailRepository(ErpDbContext db, ILogger<RequestDeta
 
     public async Task<RequestDetail> AddDetailAsync(RequestDetail entity, CancellationToken ct)
     {
+        // Check if entity already exists (upsert pattern)
+        var existing = await db.RequestDetails.FirstOrDefaultAsync(
+            x => x.Fran == entity.Fran && x.Branch == entity.Branch && x.Warehouse == entity.Warehouse && 
+                 x.RequestType == entity.RequestType && x.RequestNo == entity.RequestNo && x.RequestSrl == entity.RequestSrl, ct);
+        
+        if (existing != null)
+        {
+            // Update existing instead of creating duplicate
+            existing.RequestDate = entity.RequestDate;
+            existing.Make = entity.Make;
+            existing.Part = entity.Part;
+            existing.Qty = entity.Qty;
+            existing.UnitPrice = entity.UnitPrice;
+            existing.TotalValue = entity.TotalValue;
+            existing.UpdateDt = entity.UpdateDt;
+            existing.UpdateTm = entity.UpdateTm;
+            existing.UpdateBy = entity.UpdateBy;
+            existing.UpdateRemarks = entity.UpdateRemarks;
+            await db.SaveChangesAsync(ct);
+            log.LogInformation("Updated existing RequestDetail {Fran}/{Branch}/{Warehouse}/{RequestType}/{RequestNo}/{RequestSrl}", entity.Fran, entity.Branch, entity.Warehouse, entity.RequestType, entity.RequestNo, entity.RequestSrl);
+            return existing;
+        }
+        
         await db.RequestDetails.AddAsync(entity, ct);
         await db.SaveChangesAsync(ct);
         log.LogInformation("Inserted RequestDetail {Fran}/{Branch}/{Warehouse}/{RequestType}/{RequestNo}/{RequestSrl}", entity.Fran, entity.Branch, entity.Warehouse, entity.RequestType, entity.RequestNo, entity.RequestSrl);

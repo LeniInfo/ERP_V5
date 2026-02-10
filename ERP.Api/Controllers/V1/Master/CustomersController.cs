@@ -15,17 +15,14 @@ namespace ERP.Api.Controllers.V1.Master;
 public sealed class CustomersController(ICustomersService svc) : ControllerBase
 {
     [HttpGet]
-    [Authorize(Policy = "erp.api.read")]
     public async Task<ActionResult<IEnumerable<CustomerDto>>> Get(CancellationToken ct)
         => Ok(await svc.GetAllAsync(ct));
 
     [HttpGet("search")]
-    [Authorize(Policy = "erp.api.read")]
     public async Task<ActionResult<IEnumerable<CustomerDto>>> Search([FromQuery] string name, CancellationToken ct)
         => Ok(await svc.SearchByNameAsync(name ?? string.Empty, ct));
 
     [HttpGet("{customerCode}")]
-    [Authorize(Policy = "erp.api.read")]
     public async Task<ActionResult<CustomerDto>> GetByCode(string customerCode, CancellationToken ct)
     {
         var item = await svc.GetByCodeAsync(customerCode, ct);
@@ -33,7 +30,6 @@ public sealed class CustomersController(ICustomersService svc) : ControllerBase
     }
 
     [HttpPost]
-    [Authorize(Policy = "erp.api.write")]
     public async Task<ActionResult<CustomerDto>> Create([FromBody] CreateCustomerRequest req, CancellationToken ct)
     {
         var created = await svc.CreateAsync(req, ct);
@@ -41,7 +37,6 @@ public sealed class CustomersController(ICustomersService svc) : ControllerBase
     }
 
     [HttpPut("{customerCode}")]
-    [Authorize(Policy = "erp.api.write")]
     public async Task<IActionResult> Update(string customerCode, [FromBody] UpdateCustomerRequest req, CancellationToken ct)
     {
         var ok = await svc.UpdateAsync(customerCode, req, ct);
@@ -49,7 +44,6 @@ public sealed class CustomersController(ICustomersService svc) : ControllerBase
     }
 
     [HttpDelete("{customerCode}")]
-    [Authorize(Policy = "erp.api.write")]
     public async Task<IActionResult> Delete(string customerCode, CancellationToken ct)
     {
         var ok = await svc.DeleteAsync(customerCode, ct);

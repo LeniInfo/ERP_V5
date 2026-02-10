@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule, DecimalPipe } from '@angular/common';
 import { Router } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
+import { ApiService } from '../../services/api.service';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -21,10 +21,6 @@ export class WorkEnquiryListComponent implements OnInit {
   selectedWorkEnquiryForDetail: any;
   expandedEnquiries: Set<string> = new Set(); // Track expanded enquiries
 
-  readonly requestHeaderApiUrl = 'http://localhost:5220/api/v1/RequestHeader';
-  readonly requestDetailApiUrl = 'http://localhost:5220/api/v1/RequestDetail';
-  readonly customerApiUrl = 'http://localhost:5220/api/v1/master/Customers';
-  readonly workMasterApiUrl = 'https://localhost:7231/api/v1/WorkMaster';
   readonly defaultFran = 'MAIN';
   readonly defaultBranch = 'MAIN';
   readonly defaultWarehouse = 'MAIN';
@@ -32,7 +28,7 @@ export class WorkEnquiryListComponent implements OnInit {
 
   constructor(
     private router: Router,
-    private http: HttpClient
+    private apiService: ApiService
   ) { }
 
   ngOnInit(): void {
@@ -47,7 +43,7 @@ export class WorkEnquiryListComponent implements OnInit {
   }
 
   loadCustomers(): void {
-    this.http.get<any[]>(this.customerApiUrl).subscribe({
+    this.apiService.getAllCustomers().subscribe({
       next: (data) => {
         this.customers = data || [];
       },
@@ -58,7 +54,7 @@ export class WorkEnquiryListComponent implements OnInit {
   }
 
   loadWorkMasters(): void {
-    this.http.get<any[]>(this.workMasterApiUrl).subscribe({
+    this.apiService.getAllWorkMasters().subscribe({
       next: (data) => {
         this.workMasters = data || [];
       },
@@ -70,7 +66,7 @@ export class WorkEnquiryListComponent implements OnInit {
 
   loadWorkEnquiries(): void {
     this.isLoadingWorkEnquiries = true;
-    this.http.get<any[]>(this.requestHeaderApiUrl).subscribe({
+    this.apiService.getAllRequestHeaders().subscribe({
       next: (data) => {
         // Filter by requestType if needed, or show all
         this.workEnquiries = (data || []).filter(e => 
@@ -98,8 +94,7 @@ export class WorkEnquiryListComponent implements OnInit {
       return;
     }
 
-    const url = `${this.requestDetailApiUrl}/by-header/${this.defaultFran}/${this.defaultBranch}/${this.defaultWarehouse}/${this.requestType}/${requestNo}`;
-    this.http.get<any[]>(url).subscribe({
+    this.apiService.getRequestDetailsByHeader(this.defaultFran, this.defaultBranch, this.defaultWarehouse, this.requestType, requestNo).subscribe({
       next: (data) => {
         this.enquiryDetails[requestNo] = data || [];
         this.toggleExpand(requestNo);
@@ -222,8 +217,7 @@ export class WorkEnquiryListComponent implements OnInit {
         // First delete all details
         this.deleteEnquiryDetails(enquiry.requestNo, () => {
           // Then delete header
-          const url = `${this.requestHeaderApiUrl}/${enquiry.fran}/${enquiry.branch}/${enquiry.warehouse}/${enquiry.requestType}/${enquiry.requestNo}`;
-          this.http.delete(url).subscribe({
+          this.apiService.deleteRequestHeader(enquiry.fran, enquiry.branch, enquiry.warehouse, enquiry.requestType, enquiry.requestNo).subscribe({
             next: () => {
               Swal.fire({
                 icon: 'success',
@@ -259,8 +253,7 @@ export class WorkEnquiryListComponent implements OnInit {
     const totalDetails = details.length;
 
     details.forEach((detail: any) => {
-      const url = `${this.requestDetailApiUrl}/${detail.fran}/${detail.branch}/${detail.warehouse}/${detail.requestType}/${detail.requestNo}/${detail.requestSrl}`;
-      this.http.delete(url).subscribe({
+      this.apiService.deleteRequestDetail(detail.fran, detail.branch, detail.warehouse, detail.requestType, detail.requestNo, detail.requestSrl).subscribe({
         next: () => {
           deletedCount++;
           if (deletedCount === totalDetails) {

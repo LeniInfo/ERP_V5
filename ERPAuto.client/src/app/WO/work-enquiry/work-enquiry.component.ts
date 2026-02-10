@@ -2,8 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule, DecimalPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
-import { CustomerService, Customer } from '../../MASTER/Customer/customer.service';
+import { ApiService, Customer } from '../../services/api.service';
 import Swal from 'sweetalert2';
 
 interface WorkMaster {
@@ -75,12 +74,6 @@ export class WorkEnquiryComponent implements OnInit, OnDestroy {
   workMasters: WorkMaster[] = [];
   isLoadingWorkMasters: boolean = false;
   
-  // API URLs
-  readonly customerApiUrl = 'http://localhost:5220/api/v1/master/Customers';
-  readonly workMasterApiUrl = 'https://localhost:7231/api/v1/WorkMaster';
-  readonly requestHeaderApiUrl = 'http://localhost:5220/api/v1/RequestHeader';
-  readonly requestDetailApiUrl = 'http://localhost:5220/api/v1/RequestDetail';
-  
   // Default values
   readonly defaultFran: string = 'MAIN';
   readonly defaultBranch: string = 'MAIN';
@@ -92,8 +85,7 @@ export class WorkEnquiryComponent implements OnInit, OnDestroy {
   constructor(
     private router: Router,
     private route: ActivatedRoute,
-    private http: HttpClient,
-    private customerService: CustomerService
+    private apiService: ApiService
   ) { }
 
   ngOnInit(): void {
@@ -133,7 +125,7 @@ export class WorkEnquiryComponent implements OnInit, OnDestroy {
   
   loadCustomers(): void {
     this.isLoadingCustomers = true;
-    this.http.get<Customer[]>(this.customerApiUrl).subscribe({
+    this.apiService.getAllCustomers().subscribe({
       next: (data) => {
         this.customers = data || [];
         this.isLoadingCustomers = false;
@@ -159,8 +151,7 @@ export class WorkEnquiryComponent implements OnInit, OnDestroy {
     }
 
     this.isLoadingCustomers = true;
-    const searchUrl = `${this.customerApiUrl}/search?name=${encodeURIComponent(searchTerm.trim())}`;
-    this.http.get<Customer[]>(searchUrl).subscribe({
+    this.apiService.searchCustomers(searchTerm.trim()).subscribe({
       next: (data) => {
         this.customers = data || [];
         this.isLoadingCustomers = false;
@@ -262,8 +253,8 @@ export class WorkEnquiryComponent implements OnInit, OnDestroy {
     const customerName = this.customerForm.name;
     const customerEmail = this.customerForm.email;
 
-    this.customerService.create(this.customerForm).subscribe({
-      next: (response) => {
+    this.apiService.addCustomer(this.customerForm).subscribe({
+      next: (response: any) => {
         Swal.fire({
           icon: 'success',
           title: 'Success!',
@@ -302,7 +293,7 @@ export class WorkEnquiryComponent implements OnInit, OnDestroy {
           }
         }, 500);
       },
-      error: (err) => {
+      error: (err: any) => {
         Swal.fire({
           icon: 'error',
           title: 'Error',
@@ -372,7 +363,7 @@ export class WorkEnquiryComponent implements OnInit, OnDestroy {
 
   loadWorkMasters(): void {
     this.isLoadingWorkMasters = true;
-    this.http.get<WorkMaster[]>(this.workMasterApiUrl).subscribe({
+    this.apiService.getAllWorkMasters().subscribe({
       next: (data) => {
         this.workMasters = data || [];
         this.isLoadingWorkMasters = false;
@@ -620,7 +611,7 @@ export class WorkEnquiryComponent implements OnInit, OnDestroy {
     if (this.isEditMode && this.editRequestNo) {
       this.proceedWithSave(this.editRequestNo, validItems);
     } else {
-      this.http.get<string>(`${this.requestHeaderApiUrl}/next-request-number`, { responseType: 'text' as 'json' }).subscribe({
+      this.apiService.getNextRequestNumber().subscribe({
         next: (response) => {
           let requestNo: string;
           if (typeof response === 'string') {
@@ -652,8 +643,7 @@ export class WorkEnquiryComponent implements OnInit, OnDestroy {
           console.error('Error details:', {
             status: err.status,
             statusText: err.statusText,
-            error: err.error,
-            url: `${this.requestHeaderApiUrl}/next-request-number`
+            error: err.error
           });
           
           let errorMessage = 'Failed to generate request number';
@@ -688,8 +678,7 @@ export class WorkEnquiryComponent implements OnInit, OnDestroy {
     this.editRequestNo = requestNo;
     
     // Load header
-    const headerUrl = `${this.requestHeaderApiUrl}/${fran}/${branch}/${warehouse}/${requestType}/${requestNo}`;
-    this.http.get<any>(headerUrl).subscribe({
+    this.apiService.getRequestHeaderByKey(fran, branch, warehouse, requestType, requestNo).subscribe({
       next: (header) => {
         this.customerCode = header.customer || '';
         this.enquiryDate = header.requestDate ? new Date(header.requestDate).toISOString().split('T')[0] : new Date().toISOString().split('T')[0];
@@ -722,8 +711,7 @@ export class WorkEnquiryComponent implements OnInit, OnDestroy {
   }
 
   loadEnquiryDetailsForEdit(fran: string, branch: string, warehouse: string, requestType: string, requestNo: string): void {
-    const detailUrl = `${this.requestDetailApiUrl}/by-header/${fran}/${branch}/${warehouse}/${requestType}/${requestNo}`;
-    this.http.get<any[]>(detailUrl).subscribe({
+    this.apiService.getRequestDetailsByHeader(fran, branch, warehouse, requestType, requestNo).subscribe({
       next: (details) => {
         this.enquiryItems = [];
         this.nextItemId = 1;
@@ -879,8 +867,7 @@ export class WorkEnquiryComponent implements OnInit, OnDestroy {
     if (this.isEditMode && this.editRequestNo) {
       // Update existing enquiry - use editRequestNo instead of newly generated one
       headerData.requestNo = this.editRequestNo;
-      const updateUrl = `${this.requestHeaderApiUrl}/${this.defaultFran}/${this.defaultBranch}/${this.defaultWarehouse}/${this.requestType}/${this.editRequestNo}`;
-      this.http.put(updateUrl, headerData).subscribe({
+      this.apiService.updateRequestHeader(this.defaultFran, this.defaultBranch, this.defaultWarehouse, this.requestType, this.editRequestNo, headerData).subscribe({
         next: (response: any) => {
           console.log('Request header updated:', response);
           // Delete old details and save new ones
@@ -899,7 +886,7 @@ export class WorkEnquiryComponent implements OnInit, OnDestroy {
       });
     } else {
       // Create new enquiry
-      this.http.post<any>(`${this.requestHeaderApiUrl}`, headerData).subscribe({
+      this.apiService.createRequestHeader(headerData).subscribe({
         next: (headerResponse: any) => {
           console.log('Request header created:', headerResponse);
           // After header is saved, save all detail items
@@ -982,7 +969,7 @@ export class WorkEnquiryComponent implements OnInit, OnDestroy {
         updateRemarks: ''
       };
 
-      this.http.post<any>(`${this.requestDetailApiUrl}`, detailData).subscribe({
+      this.apiService.createRequestDetail(detailData).subscribe({
         next: () => {
           completedItems++;
           console.log(`Request detail ${index + 1} created`);
@@ -1020,8 +1007,7 @@ export class WorkEnquiryComponent implements OnInit, OnDestroy {
 
   private deleteOldDetailsAndSaveNew(requestNo: string, requestDate: string, validItems: EnquiryItem[]): void {
     // First, get existing details to delete them
-    const detailUrl = `${this.requestDetailApiUrl}/by-header/${this.defaultFran}/${this.defaultBranch}/${this.defaultWarehouse}/${this.requestType}/${requestNo}`;
-    this.http.get<any[]>(detailUrl).subscribe({
+    this.apiService.getRequestDetailsByHeader(this.defaultFran, this.defaultBranch, this.defaultWarehouse, this.requestType, requestNo).subscribe({
       next: (existingDetails) => {
         let deletedCount = 0;
         const totalDetails = existingDetails.length;
@@ -1034,8 +1020,7 @@ export class WorkEnquiryComponent implements OnInit, OnDestroy {
 
         // Delete all existing details
         existingDetails.forEach((detail: any) => {
-          const deleteUrl = `${this.requestDetailApiUrl}/${detail.fran}/${detail.branch}/${detail.warehouse}/${detail.requestType}/${detail.requestNo}/${detail.requestSrl}`;
-          this.http.delete(deleteUrl).subscribe({
+          this.apiService.deleteRequestDetail(detail.fran, detail.branch, detail.warehouse, detail.requestType, detail.requestNo, detail.requestSrl).subscribe({
             next: () => {
               deletedCount++;
               if (deletedCount === totalDetails) {
@@ -1043,7 +1028,7 @@ export class WorkEnquiryComponent implements OnInit, OnDestroy {
                 this.saveRequestDetails(requestNo, requestDate, validItems);
               }
             },
-            error: (err) => {
+            error: (err: any) => {
               console.error(`Error deleting detail ${detail.requestSrl}:`, err);
               deletedCount++;
               if (deletedCount === totalDetails) {
