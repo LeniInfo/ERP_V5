@@ -2,6 +2,7 @@ namespace ERP.Domain.Entities;
 
 public sealed class Franchise
 {
+    //added by: Nishu
     // DB: dbo.FRANs
     public string Fran { get; set; } = string.Empty; // PK (varchar 10)
     public string Name { get; set; } = string.Empty; // varchar 100
