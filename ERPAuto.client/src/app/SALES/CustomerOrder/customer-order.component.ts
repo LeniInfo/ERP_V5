@@ -2439,9 +2439,8 @@ export class CustomerOrderComponent implements OnInit, OnDestroy {
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule, DecimalPipe, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { HttpClient } from '@angular/common/http';
 import { Router, ActivatedRoute } from '@angular/router';
-import { CustomerService, Customer } from '../../MASTER/Customer/customer.service';
+import { ApiService, Customer } from '../../services/api.service';
 
 import Swal from 'sweetalert2';
 import * as XLSX from 'xlsx';
@@ -2593,12 +2592,6 @@ export class CustomerOrderComponent implements OnInit, OnDestroy {
   // Search debounce
   private searchTimeout: any = null;
   private currentSearchRow: OrderRow | null = null;
-
-  readonly apiUrl = 'http://localhost:5220/api/v1/master/Parts';
-  readonly customerOrderApiUrl = 'http://localhost:5220/api/v1/orders/CustomerOrders';
-  readonly customerApiUrl = 'http://localhost:5220/api/v1/master/Customers';
-  readonly vehicleApiUrl = 'http://localhost:5220/api/v1/VehicleMaster';
-  readonly statusApiUrl = 'http://localhost:5220/api/v1/finance/Params';
   
   // Default values for order header (can be made configurable)
   defaultFran: string = 'MAIN';
@@ -2608,8 +2601,7 @@ export class CustomerOrderComponent implements OnInit, OnDestroy {
   defaultCurrency: string = 'USD';
 
   constructor(
-    private http: HttpClient,
-    private customerService: CustomerService,
+    private apiService: ApiService,
     private router: Router,
     private route: ActivatedRoute
   ) {}
@@ -2633,7 +2625,7 @@ export class CustomerOrderComponent implements OnInit, OnDestroy {
   // Load status options from API
   loadStatusOptions(): void {
     this.isLoadingStatus = true;
-    this.http.get<StatusParam[]>(this.statusApiUrl).subscribe({
+    this.apiService.getParams(this.defaultFran, 'STATUS').subscribe({
       next: (data) => {
         this.statusOptions = data || [];
         this.isLoadingStatus = false;
@@ -2696,7 +2688,7 @@ export class CustomerOrderComponent implements OnInit, OnDestroy {
     const cordNo = params['orderNo'];
 
     // Load header
-    this.http.get<any>(`${this.customerOrderApiUrl}/headers/${fran}/${branch}/${warehouse}/${cordType}/${cordNo}`).subscribe({
+    this.apiService.getCustomerOrderHeaderByKey(fran, branch, warehouse, cordType, cordNo).subscribe({
       next: (header) => {
         const customerCode = header.customer || header.Customer || '';
         // Format dates for display
@@ -2725,7 +2717,7 @@ export class CustomerOrderComponent implements OnInit, OnDestroy {
         this.isEditMode = true;
 
         // Load line items
-        this.http.get<any[]>(`${this.customerOrderApiUrl}/lines/by-header/${fran}/${branch}/${warehouse}/${cordType}/${cordNo}`).subscribe({
+        this.apiService.getCustomerOrderLinesByHeader(fran, branch, warehouse, cordType, cordNo).subscribe({
           next: (lineItems) => {
             if (lineItems && lineItems.length > 0) {
               this.orderRows = lineItems.map((item: any, index: number) => ({
@@ -2809,9 +2801,7 @@ export class CustomerOrderComponent implements OnInit, OnDestroy {
 
     this.isSearchingParts = true;
     this.isLoading = true;
-    const searchUrl = `${this.apiUrl}/search?name=${encodeURIComponent(searchTerm)}`;
-    
-    this.http.get<Part[]>(searchUrl).subscribe({
+    this.apiService.searchParts(searchTerm).subscribe({
       next: (data) => {
         // Only update if this is still the current search row
         if (this.currentSearchRow === row) {
@@ -3106,7 +3096,7 @@ export class CustomerOrderComponent implements OnInit, OnDestroy {
           description: partName
         };
 
-        this.http.post<any>(this.apiUrl, newPart).subscribe({
+        this.apiService.addPart(newPart).subscribe({
           next: (response) => {
             Swal.fire({
               icon: 'success',
@@ -4003,7 +3993,7 @@ export class CustomerOrderComponent implements OnInit, OnDestroy {
     } else {
       // Get next order number from backend (4-digit auto-generated)
       // Use responseType: 'text' to handle plain string response
-      this.http.get(`${this.customerOrderApiUrl}/next-order-number`, { responseType: 'text' }).subscribe({
+      this.apiService.getNextCustomerOrderNumber().subscribe({
         next: (response) => {
           // Response is a plain string like "0001" or JSON string like "\"0001\""
           let orderNo: string = response;
@@ -4137,17 +4127,17 @@ export class CustomerOrderComponent implements OnInit, OnDestroy {
       }
 
       // First, update the header
-      this.http.put(`${this.customerOrderApiUrl}/headers/${fran}/${branch}/${warehouse}/${cordType}/${cordNo}`, updateHeaderData).subscribe({
+      this.apiService.updateCustomerOrderHeader(fran, branch, warehouse, cordType, cordNo, updateHeaderData).subscribe({
         next: (headerResponse: any) => {
           console.log('Header updated:', headerResponse);
           
           // Load existing line items to delete them
-          this.http.get<any[]>(`${this.customerOrderApiUrl}/lines/by-header/${fran}/${branch}/${warehouse}/${cordType}/${cordNo}`).subscribe({
+          this.apiService.getCustomerOrderLinesByHeader(fran, branch, warehouse, cordType, cordNo).subscribe({
             next: (existingLineItems) => {
               // Delete all existing line items
               const deletePromises = (existingLineItems || []).map((item: any) => {
                 const cordSrl = item.cordSrl || item.CordSrl || '';
-                return this.http.delete(`${this.customerOrderApiUrl}/lines/${fran}/${branch}/${warehouse}/${cordType}/${cordNo}/${cordSrl}`).toPromise();
+                return this.apiService.deleteCustomerOrderLine(fran, branch, warehouse, cordType, cordNo, cordSrl).toPromise();
               });
 
               Promise.all(deletePromises).then(() => {
@@ -4156,7 +4146,7 @@ export class CustomerOrderComponent implements OnInit, OnDestroy {
                 let hasError = false;
                 
                 lineItems.forEach((lineItem, index) => {
-                  this.http.post(`${this.customerOrderApiUrl}/lines`, lineItem).subscribe({
+                  this.apiService.createCustomerOrderLine(lineItem).subscribe({
                     next: () => {
                       completedItems++;
                       console.log(`Line item ${index + 1} created`);
@@ -4202,7 +4192,7 @@ export class CustomerOrderComponent implements OnInit, OnDestroy {
               let hasError = false;
               
               lineItems.forEach((lineItem, index) => {
-                this.http.post(`${this.customerOrderApiUrl}/lines`, lineItem).subscribe({
+                this.apiService.createCustomerOrderLine(lineItem).subscribe({
                   next: () => {
                     completedItems++;
                     if (completedItems === lineItems.length && !hasError) {
@@ -4238,7 +4228,7 @@ export class CustomerOrderComponent implements OnInit, OnDestroy {
       });
     } else {
       // Create new order
-      this.http.post(`${this.customerOrderApiUrl}/headers`, headerData).subscribe({
+      this.apiService.createCustomerOrderHeader(headerData).subscribe({
         next: (headerResponse: any) => {
           console.log('Header created:', headerResponse);
           
@@ -4247,7 +4237,7 @@ export class CustomerOrderComponent implements OnInit, OnDestroy {
           let hasError = false;
           
           lineItems.forEach((lineItem, index) => {
-            this.http.post(`${this.customerOrderApiUrl}/lines`, lineItem).subscribe({
+            this.apiService.createCustomerOrderLine(lineItem).subscribe({
               next: () => {
                 completedItems++;
                 console.log(`Line item ${index + 1} created`);
@@ -4344,7 +4334,7 @@ export class CustomerOrderComponent implements OnInit, OnDestroy {
     const cordNo = order['cordNo'] || order.orderNumber || '';
 
     if (cordNo) {
-      this.http.get<any[]>(`${this.customerOrderApiUrl}/lines/by-header/${fran}/${branch}/${warehouse}/${cordType}/${cordNo}`).subscribe({
+      this.apiService.getCustomerOrderLinesByHeader(fran, branch, warehouse, cordType, cordNo).subscribe({
         next: (lineItems) => {
           if (lineItems && lineItems.length > 0) {
             this.orderRows = lineItems.map((item: any, index: number) => ({
@@ -4416,17 +4406,17 @@ export class CustomerOrderComponent implements OnInit, OnDestroy {
     }).then((result) => {
       if (result.isConfirmed) {
         // First, delete all line items
-        this.http.get<any[]>(`${this.customerOrderApiUrl}/lines/by-header/${fran}/${branch}/${warehouse}/${cordType}/${cordNo}`).subscribe({
+        this.apiService.getCustomerOrderLinesByHeader(fran, branch, warehouse, cordType, cordNo).subscribe({
           next: (lineItems) => {
             // Delete all line items first
             const deletePromises = (lineItems || []).map((item: any) => {
               const cordSrl = item.cordSrl || item.CordSrl || '';
-              return this.http.delete(`${this.customerOrderApiUrl}/lines/${fran}/${branch}/${warehouse}/${cordType}/${cordNo}/${cordSrl}`).toPromise();
+              return this.apiService.deleteCustomerOrderLine(fran, branch, warehouse, cordType, cordNo, cordSrl).toPromise();
             });
 
             Promise.all(deletePromises).then(() => {
               // Then delete the header
-              this.http.delete(`${this.customerOrderApiUrl}/headers/${fran}/${branch}/${warehouse}/${cordType}/${cordNo}`).subscribe({
+              this.apiService.deleteCustomerOrderHeader(fran, branch, warehouse, cordType, cordNo).subscribe({
                 next: () => {
                   Swal.fire({
                     icon: 'success',
@@ -4461,7 +4451,7 @@ export class CustomerOrderComponent implements OnInit, OnDestroy {
           error: (err) => {
             // If we can't load line items, try to delete header anyway
             console.warn('Could not load line items, deleting header only:', err);
-            this.http.delete(`${this.customerOrderApiUrl}/headers/${fran}/${branch}/${warehouse}/${cordType}/${cordNo}`).subscribe({
+            this.apiService.deleteCustomerOrderHeader(fran, branch, warehouse, cordType, cordNo).subscribe({
               next: () => {
                 Swal.fire({
                   icon: 'success',
@@ -4494,7 +4484,7 @@ export class CustomerOrderComponent implements OnInit, OnDestroy {
   // Load all customers (for initial load or when search is empty)
   loadCustomers(): void {
     this.isLoadingCustomers = true;
-    this.http.get<Customer[]>(this.customerApiUrl).subscribe({
+    this.apiService.getAllCustomers().subscribe({
       next: (data) => {
         this.customers = data || [];
         this.isLoadingCustomers = false;
@@ -4522,8 +4512,7 @@ export class CustomerOrderComponent implements OnInit, OnDestroy {
     }
 
     this.isLoadingCustomers = true;
-    const searchUrl = `${this.customerApiUrl}/search?name=${encodeURIComponent(searchTerm.trim())}`;
-    this.http.get<Customer[]>(searchUrl).subscribe({
+    this.apiService.searchCustomers(searchTerm.trim()).subscribe({
       next: (data) => {
         this.customers = data || [];
         this.isLoadingCustomers = false;
@@ -4549,7 +4538,7 @@ export class CustomerOrderComponent implements OnInit, OnDestroy {
     
     /* Original code - commented out since vehicles not needed
     this.isLoadingVehicles = true;
-    this.http.get<Vehicle[]>(this.vehicleApiUrl).subscribe({
+    this.apiService.getAllVehicles().subscribe({
       next: (data) => {
         this.allVehicles = data || [];
         // Filter by customer if customer is selected
@@ -4730,7 +4719,7 @@ export class CustomerOrderComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.customerService.create(this.customerForm).subscribe({
+    this.apiService.addCustomer(this.customerForm).subscribe({
       next: (response) => {
         Swal.fire({
           icon: 'success',
@@ -4900,7 +4889,7 @@ export class CustomerOrderComponent implements OnInit, OnDestroy {
       this.vehicleForm.customer = this.selectedCustomerId;
     }
 
-    this.http.post<Vehicle>(this.vehicleApiUrl, this.vehicleForm).subscribe({
+    this.apiService.createVehicle(this.vehicleForm).subscribe({
       next: (response) => {
         Swal.fire({
           icon: 'success',

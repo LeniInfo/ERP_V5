@@ -179,10 +179,10 @@
                                   (input)="onDescriptionEnInput(item, $event)"
                                   (ngModelChange)="onDescriptionEnChange(item)"
                                   (blur)="onDescriptionEnBlur(item)"></textarea>
-                        <small class="d-block mt-1" [class.text-danger]="(item.descriptionEn?.length || 0) >= 300" [class.text-muted]="(item.descriptionEn?.length || 0) < 300">
+                        <small class="d-block mt-1" [class.text-danger]="(item.descriptionEn.length || 0) >= 300" [class.text-muted]="(item.descriptionEn.length || 0) < 300">
                           <i class="bi bi-info-circle"></i> 
-                          <span *ngIf="(item.descriptionEn?.length || 0) >= 300">Character limit reached (300/300)</span>
-                          <span *ngIf="(item.descriptionEn?.length || 0) < 300">{{ item.descriptionEn?.length || 0 }}/300 characters</span>
+                          <span *ngIf="(item.descriptionEn.length || 0) >= 300">Character limit reached (300/300)</span>
+                          <span *ngIf="(item.descriptionEn.length || 0) < 300">{{ item.descriptionEn.length || 0 }}/300 characters</span>
                           <span class="ms-2">- At least one description is required</span>
                         </small>
                       </td>
@@ -199,10 +199,10 @@
                                   dir="rtl"
                                   (input)="onDescriptionArInput(item, $event)"
                                   (ngModelChange)="onDescriptionArChange(item)"></textarea>
-                        <small class="d-block mt-1" dir="rtl" [class.text-danger]="(item.descriptionAr?.length || 0) >= 300" [class.text-muted]="(item.descriptionAr?.length || 0) < 300">
+                        <small class="d-block mt-1" dir="rtl" [class.text-danger]="(item.descriptionAr.length || 0) >= 300" [class.text-muted]="(item.descriptionAr.length || 0) < 300">
                           <i class="bi bi-info-circle"></i> 
-                          <span *ngIf="(item.descriptionAr?.length || 0) >= 300">تم الوصول إلى الحد الأقصى (300/300)</span>
-                          <span *ngIf="(item.descriptionAr?.length || 0) < 300">{{ item.descriptionAr?.length || 0 }}/300 حرف</span>
+                          <span *ngIf="(item.descriptionAr.length || 0) >= 300">تم الوصول إلى الحد الأقصى (300/300)</span>
+                          <span *ngIf="(item.descriptionAr.length || 0) < 300">{{ item.descriptionAr.length || 0 }}/300 حرف</span>
                           <span class="ms-2">- مطلوب وصف واحد على الأقل</span>
                         </small>
                       </td>

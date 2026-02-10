@@ -11,12 +11,10 @@ namespace ERP.Infrastructure.Repositories
 {
     public class RepairOrderRepository : IRepairOrderRepository
     {
-        private readonly ErpDbContext _db;
         private readonly ErpDbContext _context;
 
-        public RepairOrderRepository(ErpDbContext db, ErpDbContext context)
+        public RepairOrderRepository(ErpDbContext context)
         {
-            _db = db;
             _context = context;
         }
 

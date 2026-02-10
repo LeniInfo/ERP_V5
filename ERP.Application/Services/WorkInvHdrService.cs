@@ -1,4 +1,5 @@
 using ERP.Application.Interfaces.Services;
+using ERP.Contracts.Orders;
 using ERP.Domain.Entities;
 using ERP.Domain.Interfaces;
 using System.Collections.Generic;
@@ -15,17 +16,17 @@ namespace ERP.Application.Services
             _repository = repository;
         }
 
-        public Task<IEnumerable<WorkInvHdr>> GetAllAsync() => _repository.GetAllAsync();
+        public async Task<IEnumerable<WorkInvHdr>> GetAllAsync() => await _repository.GetAllAsync();
 
-        public Task<WorkInvHdr?> GetByIdAsync(string fran, string brch, string workshop, string workInvType, string workInvNo) =>
-            _repository.GetByIdAsync(fran, brch, workshop, workInvType, workInvNo);
+        public async Task<(WorkInvHdr Header, List<WorkInvDet> Details)> GetByIdAsync(string fran, string brch, string workshop, string workInvType, string workInvNo) =>
+            await _repository.GetByIdAsync(fran, brch, workshop, workInvType, workInvNo);
 
-        public Task AddAsync(WorkInvHdr entity) => _repository.AddAsync(entity);
+        public async Task AddAsync(WorkInvoiceCreateDto dto) => await _repository.AddAsync(dto);
 
-        public Task UpdateAsync(WorkInvHdr entity) => _repository.UpdateAsync(entity);
+        public async Task UpdateAsync(WorkInvoiceUpdateDto dto) => await _repository.UpdateAsync(dto);
 
-        public Task DeleteAsync(string fran, string brch, string workshop, string workInvType, string workInvNo) => 
-            _repository.DeleteAsync(fran, brch, workshop, workInvType, workInvNo);
+        public async Task DeleteAsync(string fran, string brch, string workshop, string workInvType, string workInvNo) => 
+            await _repository.DeleteAsync(fran, brch, workshop, workInvType, workInvNo);
     }
 }
 

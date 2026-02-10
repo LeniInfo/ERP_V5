@@ -27,22 +27,9 @@ namespace ERP.Api.Controllers
         }
 
         [HttpGet("{fran}/{brch}/{workshop}/{repairType}/{repairNo}/{customer}")]
-        public async Task<IActionResult> GetHdrDet(
-    string fran,
-    string brch,
-    string workshop,
-    string repairType,
-    string repairNo,
-    string customer)
+        public async Task<IActionResult> GetHdrDet(string fran, string brch, string workshop, string repairType, string repairNo, string customer)
         {
-            var result = await _service.GetHdrDetAsync(
-                fran,
-                brch,
-                workshop,
-                repairType,
-                repairNo,
-                customer
-            );
+            var result = await _service.GetHdrDetAsync(fran, brch, workshop, repairType, repairNo, customer);
 
             if (result.Header == null)
                 return NotFound(new { message = "Repair order not found" });
@@ -53,6 +40,7 @@ namespace ERP.Api.Controllers
                 details = result.Details
             });
         }
+
 
 
         [HttpPost]
