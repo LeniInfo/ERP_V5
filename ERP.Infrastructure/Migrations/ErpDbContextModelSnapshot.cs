@@ -223,13 +223,11 @@ namespace ERP.Infrastructure.Migrations
 
             modelBuilder.Entity("ERP.Domain.Entities.Branch", b =>
                 {
-                    b.Property<decimal>("BranchCode")
+                    b.Property<string>("BranchCode")
                         .ValueGeneratedOnAdd()
                         .HasPrecision(22)
-                        .HasColumnType("decimal(22,0)")
+                        .HasColumnType("nvarchar(450)")
                         .HasColumnName("BRCH");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<decimal>("BranchCode"));
 
                     b.Property<string>("CreateBy")
                         .IsRequired()
@@ -269,12 +267,6 @@ namespace ERP.Infrastructure.Migrations
                         .IsUnicode(true)
                         .HasColumnType("nvarchar(100)")
                         .HasColumnName("NAMEAR");
-
-                    b.Property<string>("RefNo")
-                        .IsRequired()
-                        .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)")
-                        .HasColumnName("REFNO");
 
                     b.Property<string>("UpdateBy")
                         .IsRequired()
@@ -1474,6 +1466,12 @@ namespace ERP.Infrastructure.Migrations
                         .HasColumnType("nvarchar(10)")
                         .HasColumnName("FRAN");
 
+                    b.Property<string>("CUSTOMERCURRENCY")
+                        .IsRequired()
+                        .HasMaxLength(1)
+                        .HasColumnType("nvarchar(1)")
+                        .HasColumnName("CUSTOMERCURRENCY");
+
                     b.Property<string>("CreateBy")
                         .IsRequired()
                         .HasMaxLength(10)
@@ -1493,6 +1491,12 @@ namespace ERP.Infrastructure.Migrations
                     b.Property<DateTime>("CreateTm")
                         .HasColumnType("datetime2")
                         .HasColumnName("CREATETM");
+
+                    b.Property<string>("NATUREOFBUSINESS")
+                        .IsRequired()
+                        .HasMaxLength(1)
+                        .HasColumnType("nvarchar(1)")
+                        .HasColumnName("NATUREOFBUSINESS");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -1532,6 +1536,12 @@ namespace ERP.Infrastructure.Migrations
                     b.Property<DateTime>("UpdateTm")
                         .HasColumnType("datetime2")
                         .HasColumnName("UPDATETM");
+
+                    b.Property<string>("VATENABLED")
+                        .IsRequired()
+                        .HasMaxLength(1)
+                        .HasColumnType("nvarchar(1)")
+                        .HasColumnName("VATENABLED");
 
                     b.HasKey("Fran");
 
@@ -2413,6 +2423,120 @@ namespace ERP.Infrastructure.Migrations
                     b.HasKey("Fran", "MakeCode");
 
                     b.ToTable("MAKE", "dbo");
+                });
+
+            modelBuilder.Entity("ERP.Domain.Entities.MasterType", b =>
+                {
+                    b.Property<string>("Fran")
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)")
+                        .HasColumnName("FRAN");
+
+                    b.Property<string>("MasterTypeCode")
+                        .HasMaxLength(25)
+                        .HasColumnType("nvarchar(25)")
+                        .HasColumnName("MASTERTYPE");
+
+                    b.Property<string>("MasterCode")
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)")
+                        .HasColumnName("MASTERCODE");
+
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)")
+                        .HasColumnName("ADDRESS");
+
+                    b.Property<string>("CreateBy")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)")
+                        .HasColumnName("CREATEBY");
+
+                    b.Property<DateTime?>("CreateDate")
+                        .IsRequired()
+                        .HasColumnType("date")
+                        .HasColumnName("CREATEDT");
+
+                    b.Property<string>("CreateRemarks")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)")
+                        .HasColumnName("CREATEREMARKS");
+
+                    b.Property<DateTime?>("CreateTime")
+                        .IsRequired()
+                        .HasColumnType("datetime2(7)")
+                        .HasColumnName("CREATETM");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)")
+                        .HasColumnName("EMAIL");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)")
+                        .HasColumnName("NAME");
+
+                    b.Property<string>("NameAr")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)")
+                        .HasColumnName("NAMEAR");
+
+                    b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)")
+                        .HasColumnName("PHONE");
+
+                    b.Property<string>("SeqNo")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)")
+                        .HasColumnName("SEQNO");
+
+                    b.Property<string>("SeqPrefix")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)")
+                        .HasColumnName("SEQPREFIX");
+
+                    b.Property<string>("UpdateBy")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)")
+                        .HasColumnName("UPDATEBY");
+
+                    b.Property<DateTime?>("UpdateDate")
+                        .IsRequired()
+                        .HasColumnType("date")
+                        .HasColumnName("UPDATEDT");
+
+                    b.Property<string>("UpdateRemarks")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)")
+                        .HasColumnName("UPDATEMARKS");
+
+                    b.Property<DateTime?>("UpdateTime")
+                        .IsRequired()
+                        .HasColumnType("datetime2(7)")
+                        .HasColumnName("UPDATETM");
+
+                    b.Property<string>("VatNo")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)")
+                        .HasColumnName("VATNO");
+
+                    b.HasKey("Fran", "MasterTypeCode", "MasterCode");
+
+                    b.ToTable("MASTERTYPE", "dbo");
                 });
 
             modelBuilder.Entity("ERP.Domain.Entities.OrderPlanDetail", b =>
@@ -5003,110 +5127,6 @@ namespace ERP.Infrastructure.Migrations
                     b.ToTable("REPAIRORDER", (string)null);
                 });
 
-            modelBuilder.Entity("ERP.Domain.Entities.SAASCUSTOMER", b =>
-                {
-                    b.Property<string>("SaasCustomerId")
-                        .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)")
-                        .HasColumnName("SAASCUSTOMERID");
-
-                    b.Property<string>("Address")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)")
-                        .HasDefaultValue("")
-                        .HasColumnName("ADDRESS");
-
-                    b.Property<string>("CreateBy")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)")
-                        .HasDefaultValue("")
-                        .HasColumnName("CREATEBY");
-
-                    b.Property<DateOnly>("CreateDt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("date")
-                        .HasColumnName("CREATEDT")
-                        .HasDefaultValueSql("GETDATE()");
-
-                    b.Property<string>("CreateRemarks")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)")
-                        .HasDefaultValue("")
-                        .HasColumnName("CREATEREMARKS");
-
-                    b.Property<DateTime>("CreateTm")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasColumnName("CREATETM")
-                        .HasDefaultValueSql("GETDATE()");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)")
-                        .HasDefaultValue("")
-                        .HasColumnName("EMAIL");
-
-                    b.Property<decimal>("Phone1")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("numeric(22,0)")
-                        .HasDefaultValue(0m)
-                        .HasColumnName("PHONE1");
-
-                    b.Property<decimal>("Phone2")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("numeric(22,0)")
-                        .HasDefaultValue(0m)
-                        .HasColumnName("PHONE2");
-
-                    b.Property<string>("SaasCustomerName")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)")
-                        .HasDefaultValue("")
-                        .HasColumnName("SAASCUSTOMERNAME");
-
-                    b.Property<string>("UpdateBy")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)")
-                        .HasDefaultValue("")
-                        .HasColumnName("UPDATEBY");
-
-                    b.Property<DateOnly>("UpdateDt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("date")
-                        .HasColumnName("UPDATEDT")
-                        .HasDefaultValueSql("'1900-01-01'");
-
-                    b.Property<string>("UpdateMarks")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)")
-                        .HasDefaultValue("")
-                        .HasColumnName("UPDATEMARKS");
-
-                    b.Property<DateOnly>("UpdateTm")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("date")
-                        .HasColumnName("UPDATETM")
-                        .HasDefaultValueSql("'1900-01-01'");
-
-                    b.HasKey("SaasCustomerId");
-
-                    b.ToTable("SAASCUSTOMER", (string)null);
-                });
-
             modelBuilder.Entity("ERP.Domain.Entities.SP_Load_Param", b =>
                 {
                     b.Property<string>("PARAMDESC")
@@ -5118,6 +5138,94 @@ namespace ERP.Infrastructure.Migrations
                     b.ToTable((string)null);
 
                     b.ToView(null, (string)null);
+                });
+
+            modelBuilder.Entity("ERP.Domain.Entities.SaasCustomer", b =>
+                {
+                    b.Property<string>("SaasCustomerId")
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)")
+                        .HasColumnName("SAASCUSTOMERID");
+
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)")
+                        .HasColumnName("ADDRESS");
+
+                    b.Property<string>("CreateBy")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)")
+                        .HasColumnName("CREATEBY");
+
+                    b.Property<DateTime?>("CreateDt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("date")
+                        .HasColumnName("CREATEDT")
+                        .HasDefaultValueSql("GETDATE()");
+
+                    b.Property<string>("CreateRemarks")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)")
+                        .HasColumnName("CREATEREMARKS");
+
+                    b.Property<DateTime?>("CreateTm")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime")
+                        .HasColumnName("CREATETM")
+                        .HasDefaultValueSql("GETDATE()");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)")
+                        .HasColumnName("EMAIL");
+
+                    b.Property<string>("Phone1")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)")
+                        .HasColumnName("PHONE1");
+
+                    b.Property<string>("Phone2")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)")
+                        .HasColumnName("PHONE2");
+
+                    b.Property<string>("SaasCustomerName")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)")
+                        .HasColumnName("SAASCUSTOMERNAME");
+
+                    b.Property<string>("UpdateBy")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)")
+                        .HasColumnName("UPDATEBY");
+
+                    b.Property<DateTime?>("UpdateDt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("date")
+                        .HasColumnName("UPDATEDT")
+                        .HasDefaultValueSql("'1900-01-01'");
+
+                    b.Property<string>("UpdateMarks")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)")
+                        .HasColumnName("UPDATEMARKS");
+
+                    b.Property<DateTime?>("UpdateTm")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime")
+                        .HasColumnName("UPDATETM")
+                        .HasDefaultValueSql("'1900-01-01'");
+
+                    b.HasKey("SaasCustomerId");
+
+                    b.ToTable("SaasCustomer", (string)null);
                 });
 
             modelBuilder.Entity("ERP.Domain.Entities.SaleDetail", b =>
@@ -5763,103 +5871,6 @@ namespace ERP.Infrastructure.Migrations
                     b.HasKey("Fran", "Branch", "WarehouseCode", "ShipmentType", "ShipmentNumber", "ShipmentSerial");
 
                     b.ToTable("SINVDET", "dbo");
-                });
-
-            modelBuilder.Entity("ERP.Domain.Entities.SpGetPartsResult", b =>
-                {
-                    b.Property<bool>("ACTIVE")
-                        .HasColumnType("bit");
-
-                    b.Property<decimal?>("AVGM6")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("BARCODE")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CATEGORY")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal?>("CMSALE")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("COO")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CREATEBY")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("CREATEDT")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CREATEREMARKS")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("DESC")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("FINALPART")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal?>("FOB")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("FRAN")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("GROUP")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal>("ID")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("INVCLASS")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal?>("LC")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal?>("LMSALE")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal?>("M12SALE")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal?>("M3SALE")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal?>("M6SALE")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("MAKE")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal?>("NETWEIGHT")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("PART")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal?>("STOCK")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("STOCKKEY")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("SUBSPART")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("UPDATEBY")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("UPDATEDT")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("UPDATEMARKS")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.ToTable((string)null);
-
-                    b.ToView(null, (string)null);
                 });
 
             modelBuilder.Entity("ERP.Domain.Entities.Store", b =>
