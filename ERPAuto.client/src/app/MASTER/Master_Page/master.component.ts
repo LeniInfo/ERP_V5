@@ -10,6 +10,7 @@ import { Router } from '@angular/router';
   templateUrl: './master.component.html',
   styleUrls: ['./master.component.css'],
 })
+
 export class MasterComponent {
   sidebarExpanded = false;
   activeMenu: string | null = null;
@@ -17,6 +18,7 @@ export class MasterComponent {
 
   fran: string | null = '';
   constructor(private router: Router) { }
+
 
   ngOnInit(): void {
     this.fran = sessionStorage.getItem('fran');

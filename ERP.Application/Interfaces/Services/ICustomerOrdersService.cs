@@ -10,6 +10,7 @@ public interface ICustomerOrdersService
     Task<CustomerOrderHeaderDto> CreateHeaderAsync(CreateCustomerOrderHeaderRequest request, CancellationToken ct);
     Task<CustomerOrderHeaderDto?> UpdateHeaderAsync(string fran, string branch, string warehouse, string cordType, string cordNo, UpdateCustomerOrderHeaderRequest request, CancellationToken ct);
     Task<bool> DeleteHeaderAsync(string fran, string branch, string warehouse, string cordType, string cordNo, CancellationToken ct);
+    Task<string> GetNextOrderNumberAsync(CancellationToken ct);
 
     // Details
     Task<IReadOnlyList<CustomerOrderDetailDto>> GetAllDetailsAsync(CancellationToken ct);

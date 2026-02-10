@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ERP.Domain.Entities
 {
@@ -19,4 +20,5 @@ namespace ERP.Domain.Entities
         public string UpdateMarks { get; set; } = string.Empty;
     }
 }
+
 

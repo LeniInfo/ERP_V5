@@ -1,0 +1,112 @@
+<div class="container">
+
+  <div class="main-card">
+
+    <!-- 🔵 Top Header -->
+    <div class="inner-navbar d-flex justify-content-between align-items-center">
+      <h5>Supplier Invoice List</h5>
+
+      <!-- ➕ Create Invoice -->
+      <button class="btn btn-primary"
+              (click)="goToInvoiceCreation()">
+        Create Invoice
+      </button>
+    </div>
+
+    <!-- 🔍 Search + Filters -->
+    <div class="form-section header-highlight">
+
+      <div class="row g-3 align-items-center">
+
+        <!-- Search -->
+        <div class="col-md-4 d-flex">
+          <label class="form-label me-2">Search</label>
+          <input type="text"
+                 class="form-control search-box"
+                 placeholder="Doc No / Vendor / Buyer / Phone"
+                 [(ngModel)]="searchText"
+                 (input)="filterData()">
+        </div>
+
+        <!-- Date From -->
+        <div class="col-md-3 d-flex">
+          <label class="form-label me-2">From</label>
+          <input type="date"
+                 class="form-control short-date"
+                 [(ngModel)]="fromDate"
+                 (change)="filterData()">
+        </div>
+
+        <!-- Date To -->
+        <div class="col-md-3 d-flex">
+          <label class="form-label me-2">To</label>
+          <input type="date"
+                 class="form-control short-date"
+                 [(ngModel)]="toDate"
+                 (change)="filterData()">
+        </div>
+
+        <div class="col-md-2 text-end">
+          <button class="btn btn-outline-primary" (click)="clearFilters()">Reset</button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- 🧾 Table Container -->
+    <div *ngIf="filteredList.length === 0" class="text-center p-4">
+      <h5 class="text-muted">No Invoices Found</h5>
+    </div>
+
+    <div class="table-responsive" *ngIf="filteredList.length > 0">
+
+      <div class="table-scroll">
+
+        <table class="table table-bordered table-striped table-hover mb-3">
+
+          <!-- Sticky Header -->
+          <thead class="table-header">
+            <tr>
+              <th>Shipment No</th>
+              <th>Supplier</th>
+              <th>Shipment Date</th>
+              <th>Currency</th>
+              <th>No.of.Items</th>
+              <th>Net Value</th>
+              <th>Discount</th>
+              <th>VAT</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr *ngFor="let inv of filteredList"
+                (dblclick)="editInvoice(inv)">
+
+              <td>{{ inv.shipmentNumber }}</td>
+              <td>{{ inv.supplier }}</td>
+              <td>{{ inv.shipmentDate | date:'dd-MM-yyyy' }}</td>
+              <td>{{ inv.currency }}</td>
+              <td>{{ inv.noOfItems }}</td>
+              <td>{{ inv.netValue }}</td>
+              <td>{{ inv.discountValue }}</td>
+              <td>{{ inv.vatValue }}</td>
+              <td>
+                <button class="btn btn-danger btn-sm"
+                        (click)="deleteShipment(inv); $event.stopPropagation()">
+                  Delete
+                </button>
+              </td>
+
+            </tr>
+          </tbody>
+
+        </table>
+
+      </div>
+
+    </div> <!-- END TABLE -->
+
+  </div> <!-- END CARD -->
+
+</div>

@@ -31,6 +31,8 @@ public sealed class SaleInvoiceService : ISaleInvoiceService
 
     public async Task<List<ParamResponse>> GetParams(ParamRequest request)
         => await _repo.GetParams(request);
+    public async Task<List<workmasRes>> getworkmas(WorkmasReq request)
+        => await _repo.getworkmas(request);
 
     //private readonly ISaleInvoiceRepository _repo = repo;
     //private readonly IAppLogger<SaleInvoiceService> _log = log;

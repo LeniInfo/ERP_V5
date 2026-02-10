@@ -1,39 +1,60 @@
-import { Injectable } from '@angular/core';
+
+
+// Re-export Customer interface for backward compatibility
+export type Customer = ApiCustomer;
+
+
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { Injectable } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
+import { CustomerModel } from './customer.model';
 import { catchError, map } from 'rxjs/operators';
+import { ApiService, Customer as ApiCustomer } from '../../services/api.service';
 
-// API Base URL - Update this to match your backend URL
-const API_BASE_URL = 'http://localhost:5220/api/v1/master/Customers'; // Backend API URL (using HTTP to avoid SSL issues)
-
-export interface Customer {
-  customerCode: string;
-  id?: number;
-  name: string;
-  nameAr: string;
-  phone: string;
-  email: string;
-  address: string;
-  vatNo: string;
-  createBy?: string;
-  createRemarks?: string;
-  updateBy?: string;
-  updateRemarks?: string;
-  createDate?: string;
-  createTime?: string;
-  updateDate?: string;
-  updateTime?: string;
-}
-
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class CustomerService {
-  constructor(private http: HttpClient) { }
+  private baseUrl = 'https://localhost:7231/api/v1/master/Customers';
+
+  constructor(private http: HttpClient, private apiService: ApiService) { }
+
+  getNextCustomerCode(): Observable<string> {
+    return this.http.get(
+      `${this.baseUrl}/next-code`,
+      { responseType: 'text' }
+    );
+  }
 
   // Get all customers
+  getCustomers(): Observable<CustomerModel[]> {
+    return this.http.get<CustomerModel[]>(this.baseUrl);
+  }
+
+  // Get customer by code
+  getCustomerByCode(customerCode: string): Observable<CustomerModel> {
+    return this.http.get<CustomerModel>(`${this.baseUrl}/${customerCode}`);
+  }
+
+  // Create a new customer
+  createCustomer(customer: CustomerModel): Observable<CustomerModel> {
+    return this.http.post<CustomerModel>(this.baseUrl, customer);
+  }
+
+  // Update existing customer
+  updateCustomer(customerCode: string, customer: CustomerModel): Observable<CustomerModel> {
+    return this.http.put<CustomerModel>(`${this.baseUrl}/${customerCode}`, customer);
+  }
+
+  // Delete customer
+  deleteCustomer(customerCode: string): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/${customerCode}`);
+  }
+
+
+
+  //////////////////////
+  // Get all customers
   getAll(): Observable<Customer[]> {
-    return this.http.get<Customer[]>(API_BASE_URL).pipe(
+    return this.apiService.getAllCustomers().pipe(
       map((response: any) => {
         // Handle different response formats
         if (Array.isArray(response)) {
@@ -50,7 +71,7 @@ export class CustomerService {
 
   // Get customer by code
   getByCode(customerCode: string): Observable<Customer> {
-    return this.http.get<Customer>(`${API_BASE_URL}/${customerCode}`).pipe(
+    return this.apiService.getCustomerByCode(customerCode).pipe(
       catchError(this.handleError)
     );
   }
@@ -58,8 +79,8 @@ export class CustomerService {
   // Create new customer
   create(customer: Customer): Observable<any> {
     // Prepare request matching backend CreateCustomerRequest
-    const createRequest = {
-      customerCode: customer.customerCode,
+    // CustomerCode is optional - backend will auto-generate if not provided
+    const createRequest: any = {
       name: customer.name,
       nameAr: customer.nameAr,
       phone: customer.phone,
@@ -68,31 +89,30 @@ export class CustomerService {
       vatNo: customer.vatNo
     };
 
-    return this.http.post<any>(API_BASE_URL, createRequest).pipe(
+    // Only include customerCode if it's provided and not empty
+    if (customer.customerCode && customer.customerCode.trim() !== '') {
+      createRequest.customerCode = customer.customerCode;
+    }
+
+    return this.apiService.addCustomer(createRequest).pipe(
       catchError(this.handleError)
     );
   }
 
   // Update customer
   update(customer: Customer): Observable<any> {
-    // Prepare request matching backend UpdateCustomerRequest
-    const updateRequest = {
-      name: customer.name,
-      nameAr: customer.nameAr,
-      phone: customer.phone,
-      email: customer.email,
-      address: customer.address,
-      vatNo: customer.vatNo
-    };
+    if (!customer.customerCode) {
+      return throwError(() => ({ message: 'Customer code is required for update' }));
+    }
 
-    return this.http.put<any>(`${API_BASE_URL}/${customer.customerCode}`, updateRequest).pipe(
+    return this.apiService.updateCustomer(customer.customerCode, customer).pipe(
       catchError(this.handleError)
     );
   }
 
   // Delete customer
   delete(customerCode: string): Observable<any> {
-    return this.http.delete<any>(`${API_BASE_URL}/${customerCode}`).pipe(
+    return this.apiService.deleteCustomer(customerCode).pipe(
       catchError(this.handleError)
     );
   }
@@ -160,3 +180,4 @@ export class CustomerService {
     }));
   }
 }
+

@@ -9,6 +9,8 @@ namespace ERP.Contracts.Master
         public string? Description { get; set; }
         public string? Make { get; set; }
         public bool Active { get; set; }
+        /// <summary>FOB Price.</summary>
+        public decimal Fob { get; set; }
 
         // ADD THESE:
         public string? Category { get; set; }
