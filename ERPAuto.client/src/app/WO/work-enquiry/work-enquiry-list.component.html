@@ -1,0 +1,231 @@
+<div class="customer-quotation-container">
+  <div class="container-fluid mt-4 mb-5">
+
+    <!-- Work Enquiry List Card -->
+    <div class="card shadow-sm mb-4">
+      <div class="card-header bg-secondary text-white d-flex justify-content-between align-items-center">
+        <h4 class="mb-0">
+          <i class="bi bi-list-ul me-2"></i> Work Enquiry List
+        </h4>
+        <button type="button" class="btn btn-primary" (click)="goToAddWorkEnquiry()">
+          <i class="bi bi-plus-circle me-2"></i>Add New Work Enquiry
+        </button>
+      </div>
+
+      <div class="card-body">
+
+        <!-- Loading -->
+        <div class="text-center py-5" *ngIf="isLoadingWorkEnquiries">
+          <div class="spinner-border text-primary"></div>
+          <p class="mt-2 text-muted">Loading work enquiries...</p>
+        </div>
+
+        <!-- Work Enquiry Table -->
+        <div class="table-responsive" *ngIf="!isLoadingWorkEnquiries">
+          <table class="table table-bordered table-hover align-middle">
+            <thead class="table-primary">
+              <tr>
+                <th style="width: 4%;">S.No</th>
+                <th style="width: 12%;">Enquiry #</th>
+                <th style="width: 25%;">Customer</th>
+                <th style="width: 10%;">Date</th>
+                <th style="width: 10%;">Status</th>
+                <th style="width: 12%;" class="text-end">Total</th>
+                <th style="width: 27%;" class="text-center">Actions</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <ng-container *ngFor="let enquiry of workEnquiries; let i = index">
+                <tr>
+                  <td class="text-center">{{ i + 1 }}</td>
+                  <td>
+                    <strong>{{ enquiry.requestNo }}</strong>
+                    <button 
+                      class="btn btn-sm btn-link p-0 ms-1" 
+                      (click)="loadEnquiryDetails(enquiry.requestNo)"
+                      [title]="isExpanded(enquiry.requestNo) ? 'Collapse' : 'Expand'">
+                      <i class="bi" [class.bi-chevron-down]="!isExpanded(enquiry.requestNo)" [class.bi-chevron-up]="isExpanded(enquiry.requestNo)"></i>
+                    </button>
+                  </td>
+                  <td>
+                    <div class="fw-bold">{{ getCustomerName(enquiry.customer) }}</div>
+                    <small class="text-muted">{{ enquiry.customer }}</small>
+                  </td>
+                  <td>{{ formatDate(enquiry.requestDate) }}</td>
+                  <td>
+                    <span class="badge" [ngClass]="getStatusBadgeClass(enquiry.status || 'OPEN')">
+                      {{ enquiry.status || 'OPEN' }}
+                    </span>
+                  </td>
+                  <td class="text-end fw-bold">{{ enquiry.totalValue | number:'1.2-2' }}</td>
+                  <td>
+                    <div class="d-flex justify-content-center gap-1">
+                      <button class="btn btn-sm btn-primary" title="Edit" (click)="editEnquiry(enquiry)">
+                        <i class="bi bi-pencil-square"></i>
+                      </button>
+                      <button class="btn btn-sm btn-danger" title="Delete" (click)="deleteEnquiry(enquiry)">
+                        <i class="bi bi-trash"></i>
+                      </button>
+                      <button class="btn btn-sm btn-info text-white" title="View" (click)="showDetail(enquiry)">
+                        <i class="bi bi-eye"></i>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+                <!-- Expanded Details Row -->
+                <tr *ngIf="isExpanded(enquiry.requestNo) && enquiryDetails[enquiry.requestNo]">
+                  <td colspan="7" class="p-0">
+                    <div class="p-3 bg-light">
+                      <h6 class="mb-2">Enquiry Details:</h6>
+                      <div class="table-responsive">
+                        <table class="table table-sm table-bordered mb-0">
+                          <thead class="table-secondary">
+                            <tr>
+                              <th>S.No</th>
+                              <th>Part Name</th>
+                              <th>Quantity</th>
+                              <th>Description (English)</th>
+                              <th>Description (Arabic)</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr *ngFor="let detail of enquiryDetails[enquiry.requestNo]; let j = index">
+                              <td class="text-center">{{ j + 1 }}</td>
+                              <td>{{ getPartName(detail.part) }}</td>
+                              <td class="text-center">{{ detail.qty | number:'1.0-0' }}</td>
+                              <td>{{ getItemDescriptionEn(enquiry, j, enquiryDetails[enquiry.requestNo].length) }}</td>
+                              <td dir="rtl">{{ getItemDescriptionAr(enquiry, j, enquiryDetails[enquiry.requestNo].length) }}</td>
+                            </tr>
+                            <tr *ngIf="enquiryDetails[enquiry.requestNo].length === 0">
+                              <td colspan="5" class="text-center text-muted">No details found</td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+              </ng-container>
+
+              <!-- Empty State -->
+              <tr *ngIf="workEnquiries.length === 0">
+                <td colspan="7" class="text-center text-muted py-4">
+                  <i class="bi bi-inbox me-2"></i>
+                  No work enquiries found.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Work Enquiry Detail Modal -->
+<div class="modal fade" 
+     [class.show]="showDetailModal" 
+     [style.display]="showDetailModal ? 'block' : 'none'"
+     tabindex="-1"
+     role="dialog">
+  <div class="modal-dialog modal-lg modal-dialog-scrollable" role="document">
+    <div class="modal-content">
+
+      <div class="modal-header bg-info text-white">
+        <h5 class="modal-title">
+          <i class="bi bi-eye me-2"></i> Work Enquiry Details
+        </h5>
+        <button type="button" class="btn-close btn-close-white" (click)="closeDetailModal()"></button>
+      </div>
+
+      <div class="modal-body" *ngIf="selectedWorkEnquiryForDetail">
+        <div class="row g-3">
+
+          <div class="col-md-6">
+            <strong>Enquiry Number:</strong>
+            <p>{{ selectedWorkEnquiryForDetail.requestNo }}</p>
+          </div>
+
+          <div class="col-md-6">
+            <strong>Date:</strong>
+            <p>{{ formatDate(selectedWorkEnquiryForDetail.requestDate) }}</p>
+          </div>
+
+          <div class="col-md-6">
+            <strong>Customer:</strong>
+            <p>{{ getCustomerName(selectedWorkEnquiryForDetail.customer) }} ({{ selectedWorkEnquiryForDetail.customer }})</p>
+          </div>
+
+          <div class="col-md-6">
+            <strong>Status:</strong>
+            <span class="badge" [ngClass]="getStatusBadgeClass(selectedWorkEnquiryForDetail.status || 'OPEN')">
+              {{ selectedWorkEnquiryForDetail.status || 'OPEN' }}
+            </span>
+          </div>
+
+          <div class="col-md-6">
+            <strong>Description (English):</strong>
+            <p>{{ selectedWorkEnquiryForDetail.descEn || 'N/A' }}</p>
+          </div>
+
+          <div class="col-md-6">
+            <strong>Description (Arabic):</strong>
+            <p dir="rtl">{{ selectedWorkEnquiryForDetail.descArabic || 'N/A' }}</p>
+          </div>
+
+          <div class="col-md-6">
+            <strong>Grand Total:</strong>
+            <p class="fw-bold">{{ selectedWorkEnquiryForDetail.totalValue | number:'1.2-2' }}</p>
+          </div>
+
+          <div class="col-12">
+            <strong>Work Enquiry Items:</strong>
+
+            <div class="table-responsive mt-2">
+              <table class="table table-sm table-bordered">
+                <thead class="table-secondary">
+                  <tr>
+                    <th>S.No</th>
+                    <th>Part Name</th>
+                    <th>Quantity</th>
+                    <th>Description (English)</th>
+                    <th>Description (Arabic)</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  <tr *ngFor="let detail of enquiryDetails[selectedWorkEnquiryForDetail.requestNo]; let i = index">
+                    <td class="text-center">{{ i + 1 }}</td>
+                    <td>{{ getPartName(detail.part) }}</td>
+                    <td class="text-center">{{ detail.qty | number:'1.0-0' }}</td>
+                    <td>{{ getItemDescriptionEn(selectedWorkEnquiryForDetail, i, enquiryDetails[selectedWorkEnquiryForDetail.requestNo]?.length || 0) }}</td>
+                    <td dir="rtl">{{ getItemDescriptionAr(selectedWorkEnquiryForDetail, i, enquiryDetails[selectedWorkEnquiryForDetail.requestNo]?.length || 0) }}</td>
+                  </tr>
+                  <tr *ngIf="!enquiryDetails[selectedWorkEnquiryForDetail.requestNo] || enquiryDetails[selectedWorkEnquiryForDetail.requestNo].length === 0">
+                    <td colspan="5" class="text-center text-muted">No details found</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-secondary" (click)="closeDetailModal()">
+          <i class="bi bi-x-circle me-2"></i>Close
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Modal Backdrop -->
+<div *ngIf="showDetailModal" 
+     class="modal-backdrop fade show" 
+     [style.display]="'block'"
+     (click)="closeDetailModal()"></div>

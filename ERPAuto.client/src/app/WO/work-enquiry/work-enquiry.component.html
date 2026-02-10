@@ -1,0 +1,399 @@
+<div class="workEnquiries">
+  <div class="container-fluid mt-4 mb-5">
+
+    <!-- Work Enquiry Card -->
+    <div class="card shadow-sm mb-4">
+      <div class="card-header bg-primary text-white">
+        <h4 class="mb-0">
+          <i class="bi bi-file-earmark-text me-2"></i>
+          Work Enquiry
+        </h4>
+      </div>
+
+      <div class="card-body">
+        <form>
+
+          <!-- Header Descriptions Section (for reference, but item-level descriptions are used) -->
+          <div class="row g-3 mb-3" *ngIf="isEditMode && (headerDescriptionEn || headerDescriptionAr)">
+            <div class="col-md-6">
+              <label class="form-label">Description (English) - From Header</label>
+              <textarea class="form-control" rows="2" readonly>{{ headerDescriptionEn }}</textarea>
+              <small class="text-muted">These descriptions are distributed to items below</small>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Description (Arabic) - From Header</label>
+              <textarea class="form-control" rows="2" dir="rtl" readonly>{{ headerDescriptionAr }}</textarea>
+            </div>
+          </div>
+
+          <!-- Top Section -->
+          <div class="row g-3">
+
+            <!-- Customer -->
+            <div class="col-md-5">
+              <label class="form-label">
+                Customer <span class="text-danger">*</span>
+              </label>
+              <div class="input-group position-relative">
+                <input type="text"
+                       class="form-control"
+                       placeholder="Type to search customer..."
+                       [(ngModel)]="customerSearchTerm"
+                       name="customerSearch"
+                       (input)="onCustomerSearch($event)"
+                       (focus)="onCustomerInputFocus()"
+                       (blur)="onCustomerInputBlur()"
+                       [disabled]="isLoadingCustomers" />
+                <button class="btn btn-success" type="button" title="Add New Customer" (click)="openCustomerModal()">
+                  <i class="bi bi-plus-circle"></i>
+                </button>
+                
+                <!-- Customer Dropdown -->
+                <div *ngIf="showCustomerDropdown && getFilteredCustomers().length > 0" 
+                     class="position-absolute w-100 bg-white border rounded shadow-lg customer-dropdown"
+                     style="top: 100%; z-index: 1000; max-height: 300px; overflow-y: auto; margin-top: 2px;">
+                  <div *ngFor="let customer of getFilteredCustomers()" 
+                       class="customer-suggestion-item p-2 border-bottom cursor-pointer"
+                       (mousedown)="selectCustomer(customer)"
+                       style="cursor: pointer;">
+                    <div class="fw-bold">{{ getCustomerDisplayName(customer) }}</div>
+                    <small class="text-muted">{{ customer.customerCode }}</small>
+                    <small class="text-muted ms-2" *ngIf="customer.phone">| {{ customer.phone }}</small>
+                  </div>
+                </div>
+              </div>
+              
+              <div *ngIf="isLoadingCustomers" class="mt-1">
+                <small class="text-muted">
+                  <i class="bi bi-hourglass-split"></i> Loading customers...
+                </small>
+              </div>
+              
+              <div *ngIf="customerCode" class="mt-2">
+                <small class="text-muted">
+                  Selected: <strong>{{ getSelectedCustomerName() }}</strong>
+                  <button type="button"
+                          class="btn btn-sm btn-link text-danger p-0 ms-2"
+                          (click)="clearCustomerSelection()">
+                    <i class="bi bi-x-circle"></i>
+                  </button>
+                </small>
+              </div>
+            </div>
+
+            <!-- Enquiry Date -->
+            <div class="col-md-3">
+              <label class="form-label">Enquiry Date</label>
+              <input type="date" class="form-control" [(ngModel)]="enquiryDate" name="enquiryDate" />
+            </div>
+
+            <!-- Status -->
+            <div class="col-md-4">
+              <label class="form-label">Status</label>
+              <select class="form-select"
+                      [(ngModel)]="status"
+                      name="status"
+                      [disabled]="status === 'OPEN'">
+                <option value="OPEN">OPEN</option>
+                <option value="Approved">Approved</option>
+                <option value="Rejected">Rejected</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Items Table -->
+          <div class="row g-3">
+            <div class="col-12">
+              <h5 class="mb-2">Work Enquiry Items</h5>
+
+              <div class="table-responsive" style="max-height: 500px;">
+                <table class="table table-bordered table-sm align-middle">
+                  <thead class="table-secondary sticky-top">
+                    <tr>
+                      <th style="width: 5%;">S.No</th>
+                      <th style="width: 15%;">Name</th>
+                      <th class="text-end" style="width: 10%;">Price</th>
+                      <th class="text-end" style="width: 8%;">Qty</th>
+                      <th class="text-end" style="width: 10%;">Total</th>
+                      <th style="width: 26%;">Description (English)</th>
+                      <th style="width: 26%;">Description (Arabic)</th>
+                      <th class="text-center" style="width: 10%;">Action</th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    <tr *ngFor="let item of enquiryItems; let i = index">
+                      <td class="text-center">{{ i + 1 }}</td>
+
+                      <td>
+                        <select class="form-select form-select-sm"
+                                [ngModel]="item.workId"
+                                (ngModelChange)="onWorkSelected(item, +$any($event))"
+                                name="workName_{{item.id}}">
+                          <option [ngValue]="undefined">-- Select Work --</option>
+                          <option *ngFor="let work of workMasters" 
+                                  [ngValue]="work.workId">
+                            {{ getWorkDisplayName(work) }}
+                          </option>
+                        </select>
+                        <div *ngIf="item.workName" class="mt-1">
+                          <small class="text-muted fw-bold">{{ item.workName }}</small>
+                        </div>
+                      </td>
+
+                      <td>
+                        <input type="number" 
+                               class="form-control form-control-sm text-end" 
+                               [(ngModel)]="item.price"
+                               name="price_{{item.id}}"
+                               (ngModelChange)="calculateItemTotal(item)"
+                               step="0.01"
+                               min="0" />
+                      </td>
+                      <td>
+                        <input type="number" 
+                               class="form-control form-control-sm text-end" 
+                               [(ngModel)]="item.quantity"
+                               name="quantity_{{item.id}}"
+                               (ngModelChange)="calculateItemTotal(item)"
+                               step="1"
+                               min="0" />
+                      </td>
+                      <td>
+                        <input type="text"
+                               class="form-control form-control-sm text-end fw-bold"
+                               [value]="item.total | number:'1.2-2'"
+                               readonly
+                               style="cursor: default;" />
+                      </td>
+                      <td>
+                        <label class="form-label small">
+                          Description (English) <span class="text-danger">*</span>
+                        </label>
+                        <textarea class="form-control form-control-sm description-textarea"
+                                  [(ngModel)]="item.descriptionEn"
+                                  name="descriptionEn_{{item.id}}"
+                                  placeholder="Enter detailed description in English..."
+                                  rows="3"
+                                  maxlength="300"
+                                  (input)="onDescriptionEnInput(item, $event)"
+                                  (ngModelChange)="onDescriptionEnChange(item)"
+                                  (blur)="onDescriptionEnBlur(item)"></textarea>
+                        <small class="d-block mt-1" [class.text-danger]="(item.descriptionEn.length || 0) >= 300" [class.text-muted]="(item.descriptionEn.length || 0) < 300">
+                          <i class="bi bi-info-circle"></i> 
+                          <span *ngIf="(item.descriptionEn.length || 0) >= 300">Character limit reached (300/300)</span>
+                          <span *ngIf="(item.descriptionEn.length || 0) < 300">{{ item.descriptionEn.length || 0 }}/300 characters</span>
+                          <span class="ms-2">- At least one description is required</span>
+                        </small>
+                      </td>
+                      <td>
+                        <label class="form-label small">
+                          Description (Arabic) <span class="text-danger">*</span>
+                        </label>
+                        <textarea class="form-control form-control-sm description-textarea"
+                                  [(ngModel)]="item.descriptionAr"
+                                  name="descriptionAr_{{item.id}}"
+                                  placeholder="أدخل وصفًا تفصيليًا بالعربية..."
+                                  rows="3"
+                                  maxlength="300"
+                                  dir="rtl"
+                                  (input)="onDescriptionArInput(item, $event)"
+                                  (ngModelChange)="onDescriptionArChange(item)"></textarea>
+                        <small class="d-block mt-1" dir="rtl" [class.text-danger]="(item.descriptionAr.length || 0) >= 300" [class.text-muted]="(item.descriptionAr.length || 0) < 300">
+                          <i class="bi bi-info-circle"></i> 
+                          <span *ngIf="(item.descriptionAr.length || 0) >= 300">تم الوصول إلى الحد الأقصى (300/300)</span>
+                          <span *ngIf="(item.descriptionAr.length || 0) < 300">{{ item.descriptionAr.length || 0 }}/300 حرف</span>
+                          <span class="ms-2">- مطلوب وصف واحد على الأقل</span>
+                        </small>
+                      </td>
+                      <td class="text-center">
+                        <div class="d-flex justify-content-center gap-1">
+                          <button type="button" 
+                                  class="btn btn-sm btn-success"
+                                  (click)="addNewItem()"
+                                  title="Add New Item">
+                            <i class="bi bi-plus-circle"></i>
+                          </button>
+                          <button type="button" 
+                                  class="btn btn-sm btn-danger"
+                                  (click)="removeItem(item)"
+                                  title="Remove Item"
+                                  [disabled]="enquiryItems.length === 1">
+                            <i class="bi bi-trash"></i>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+
+                    <!-- Grand Total -->
+                    <tr class="table-info">
+                      <td colspan="4" class="text-end fw-bold">
+                        Grand Total:
+                      </td>
+                      <td class="text-end fw-bold">{{ grandTotal | number:'1.2-2' }}</td>
+                      <td colspan="3"></td>
+                    </tr>
+
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="col-12">
+              <button type="button" class="btn btn-primary me-2" (click)="saveWorkEnquiry()">
+                <i class="bi bi-save me-2"></i>Save Work Enquiry
+              </button>
+              <button type="button"
+                      class="btn btn-secondary me-2"
+                      (click)="goBackToList()">
+                <i class="bi bi-arrow-left me-2"></i>Back to List
+              </button>
+              <button type="button" class="btn btn-secondary">
+                <i class="bi bi-x-circle me-2"></i>Reset
+              </button>
+            </div>
+          </div>
+
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Customer Modal -->
+<div
+  class="modal fade"
+  [class.show]="showCustomerModal"
+  [style.display]="showCustomerModal ? 'block' : 'none'"
+  tabindex="-1"
+  role="dialog"
+  [attr.aria-hidden]="!showCustomerModal"
+>
+  <div class="modal-dialog modal-lg modal-dialog-scrollable" role="document">
+    <div class="modal-content">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title">
+          <i class="bi bi-person-plus me-2"></i>Add New Customer
+        </h5>
+        <button
+          type="button"
+          class="btn-close btn-close-white"
+          (click)="closeCustomerModal()"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <form (ngSubmit)="saveCustomer()">
+          <div class="row g-3">
+            <!-- Customer Code is hidden - auto-generated -->
+            <div class="col-md-6">
+              <label class="form-label">
+                Name <span class="text-danger">*</span>
+              </label>
+              <input
+                type="text"
+                class="form-control"
+                [(ngModel)]="customerForm.name"
+                name="name"
+                (blur)="onCustomerNameChange(customerForm.name)"
+                required
+                maxlength="100"
+              />
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">
+                Name(AR) <span class="text-danger">*</span>
+              </label>
+              <input
+                type="text"
+                class="form-control"
+                [(ngModel)]="customerForm.nameAr"
+                name="nameAr"
+                (ngModelChange)="nameArManuallyEdited = true"
+                (focus)="onCustomerNameArFocus()"
+                required
+                maxlength="100"
+              />
+              <small class="text-muted">Auto-filled from Name when you leave the Name field</small>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">
+                Phone
+              </label>
+              <input
+                type="text"
+                class="form-control"
+                [class.is-invalid]="phoneError"
+                [(ngModel)]="customerForm.phone"
+                name="phone"
+                maxlength="50"
+                placeholder="1234567890"
+              />
+              <div class="invalid-feedback" *ngIf="phoneError">
+                {{ phoneError }}
+              </div>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">
+                Email
+              </label>
+              <input
+                type="email"
+                class="form-control"
+                [class.is-invalid]="emailError"
+                [(ngModel)]="customerForm.email"
+                name="email"
+                maxlength="100"
+                placeholder="example@domain.com"
+              />
+              <div class="invalid-feedback" *ngIf="emailError">
+                {{ emailError }}
+              </div>
+            </div>
+            <div class="col-12">
+              <label class="form-label">
+                Address
+              </label>
+              <textarea
+                class="form-control"
+                rows="2"
+                [(ngModel)]="customerForm.address"
+                name="address"
+                maxlength="200"
+              ></textarea>
+            </div>
+            <div class="col-md-12">
+              <label class="form-label">
+                VAT No
+              </label>
+              <input
+                type="text"
+                class="form-control"
+                [(ngModel)]="customerForm.vatNo"
+                name="vatNo"
+                maxlength="20"
+              />
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="closeCustomerModal()">
+          <i class="bi bi-x-circle me-2"></i>Cancel
+        </button>
+        <button type="button" class="btn btn-primary" (click)="saveCustomer()">
+          <i class="bi bi-check-circle me-2"></i>Save Customer
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Backdrop -->
+<div
+  *ngIf="showCustomerModal"
+  class="modal-backdrop fade show"
+  [style.display]="'block'"
+  (click)="closeCustomerModal()"
+></div>

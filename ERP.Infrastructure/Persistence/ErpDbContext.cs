@@ -63,6 +63,10 @@ public sealed class ErpDbContext(DbContextOptions<ErpDbContext> options) : DbCon
     public DbSet<WorkInvHdr> WorkInvHdrs => Set<WorkInvHdr>();
     public DbSet<WorkInvDet> WorkInvDets => Set<WorkInvDet>();
     public DbSet<WorkshopMaster> WorkshopMasters => Set<WorkshopMaster>();
+    public DbSet<QuotationHeader> QuotationHeaders => Set<QuotationHeader>();
+    public DbSet<QuotationDetail> QuotationDetails => Set<QuotationDetail>();
+    public DbSet<RequestHeader> RequestHeaders => Set<RequestHeader>();
+    public DbSet<RequestDetail> RequestDetails => Set<RequestDetail>();
     public DbSet<SaasCustomer> SaasCustomer => Set<SaasCustomer>();
 
     //Procedure

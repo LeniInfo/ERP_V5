@@ -19,13 +19,26 @@ public sealed class CustomersService(ICustomersRepository repo) : ICustomersServ
         return x is null ? null : ToDto(x);
     }
 
+    public async Task<IReadOnlyList<CustomerDto>> SearchByNameAsync(string name, CancellationToken ct)
+    {
+        var rows = await repo.SearchByNameAsync(name, ct);
+        return rows.Select(ToDto).ToList();
+    }
+
     public async Task<CustomerDto> CreateAsync(CreateCustomerRequest req, CancellationToken ct)
     {
         var now = DateTime.UtcNow;
 
+        // Auto-generate customer code if not provided
+        string customerCode = req.CustomerCode;
+        if (string.IsNullOrWhiteSpace(customerCode))
+        {
+            customerCode = await repo.GetNextCustomerCodeAsync(ct);
+        }
+
         var entity = new Customer
         {
-            CustomerCode = req.CustomerCode,
+            CustomerCode = customerCode,
             Name = req.Name,
             NameAr = req.NameAr,
             Phone = req.Phone,

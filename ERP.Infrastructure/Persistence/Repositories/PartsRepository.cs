@@ -23,6 +23,29 @@ public sealed class PartsRepository(ErpDbContext db, ILogger<PartsRepository> lo
         return await _db.Parts.AsNoTracking().OrderBy(p => p.PartCode).ToListAsync(ct);
     }
 
+    public async Task<IReadOnlyList<Part>> SearchByNameAsync(string name, CancellationToken ct)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            return await GetAllAsync(ct);
+        }
+
+        var searchTerm = name.Trim().ToLower();
+
+        return await _db.Parts
+            .AsNoTracking()
+            .Where(p =>
+                (p.PartCode != null && p.PartCode.ToLower().Contains(searchTerm)) ||
+                (p.Description != null && p.Description.ToLower().Contains(searchTerm)) ||
+                (p.Make != null && p.Make.ToLower().Contains(searchTerm)) ||
+                (p.Barcode != null && p.Barcode.ToLower().Contains(searchTerm)) ||
+                (p.Category != null && p.Category.ToLower().Contains(searchTerm))
+            )
+            .OrderBy(p => p.PartCode)
+            .Take(100) // Limit to 100 results for performance
+            .ToListAsync(ct);
+    }
+
     // Added: Added to store parts
     // Added by: Vaishnavi
     // Added on: 10-12-2025

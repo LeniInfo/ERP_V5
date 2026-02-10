@@ -1,0 +1,217 @@
+
+<div class="container">
+  <div class="main-card">
+
+    <!-- 🔷 Navbar -->
+    <div class="inner-navbar d-flex justify-content-between align-items-center">
+      <h5>Work Order Invoice</h5>
+
+      <div class="row mt-2">
+        <div class="col-md-12 text-end">
+          <button class="btn btn-primary px-4 g-2" (click)="onSubmit()">
+            <span *ngIf="!isEditMode">Submit Order Invoice</span>
+            <span *ngIf="isEditMode">Update Order Invoice</span>
+          </button>
+
+          <button class="btn btn-primary ms-2" (click)="goToInvoiceInquiry()">
+            Work Inquiry Invoice
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 🌤️ HEADER -->
+    <div class="form-section header-highlight">
+      <div class="row align-items-center mb-2">
+
+        <div class="col-md-3 d-flex align-items-center" *ngIf="isEditMode">
+          <label class="form-label me-1 mb-0">Repair No:</label>
+          <input type="text" class="form-control" [(ngModel)]="header.repairNo" readonly />
+        </div>
+
+        <div class="col-md-3 d-flex align-items-center">
+          <label class="form-label mb-1">Customer:</label>
+
+          <div class="dropdown w-100 customer-dropdown" style="position: relative;">
+            <input type="text"
+                   class="form-control"
+                   [(ngModel)]="customerSearch"
+                   (focus)="onCustomerFocus()"
+                   (input)="filterCustomers()"
+                   placeholder="Search Customer" [disabled]="isHeaderDisabled()" />
+
+            <ul *ngIf="showCustomerDropdown"
+                class="dropdown-menu w-100 show mt-1 p-1"
+                (click)="$event.stopPropagation()"
+                style="max-height: 120px; overflow-y: auto;">
+
+              <li *ngIf="filteredCustomers.length === 0"
+                  class="dropdown-item text-muted">
+                No result found
+              </li>
+
+              <li *ngFor="let c of filteredCustomers">
+                <button class="dropdown-item"
+                        (click)="selectCustomer(c)">
+                  {{ c.name }}
+                </button>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="col-md-3 d-flex align-items-center">
+          <label class="form-label me-2 mb-0">Repair Date:</label>
+          <input type="date"
+                 class="form-control short-date"
+                 [(ngModel)]="header.repairDt" [disabled]="isHeaderDisabled()" />
+        </div>
+
+      </div>
+    </div>
+
+    <!-- 🧩 DETAIL SECTION -->
+    <div class="form-section">
+
+      <!-- ROW -->
+      <div class="row g-2 mb-3">
+
+        <div class="col-md-3">
+          <label class="form-label">Work Name</label>
+          <div class="dropdown work-dropdown" style="position:relative">
+
+            <input type="text"
+                   class="form-control"
+                   [(ngModel)]="workSearch"
+                   (focus)="showWorkDropdown=true"
+                   (input)="filterWorks()"
+                   placeholder="Search Work" />
+
+            <ul *ngIf="showWorkDropdown"
+                class="dropdown-menu w-100 show mt-1"
+                (click)="$event.stopPropagation()"
+                style="max-height:120px; overflow:auto">
+
+              <li *ngFor="let w of filteredWorks">
+                <button class="dropdown-item"
+                        type="button"
+                        (click)="selectWork(w)">
+                  {{ w.name }}
+                </button>
+              </li>
+            </ul>
+
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <label class="form-label">Work Description</label>
+          <input type="text"
+                 class="form-control"
+                 [(ngModel)]="detail.workDesc"
+                 (input)="onEnglishDescChange()" />
+        </div>
+
+        <div class="col-md-4">
+          <label class="form-label">Work Description (AR)</label>
+          <input type="text"
+                 class="form-control"
+                 dir="rtl"
+                 [(ngModel)]="detail.workDescAR"
+                 (input)="onArabicDescChange()" />
+        </div>
+
+      </div>
+
+      <div class="row g-3 align-items-end mb-3">
+
+        <div class="col-md-2">
+          <label class="form-label">Unit Price</label>
+          <input type="number" class="form-control" [(ngModel)]="detail.unitPrice" (input)="updateValue()" />
+        </div>
+
+        <div class="col-md-2">
+          <label class="form-label">Qty</label>
+          <input type="number" class="form-control" [(ngModel)]="detail.qty" (input)="updateValue()" />
+        </div>
+
+        <div class="col-md-2">
+          <label class="form-label">Discount Value</label>
+          <input type="number" class="form-control" [(ngModel)]="detail.discount" (input)="updateValue()" />
+        </div>
+
+        <div class="col-md-2">
+          <label class="form-label">Total</label>
+          <input type="number" class="form-control" [(ngModel)]="detail.totalValue" readonly />
+        </div>
+
+        <div class="col-md-3 d-flex align-items-end gap-1">
+          <button class="btn btn-primary w-100"
+                  (click)="isEditing ? updateDetail() : addDetail()">
+            {{ isEditing ? 'Update' : 'Add' }}
+          </button>
+
+          <button type="button"
+                  class="btn btn-outline-primary w-97"
+                  (click)="onClear()">
+            Clear
+          </button>
+        </div>
+
+      </div>
+
+      <!-- TABLE -->
+      <div class="table-container mt-3 fixed-rows-3">
+        <div class="table-rounded">
+          <div class="table-scroll">
+            <table class="table table-striped table-hover mb-0">
+              <thead class="table-header">
+                <tr>
+                  <th>#</th>
+                  <th>Work</th>
+                  <th>Description</th>
+                  <th>Arabic Desc</th>
+                  <th>Unit</th>
+                  <th>Qty</th>
+                  <th>Total</th>
+                  <th class="text-center">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let item of details; let i = index">
+                  <td>{{ i + 1 }}</td>
+                  <td>{{ item.workName }}</td>
+                  <td>{{ item.workDesc }}</td>
+                  <td>{{ item.workDescAR }}</td>
+                  <td>{{ item.unitPrice }}</td>
+                  <td>{{ item.qty }}</td>
+                  <td>{{ item.totalValue }}</td>
+
+                  <td class="text-center">
+                    <button class="btn btn-sm btn-outline-primary me-1"
+                            (click)="editDetail(i); $event.stopPropagation()">
+                      Edit
+                    </button>
+                    <button class="btn btn-sm btn-outline-danger"
+                            (click)="removeDetail(i)">
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+
+                <tr *ngIf="details.length === 0">
+                  <td colspan="7" class="text-center text-muted">
+                    No works added yet.
+                  </td>
+                </tr>
+
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>
